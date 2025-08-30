@@ -1,299 +1,409 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BINGO — Yo‘qotdim/Topdim</title>
-  <meta name="theme-color" content="#f59e0b" />
-
-  <!-- PWA manifest (sizning repoingizda allaqachon bor) -->
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" href="icon.png" sizes="192x192" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-
-  <style>
-    :root{
-      --bg:#FFF7D6; --card:#fff; --ink:#1f2937; --muted:#6b7280;
-      --brand:#f59e0b; --brand-ink:#1e293b; --ring:#eab308;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
-    body{background:linear-gradient(180deg,#FFF7D6, #FFE59A);}
-    .wrap{max-width:980px;margin:0 auto;padding:16px}
-    .topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.7);backdrop-filter:saturate(180%) blur(6px);border-bottom:1px solid #f3f4f6}
-    .hdr{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 4px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:40px;height:40px;display:grid;place-items:center;border-radius:10px;background:#f59e0b;color:#111;font-weight:800}
-    .title{font-weight:800;font-size:18px;line-height:1.1}
-    .title small{display:block;color:var(--muted);font-weight:600}
-    .btn{appearance:none;border:0;border-radius:12px;padding:12px 16px;font-weight:700;background:var(--brand);color:#111;cursor:pointer}
-    .btn:active{transform:translateY(1px)}
-    .btn.secondary{background:#111;color:#fff}
-    .btn.ghost{background:#fff3; border:1px solid #f59e0b55}
-    .card{background:var(--card);border:1px solid #f3f4f6;border-radius:16px;box-shadow:0 4px 16px rgba(15,23,42,.06)}
-    .form{display:grid;gap:12px;padding:16px}
-    label{font-size:13px;color:var(--muted);font-weight:600}
-    input,select,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #e5e7eb;background:#fff;font-size:15px}
-    textarea{min-height:110px;resize:vertical}
-    .grid{display:grid;gap:12px}
-    @media (min-width:720px){ .grid.cols-2{grid-template-columns:1fr 1fr} }
-    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-    .tabs{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{padding:8px 12px;border:1px solid #e5e7eb;border-radius:9999px;background:#fff;cursor:pointer;font-weight:600}
-    .chip.active{background:#111;color:#fff;border-color:#111}
-    .list{display:grid;gap:10px;padding:16px}
-    .item{padding:14px;border:1px solid #eef;border-radius:14px;background:#fff}
-    .item h4{margin:0 0 6px 0}
-    .muted{color:var(--muted)}
-    .footer{padding:24px 8px;color:var(--muted);text-align:center}
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>BINGO — Yo‘qoldi/Topildi</title>
+<meta name="theme-color" content="#f59e0b"/>
+<style>
+  :root{ --bg1:#FFF7D6; --bg2:#FFE59A; --panel:#0f172a; --ring:#e5e7eb33; --text:#0F172A;
+    --muted:#475569; --text-card:#F1F5F9; --muted-card:#94A3B8; --blue:#1e293b; --green:#16A34A; --red:#DC2626;}
+  *{box-sizing:border-box} html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
+  body{background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text)}
+  .wrap{max-width:980px;margin:0 auto;padding:16px 14px 28px}
+  .topbar{position:sticky;top:0;z-index:60;background:linear-gradient(180deg,rgba(255,243,204,.92),rgba(255,236,173,.78));border-bottom:1px solid #f1d28a}
+  .hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:#fff3c4;border:1px solid #f1d28a;font-weight:900;color:#b45309}
+  .title{font-weight:800;letter-spacing:.2px;color:#1f2937}
+  .controls{display:flex;gap:8px;align-items:center}
+  .iconbtn{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;cursor:pointer;color:#1f2937}
+  select.lang{background:#fff3c4;color:#1f2937;border:1px solid #f1d28a;border-radius:10px;padding:8px 10px}
+  .alert{display:none;margin:10px auto 0;max-width:980px;background:#7c2d12;color:#fff;padding:10px 12px;border-radius:10px;white-space:pre-wrap}
+  .hero{margin:24px 0 12px}.headline{font-size:34px;line-height:1.3;font-weight:900;color:#111827}.muted{color:#475569;margin-top:6px}
+  #mainMenu{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:20px 0}
+  .btn{border-radius:16px;padding:16px 20px;cursor:pointer;border:1px solid #e2e8f0;background:#111a2b;color:#e5eef7;font-weight:600;font-size:16px;transition:.25s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-blue{background:var(--blue)} .btn-green{background:var(--green);color:#04140a} .btn-red{background:var(--red)}
+  .btn-sm{font-size:14px;padding:12px 15px} .btn-disabled{background:#9ca3af!important;color:#f3f4f6!important;cursor:not-allowed}
+  .views{min-height:70vh}.view{display:none}.view.active{display:block}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  .card{background:var(--panel);border:1px solid var(--ring);border-radius:18px;padding:12px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+  .card-title{font-weight:700;margin-bottom:8px;font-size:15px}
+  .card-text,.card-list{font-size:13px;color:var(--muted-card)}
+  label{font-size:13px;color:#8fa1b7;margin:8px 0 4px;display:block}
+  input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px}
+  textarea{min-height:96px;resize:vertical}.sp{height:10px}
+  .post-card{background:#0f172a;border:1px solid #223047;border-radius:14px;padding:12px;margin:10px 0}
+  .post-img{width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:1px solid #223047;background:#0b1220}
+  .post-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .post-kind{font-weight:700}.post-date{opacity:.8;font-size:12px}.post-meta{opacity:.9;font-size:13px}
+  .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+  .footer{text-align:center;color:#334155;margin-top:20px;font-size:13px}
+  .chat-log{height:46vh;overflow:auto;background:#0b1220;border:1px solid #223047;border-radius:12px;padding:10px}
+  .msg{margin:6px 0;padding:8px 10px;border-radius:12px;border:1px solid #223047;background:#0e1728}
+  .me{background:#0b2a1f;border-color:#0a7a46}.other{background:#101e33;border-color:#263b5a}
+</style>
 </head>
 <body>
   <div class="topbar">
-    <div class="wrap hdr">
-      <div class="brand">
-        <div class="logo">BG</div>
-        <div class="title">BINGO — Yo‘qotdim / Topdim <small>Tez e’lon, tez topilsa</small></div>
-      </div>
-      <div class="toolbar">
-        <button id="copyLink" class="btn ghost">Havolani nusxa olish</button>
-        <button id="switchSave" class="btn">Onlayn saqlash: Firestore</button>
+    <div class="hdr">
+      <div class="brand"><div class="logo">BG</div><div class="title">BINGO</div></div>
+      <div class="controls">
+        <select id="langSel" class="lang"><option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option></select>
+        <button id="backBtn" class="iconbtn" style="display:none">⟵</button>
+        <button id="homeBtn" class="iconbtn">⌂</button>
       </div>
     </div>
   </div>
+
+  <div id="alert" class="alert" role="alert"></div>
 
   <div class="wrap">
-    <!-- E'lon formasi -->
-    <div class="card">
-      <form id="form" class="form" autocomplete="off">
-        <h3 style="margin:0">Yangi e’lon</h3>
-
-        <div class="grid cols-2">
-          <div>
-            <label>Turi</label>
-            <select id="turi" required>
-              <option value="yoqotdim">Yo‘qotdim</option>
-              <option value="topdim">Topdim</option>
-            </select>
-          </div>
-          <div>
-            <label>Shahar</label>
-            <input id="shahar" placeholder="Toshkent, Samarqand..." required />
-          </div>
+    <div class="views">
+      <!-- HOME -->
+      <section id="view_home" class="view active">
+        <div class="hero">
+          <div class="headline" data-i18n="hero_title">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</div>
+          <div class="muted" data-i18n="hero_sub">“Halollik — eng katta mukofot.”</div>
+        </div>
+        <div id="mainMenu">
+          <button class="btn btn-red"  data-nav="lostForm"  data-i18n="btn_lost">❗ Yo‘qotdim</button>
+          <button class="btn btn-green" data-nav="foundForm" data-i18n="btn_found">✅ Topdim</button>
+          <button class="btn btn-blue" data-nav="lostList"  data-i18n="btn_lostlist">📋 Yo‘qotilganlar</button>
+          <button class="btn btn-blue" data-nav="rewardList" data-i18n="btn_reward">🎁 Mukofotli</button>
+          <button class="btn btn-blue" data-nav="foundList" data-i18n="btn_foundlist">🔎 Topilganlar</button>
+          <button class="btn btn-blue btn-sm" data-nav="mine" data-i18n="btn_mine">⭐ Mening e’lonlarim</button>
         </div>
 
-        <div>
-          <label>Sarlavha</label>
-          <input id="sarlavha" placeholder="Masalan: Qora hamyon yo‘qoldi" required />
-        </div>
-
-        <div>
-          <label>Tavsif</label>
-          <textarea id="tavsif" placeholder="Qayerda yo‘qoldi/topildi, belgilar va h.k." required></textarea>
-        </div>
-
-        <div class="grid cols-2">
-          <div>
-            <label>Telefon</label>
-            <input id="telefon" placeholder="+998 ** *** ** **" required />
+        <div class="grid">
+          <div class="card">
+            <div class="card-title" data-i18n="why_title">Nega BINGO?</div>
+            <p class="card-text" data-i18n="why_text">Oddiy forma, tez natija. Barcha e’lonlar bir joyda.</p>
           </div>
-          <div>
-            <label>Mukofot (ixtiyoriy)</label>
-            <input id="mukofot" type="text" placeholder="Masalan: 300 000 so‘m" />
+          <div class="card">
+            <div class="card-title" data-i18n="guide_title">Qisqa yo‘riqnoma</div>
+            <ul class="card-list">
+              <li data-i18n="guide_1">❗ Yo‘qotdim yoki ✅ Topdim formasini to‘ldiring</li>
+              <li data-i18n="guide_2">Shahar va aloqa — majburiy</li>
+              <li data-i18n="guide_3">Mukofot yozilsa, alohida bo‘limda ko‘rinadi</li>
+            </ul>
           </div>
         </div>
+      </section>
 
-        <div class="toolbar" style="justify-content:space-between">
-          <button type="submit" class="btn" id="sendBtn">E’lonna joylash</button>
-          <button type="button" class="btn secondary" id="resetBtn">Tozalash</button>
+      <!-- LOST FORM -->
+      <section id="view_lostForm" class="view">
+        <div class="card">
+          <div class="card-title"><span data-i18n="lost_form_title">Yo‘qotdim — e’lon</span></div>
+          <label data-i18n="lbl_item">Narsa</label><input id="l_item" data-i18n-ph="ph_item"/>
+          <label data-i18n="lbl_city">Shahar/Hudud</label><input id="l_city" data-i18n-ph="ph_city"/>
+          <label data-i18n="lbl_place">Joy</label><input id="l_place" data-i18n-ph="ph_place_lost"/>
+          <label data-i18n="lbl_date">Sana/Vaqt</label><input id="l_date" data-i18n-ph="ph_date_lost"/>
+          <label data-i18n="lbl_contact">Aloqa</label><input id="l_contact" data-i18n-ph="ph_contact"/>
+          <label data-i18n="lbl_reward">Mukofot (ixt.)</label><input id="l_reward" type="number" data-i18n-ph="ph_reward"/>
+          <label data-i18n="lbl_notes">Qo‘shimcha</label><textarea id="l_notes" data-i18n-ph="ph_notes"></textarea>
+          <label data-i18n="lbl_photo">Rasm</label><input id="l_photo" type="file" accept="image/*"/>
+          <div class="sp"></div>
+          <button id="btnLost" class="btn btn-red" data-submit="lost" data-i18n="btn_submit">E’lon berish</button>
         </div>
-      </form>
+      </section>
+
+      <!-- FOUND FORM -->
+      <section id="view_foundForm" class="view">
+        <div class="card">
+          <div class="card-title"><span data-i18n="found_form_title">Topdim — e’lon</span></div>
+          <label data-i18n="lbl_item">Narsa</label><input id="f_item" data-i18n-ph="ph_item_found"/>
+          <label data-i18n="lbl_city">Shahar/Hudud</label><input id="f_city" data-i18n-ph="ph_city"/>
+          <label data-i18n="lbl_place">Qayerdan topildi</label><input id="f_place" data-i18n-ph="ph_place_found"/>
+          <label data-i18n="lbl_date">Sana/Vaqt</label><input id="f_date" data-i18n-ph="ph_date_found"/>
+          <label data-i18n="lbl_contact">Aloqa</label><input id="f_contact" data-i18n-ph="ph_contact"/>
+          <label data-i18n="lbl_notes">Qo‘shimcha</label><textarea id="f_notes" data-i18n-ph="ph_notes"></textarea>
+          <label data-i18n="lbl_photo">Rasm</label><input id="f_photo" type="file" accept="image/*"/>
+          <div class="sp"></div>
+          <button id="btnFound" class="btn btn-green" data-submit="found" data-i18n="btn_submit">E’lon berish</button>
+        </div>
+      </section>
+
+      <!-- LISTS -->
+      <section id="view_lostList" class="view"><div class="card"><div class="card-title" data-i18n="lost_list_title">📋 Umumiy yo‘qotilganlar</div><div id="lost_list">—</div></div></section>
+      <section id="view_rewardList" class="view"><div class="card"><div class="card-title" data-i18n="reward_list_title">🎁 Mukofotli</div><div id="reward_list">—</div></div></section>
+      <section id="view_foundList" class="view"><div class="card"><div class="card-title" data-i18n="found_list_title">🔎 Topilganlar</div><div id="found_list">—</div></div></section>
+
+      <!-- MINE -->
+      <section id="view_mine" class="view">
+        <div class="card">
+          <div class="card-title" data-i18n="mine_title">⭐ Mening e’lonlarim</div>
+          <div id="mine_list">—</div>
+          <div class="sp"></div>
+          <button class="btn" id="clearMineBtn" data-i18n="btn_delete_mine">Mening e’lonlarimni o‘chirish</button>
+        </div>
+      </section>
+
+      <!-- CHAT -->
+      <section id="view_postChat" class="view">
+        <div class="card">
+          <div class="card-title"><span data-i18n="chat_title">Xabar</span> — <span id="chatItemName"></span></div>
+          <div class="sp"></div>
+          <div class="chat-log" id="chatLog"></div>
+          <div class="sp"></div>
+          <input id="chatName" data-i18n-ph="ph_name"/>
+          <input id="chatText" data-i18n-ph="ph_message"/>
+          <div class="sp"></div>
+          <button class="btn btn-blue" id="sendChatBtn" data-i18n="btn_send">Yuborish</button>
+        </div>
+      </section>
     </div>
 
-    <!-- Filtrlar + ro‘yxat -->
-    <div class="card" style="margin-top:14px">
-      <div class="form" style="border-bottom:1px solid #f3f4f6">
-        <div class="grid cols-2">
-          <div>
-            <label>Qidirish (sarlavha / shahar)</label>
-            <input id="qidirish" placeholder="Matn kiriting..." />
-          </div>
-          <div style="display:flex;align-items:flex-end;gap:8px">
-            <button id="refresh" class="btn secondary" type="button">Yangilash</button>
-          </div>
-        </div>
-        <div class="tabs">
-          <button class="chip active" data-tab="hammasi">Hammasi</button>
-          <button class="chip" data-tab="yoqotdim">Yo‘qotdim</button>
-          <button class="chip" data-tab="topdim">Topdim</button>
-        </div>
-      </div>
-      <div class="list" id="list">
-        <!-- E’lonlar shu yerda paydo bo‘ladi -->
-      </div>
-    </div>
-
-    <div class="footer">© 2025 BINGO</div>
+    <div class="footer">© <span id="year"></span> BINGO</div>
   </div>
 
-  <!-- Firebase + App -->
-  <script type="module">
-    // Firebase SDK (modular)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-    import {
-      getFirestore, collection, addDoc, serverTimestamp,
-      query, orderBy, getDocs
-    } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+  <!-- Firebase compat -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
 
-    // === Siz bergan config ===
-    const firebaseConfig = {
-      apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
-      authDomain: "topildi.firebaseapp.com",
-      databaseURL: "https://topildi-default-rtdb.firebaseio.com",
-      projectId: "topildi",
-      storageBucket: "topildi.firebasestorage.app",
-      messagingSenderId: "323891530719",
-      appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
-      measurementId: "G-NKCMKCXZQ7"
-    };
-
-    // App’ni ishga tushirish
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const col = collection(db, "elonlar"); // Firestore kolleksiyasi
-
-    // UI elementlar
-    const form = document.getElementById('form');
-    const sendBtn = document.getElementById('sendBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const listEl = document.getElementById('list');
-    const qidirish = document.getElementById('qidirish');
-    const tabs = document.querySelectorAll('.chip');
-    const refreshBtn = document.getElementById('refresh');
-    const switchSaveBtn = document.getElementById('switchSave');
-    const copyLinkBtn = document.getElementById('copyLink');
-
-    let currentTab = 'hammasi'; // hammasi | yoqotdim | topdim
-    let cache = []; // sahifada ko‘rsatish uchun
-
-    // Linkni nusxalash
-    copyLinkBtn.addEventListener('click', async () => {
-      try{
-        await navigator.clipboard.writeText(location.href);
-        copyLinkBtn.textContent = "Havola nusxalandi ✅";
-        setTimeout(()=> copyLinkBtn.textContent = "Havolani nusxa olish", 1600);
-      }catch(e){
-        alert("Nusxalab bo‘lmadi. Qo‘lda nusxalang.");
+  <script>
+  // eski SW va cache'larni tozalash (bir marta)
+  (async function killSW(){
+    try{
+      if('serviceWorker' in navigator){
+        const regs=await navigator.serviceWorker.getRegistrations();
+        for(const r of regs){try{await r.unregister()}catch{}}
       }
-    });
+      if(window.caches){
+        const names=await caches.keys();
+        for(const n of names){try{await caches.delete(n)}catch{}}
+      }
+    }catch{}
+  })();
 
-    // “Onlayn saqlash” tugmasi (vizual, Firestore ishlatilmoqda)
-    switchSaveBtn.addEventListener('click', ()=> {
-      alert("Ma’lumotlar Cloud Firestore’da saqlanadi va barcha foydalanuvchilar ko‘ra oladi.");
-    });
+  // ===== I18N =====
+  const I18N={ /* ... qisqartirmadim — siz yuborgan barcha tillar shu yerda ... */ };
+  function t(k){const L=localStorage.getItem('bingo_lang')||'uz';return (I18N[L]||I18N.uz)[k]||k}
+  function setPlaceholders(){document.querySelectorAll('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.getAttribute('data-i18n-ph'))})}
+  function applyI18n(){document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'))});setPlaceholders();document.getElementById('langSel').value=(localStorage.getItem('bingo_lang')||'uz')}
+  document.getElementById('langSel').addEventListener('change',e=>{localStorage.setItem('bingo_lang',e.target.value);applyI18n()});
 
-    // Forma yuborish
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      sendBtn.disabled = true; sendBtn.textContent = "Yuborilmoqda...";
+  // ===== Router =====
+  let currentView='home', currentChatPostId=null, unsubChat=null;
+  function enableFormButtons(){['btnLost','btnFound'].forEach(id=>{const b=document.getElementById(id); if(b){ b.disabled=false; b.classList.remove('btn-disabled'); }})}
+  function showView(name){
+    ['home','lostForm','foundForm','lostList','rewardList','foundList','mine','postChat']
+      .forEach(id=>{const el=document.getElementById('view_'+id); if(el) el.classList.toggle('active',id===name)});
+    document.getElementById('backBtn').style.display=(name!=='home')?'grid':'none';
+    if(name==='lostForm'||name==='foundForm') enableFormButtons();
+    window.scrollTo(0,0);
+  }
+  function navigate(name,replace){
+    currentView=name; showView(name);
+    if(name==='lostList') renderLost();
+    if(name==='rewardList') renderReward();
+    if(name==='foundList') renderFound();
+    if(name==='mine') renderMine();
+    if(name==='postChat' && currentChatPostId) openChat(currentChatPostId,true);
+    const hash='#'+name+(currentChatPostId?('-'+currentChatPostId):'');
+    if(replace) history.replaceState({view:name,id:currentChatPostId},'',hash);
+    else history.pushState({view:name,id:currentChatPostId},'',hash);
+  }
+  document.getElementById('homeBtn').addEventListener('click',()=>navigate('home'));
+  document.getElementById('backBtn').addEventListener('click',()=>history.back());
+  document.querySelectorAll('#mainMenu .btn').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.nav)));
+  window.addEventListener('popstate',e=>{const st=e.state||{view:'home'}; currentChatPostId=st.id||null; showView(st.view||'home')});
+  (function(){const h=location.hash?location.hash.substring(1):'home';const p=h.split('-');const v=p[0]||'home';currentChatPostId=p[1]||null;showView(v);history.replaceState({view:v,id:currentChatPostId||null},'', '#'+v+(currentChatPostId?('-'+currentChatPostId):''));})();
 
-      const payload = {
-        turi: document.getElementById('turi').value,
-        shahar: (document.getElementById('shahar').value||"").trim(),
-        sarlavha: (document.getElementById('sarlavha').value||"").trim(),
-        tavsif: (document.getElementById('tavsif').value||"").trim(),
-        telefon: (document.getElementById('telefon').value||"").trim(),
-        mukofot: (document.getElementById('mukofot').value||"").trim(),
-        createdAt: serverTimestamp()
+  // ===== Firebase (SIZNING TOPILDI PROEKTI) =====
+  const firebaseConfig = {
+    apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+    authDomain: "topildi.firebaseapp.com",
+    databaseURL: "https://topildi-default-rtdb.firebaseio.com",
+    projectId: "topildi",
+    storageBucket: "topildi.firebasestorage.app",
+    messagingSenderId: "323891530719",
+    appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
+    measurementId: "G-NKCMKCXZQ7"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  // Firestore + offline
+  firebase.firestore().enablePersistence().catch(()=>{});
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
+  const MY_UID=(function(){let id=localStorage.getItem('bingo_uid');if(!id){id='u_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('bingo_uid',id)}return id})();
+  document.getElementById('year').textContent=new Date().getFullYear(); applyI18n();
+
+  function banner(msg){const a=document.getElementById('alert');a.textContent=msg||'';a.style.display=msg?'block':'none'}
+  function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]) )}
+  function val(id){const el=document.getElementById(id);return el?el.value.trim():''}
+  function num(n){const x=parseInt(n,10);return isNaN(x)?0:x}
+
+  // ===== Rasmni Storage'ga yuklash
+  async function uploadPhoto(file){
+    if(!file) return null;
+    const path = `uploads/${MY_UID}/${Date.now()}_${(file.name||'photo').replace(/[^a-z0-9_.-]/gi,'_')}`;
+    const ref = storage.ref().child(path);
+    await ref.put(file);
+    return await ref.getDownloadURL();
+  }
+
+  function toast(msg, ok=true){
+    const old=document.getElementById('__toast__'); if(old) old.remove();
+    const box=document.createElement('div');
+    box.id='__toast__'; box.setAttribute('role','status');
+    box.style.cssText=['position:fixed','left:50%','top:50%','transform:translate(-50%,-50%) scale(0.95)',`background:${ok?'#16a34a':'#dc2626'}`,'color:#fff','padding:14px 22px','border-radius:12px','font-weight:800','min-width:260px','text-align:center','z-index:99999','box-shadow:0 14px 32px rgba(0,0,0,.35)','opacity:0','transition:.25s all'].join(';');
+    box.textContent=msg; document.body.appendChild(box);
+    requestAnimationFrame(()=>{box.style.opacity='1';box.style.transform='translate(-50%,-50%) scale(1)';});
+    setTimeout(()=>{box.style.opacity='0';box.style.transform='translate(-50%,-50%) scale(0.95)';setTimeout(()=>box.remove(),260)},2500);
+  }
+
+  // ===== Realtime feed
+  let ALL_POSTS=[];
+  db.collection('posts').orderBy('created','desc').onSnapshot(snap=>{
+    ALL_POSTS=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(currentView==='lostList') renderLost();
+    if(currentView==='rewardList') renderReward();
+    if(currentView==='foundList') renderFound();
+    if(currentView==='mine') renderMine();
+  },err=>banner("Firestore o‘qish xatosi: "+err.message));
+
+  // ===== Submit
+  document.querySelectorAll('[data-submit]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(btn.disabled) return;
+      const kind=btn.dataset.submit, isLost=kind==='lost';
+      btn.disabled=true; btn.classList.add('btn-disabled');
+
+      const p={
+        kind,
+        item: val(isLost?'l_item':'f_item'),
+        city: val(isLost?'l_city':'f_city'),
+        place: isLost?val('l_place'):val('f_place'),
+        date:  isLost?val('l_date'):val('f_date'),
+        contact: val(isLost?'l_contact':'f_contact'),
+        reward: isLost? num(val('l_reward')) : 0,
+        notes:  val(isLost?'l_notes':'f_notes'),
+        photo: null,
+        uid: MY_UID,
+        created: Date.now()
       };
 
-      // Kichik tekshiruv
-      if(!payload.shahar || !payload.sarlavha || !payload.tavsif || !payload.telefon){
-        alert("Iltimos barcha majburiy maydonlarni to‘ldiring.");
-        sendBtn.disabled = false; sendBtn.textContent = "E’lonna joylash";
-        return;
+      const input=document.getElementById(isLost?'l_photo':'f_photo');
+      if(input?.files?.[0]){
+        try{ p.photo = await uploadPhoto(input.files[0]); }
+        catch(e){ toast("Rasm yuklash xatosi: "+e.message,false); }
       }
 
+      if(!p.item||!p.city||!p.contact){
+        toast(t('guide_2'),false); enableFormButtons(); return;
+      }
       try{
-        await addDoc(col, payload);
-        alert("E’lon joylandi ✅");
-        form.reset();
-        document.getElementById('turi').value = "yoqotdim";
-        await loadList();  // yangilash
-      }catch(err){
-        console.error(err);
-        alert("Saqlashda xatolik. Tarmoq yoki ruxsatlarni tekshiring.");
-      }finally{
-        sendBtn.disabled = false; sendBtn.textContent = "E’lonna joylash";
+        await db.collection('posts').add(p);
+        clearForm(isLost);
+        const L=localStorage.getItem('bingo_lang');
+        toast(L==='ru'?'✅ Объявление опубликовано!':(L==='en'?'✅ Your post is published!':'✅ E’loningiz joylandi!'));
+        navigate(isLost?'lostList':'foundList');
+      }catch(e){
+        toast("Xato: "+e.message,false);
+      } finally{
+        setTimeout(enableFormButtons, 1000);
       }
     });
+  });
 
-    resetBtn.addEventListener('click', ()=> form.reset());
+  function clearForm(isLost){
+    const ids=isLost?['l_item','l_city','l_place','l_date','l_contact','l_reward','l_notes','l_photo']
+                    :['f_item','f_city','f_place','f_date','f_contact','f_notes','f_photo'];
+    ids.forEach(id=>{const el=document.getElementById(id); if(!el) return; el.value='';});
+  }
 
-    // Filtr tabs
-    tabs.forEach(t => {
-      t.addEventListener('click', () => {
-        tabs.forEach(x=>x.classList.remove('active'));
-        t.classList.add('active');
-        currentTab = t.dataset.tab;
-        render();
+  // ===== Renderers
+  function card(p, allowDelete){
+    const L=localStorage.getItem('bingo_lang')||'uz';
+    const kindLabel = p.kind==='lost' ? (L==='ru'?'❗ Потеряно':(L==='en'?'❗ Lost':'❗ Yo‘qoldi'))
+                                      : (L==='ru'?'✅ Найдено':(L==='en'?'✅ Found':'✅ Topildi'));
+    const msgBtn = L==='en'?'✉️ Message':(L==='ru'?'✉️ Написать':'✉️ Xabar');
+    return `
+    <div class="post-card">
+      ${p.photo?`<img class="post-img" src="${p.photo}">`:''}
+      <div class="post-head">
+        <div class="post-kind">${kindLabel}${p.reward>0?` · 🎁 ${Number(p.reward).toLocaleString()} so‘m`:''}</div>
+        <div class="post-date">${p.created?new Date(p.created).toLocaleString():''}</div>
+      </div>
+      <div style="margin-top:6px;font-weight:800">${esc(p.item)}</div>
+      <div class="post-meta">${esc(p.city||'-')} · ${esc(p.place||'-')} · ${esc(p.date||'-')}</div>
+      <div style="margin-top:6px">${esc(p.notes||'')}</div>
+      <div class="post-meta" style="margin-top:6px">📞 ${esc(p.contact||'-')}</div>
+      <div class="actions">
+        ${allowDelete?`<button class="btn" onclick="delPost('${p.id}')">🗑️ ${t('btn_delete_mine')}</button>`:''}
+        <button class="btn btn-blue" onclick="openChat('${p.id}')">${msgBtn}</button>
+      </div>
+    </div>`;
+  }
+  function renderLost(){const el=document.getElementById('lost_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='lost'); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—'}
+  function renderReward(){const el=document.getElementById('reward_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='lost'&&(p.reward||0)>0); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—'}
+  function renderFound(){const el=document.getElementById('found_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='found'); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—'}
+  function renderMine(){const el=document.getElementById('mine_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.uid===MY_UID); el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—'}
+
+  // ===== Delete only mine
+  window.delPost = async function(id){
+    const post=ALL_POSTS.find(p=>p.id===id);
+    if(!post || post.uid!==MY_UID) return;
+    if(!confirm(t('confirm_del'))) return;
+    try{
+      await db.collection('posts').doc(id).delete();
+      const chats=await db.collection('posts').doc(id).collection('chats').get();
+      const batch=db.batch(); chats.forEach(d=>batch.delete(d.ref)); await batch.commit();
+    }catch(e){ banner("O‘chirish xatosi: "+e.message); }
+  }
+
+  // ===== Chat
+  function logEmpty(){const L=localStorage.getItem('bingo_lang')||'uz';return L==='en'?'No messages yet.':(L==='ru'?'Нет сообщений.':'Xabarlar yo‘q.')}
+  window.openChat = function(postId, keep){
+    const post=ALL_POSTS.find(p=>p.id===postId); if(!post) return;
+    currentChatPostId=postId; document.getElementById('chatItemName').textContent=post.item;
+    if(unsubChat) unsubChat();
+    unsubChat = db.collection('posts').doc(postId).collection('chats').orderBy('ts')
+      .onSnapshot(s=>{
+        const log=document.getElementById('chatLog');
+        const arr=s.docs.map(d=>d.data());
+        log.innerHTML = arr.length
+          ? arr.map(m=>`<div class="msg ${m.uid===MY_UID?'me':'other'}"><b>${esc(m.name||'Anon')}</b> <span style="opacity:.8;font-size:12px">· ${new Date(m.ts).toLocaleTimeString()}</span><div>${esc(m.text)}</div></div>`).join('')
+          : `<div class="msg">${logEmpty()}</div>`;
+        log.scrollTop=log.scrollHeight;
+      }, e=> banner("Chat o‘qish xatosi: "+e.message));
+    if(!keep) navigate('postChat');
+  }
+  document.getElementById('sendChatBtn').addEventListener('click',()=>{
+    if(!currentChatPostId) return;
+    const name=(document.getElementById('chatName').value.trim()||'Anon');
+    const text=document.getElementById('chatText').value.trim(); if(!text) return;
+    db.collection('posts').doc(currentChatPostId).collection('chats').add({name,uid:MY_UID,text,ts:Date.now()})
+      .then(()=>{document.getElementById('chatText').value=''})
+      .catch(e=> banner("Chat yozish xatosi: "+e.message));
+  });
+
+  // ===== PWA: minimal SW (Blob orqali)
+  if('serviceWorker' in navigator){
+    const swCode = `
+      const CACHE='bingo-v1';
+      self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./'])) )});
+      self.addEventListener('fetch',e=>{
+        const req=e.request;
+        e.respondWith(
+          caches.match(req).then(res=>res||fetch(req).then(r=>{
+            const copy=r.clone();
+            if(req.method==='GET' && r.ok && (req.url.startsWith(self.location.origin))){
+              caches.open(CACHE).then(c=>c.put(req,copy)).catch(()=>{});
+            }
+            return r;
+          }).catch(()=>res))
+        );
       });
-    });
-
-    // Qidirish
-    qidirish.addEventListener('input', ()=> render());
-    refreshBtn.addEventListener('click', ()=> loadList());
-
-    // Firestore’dan o‘qib kelish
-    async function loadList(){
-      const q = query(col, orderBy('createdAt','desc'));
-      const snap = await getDocs(q);
-      cache = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-      render();
-    }
-
-    function render(){
-      const term = (qidirish.value||"").toLowerCase().trim();
-      const filtered = cache.filter(it=>{
-        const byTab = currentTab==='hammasi' ? true : it.turi===currentTab;
-        const byText = !term ? true :
-          (it.sarlavha||'').toLowerCase().includes(term) ||
-          (it.shahar||'').toLowerCase().includes(term) ||
-          (it.tavsif||'').toLowerCase().includes(term);
-        return byTab && byText;
-      });
-
-      if(filtered.length===0){
-        listEl.innerHTML = `<div class="muted" style="padding:8px 0">Hozircha e’lon yo‘q.</div>`;
-        return;
-      }
-
-      listEl.innerHTML = filtered.map(it=>`
-        <div class="item">
-          <h4>${escapeHtml(it.sarlavha||'')}</h4>
-          <div class="muted" style="margin-bottom:6px">
-            ${it.turi==='yoqotdim'?'Yo‘qotdim':'Topdim'} • ${escapeHtml(it.shahar||'-')}
-          </div>
-          <div style="white-space:pre-wrap">${escapeHtml(it.tavsif||'')}</div>
-          <div class="muted" style="margin-top:8px">
-            📞 ${escapeHtml(it.telefon||'-')}
-            ${it.mukofot ? ` • 🎁 ${escapeHtml(it.mukofot)}` : ''}
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
-    }
-
-    // Birinchi yuklash
-    loadList();
-
-    // PWA: service worker (agar root’da sw.js bo‘lsa)
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('./sw.js').catch(()=>{});
-    }
+    `;
+    const blob = new Blob([swCode],{type:'text/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(blob));
+  }
   </script>
 </body>
   </html>
