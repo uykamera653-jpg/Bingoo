@@ -1,263 +1,278 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>BINGO — Yo‘qotdim/Topdim</title>
-  <meta name="theme-color" content="#f59e0b"/>
-
-  <!-- PWA manifest (sizda allaqachon bor) -->
-  <link rel="manifest" href="manifest.webmanifest"/>
+  <meta name="theme-color" content="#f59e0b" />
+  <link rel="manifest" href="manifest.webmanifest" />
 
   <style>
     :root{
-      --bg:#FFF7D6; --panel:#0f172a; --brand:#f59e0b; --ink:#0f172a;
-      --muted:#475569; --card:#fff; --ring:#e5e7eb;
+      --bg:#FFF7D6; --brand:#f59e0b; --brand-700:#b45309; --panel:#0f172a; --txt:#111827; --muted:#6b7280; --card:#ffffff;
+      --ok:#16a34a; --bad:#dc2626;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    body{background:linear-gradient(180deg,#FFF7D6 0%, #FFE59A 100%); color:var(--ink)}
-    .wrap{max-width:980px; margin:0 auto; padding:16px}
-    .topbar{position:sticky; top:0; z-index:20; background:transparent; padding:8px 0}
-    .hdr{display:flex; align-items:center; justify-content:space-between}
-    .brand{display:flex; align-items:center; gap:10px}
-    .logo{width:40px; height:40px; border-radius:10px; background:#000; display:grid; place-items:center; font-weight:800; color:#fff}
-    .title{font-weight:800; font-size:20px; letter-spacing:.3px}
-    .card{background:var(--card); border:1px solid var(--ring); border-radius:16px; padding:16px; box-shadow:0 6px 20px rgba(0,0,0,.04)}
-    .grid{display:grid; gap:16px}
-    @media(min-width:860px){ .grid-2{grid-template-columns:460px 1fr} }
-    label{font-size:13px; color:var(--muted); margin-bottom:6px; display:block}
-    input,select,textarea{
-      width:100%; padding:12px 14px; border:1px solid var(--ring); border-radius:12px;
-      background:#fff; font-size:15px; outline:none;
-    }
-    textarea{min-height:90px; resize:vertical}
-    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-    .btn{appearance:none; border:0; border-radius:12px; padding:12px 16px; font-weight:700; cursor:pointer}
-    .btn-primary{background:var(--brand); color:#1f2937}
-    .btn-ghost{background:transparent; border:1px solid var(--ring)}
-    .toolbar{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-    .tag{padding:6px 10px; border-radius:999px; border:1px solid var(--ring); background:#fff; font-size:12px; cursor:pointer}
-    .tag.active{background:#FEF3C7; border-color:#FCD34D}
-    .list{display:grid; gap:12px}
-    .item{background:#fff; border:1px solid var(--ring); border-radius:14px; padding:12px}
-    .item h4{margin:0 0 6px 0}
-    .muted{color:var(--muted); font-size:13px}
-    .footer{margin:24px 0 40px; text-align:center; color:var(--muted); font-size:12px}
-    .pill{background:#111827; color:#FDE68A; padding:4px 8px; border-radius:999px; font-size:12px; font-weight:700}
-    .success{color:#16a34a;font-weight:700}
-    .danger{color:#dc2626;font-weight:700}
-    .search{display:flex; gap:8px}
-    .search input{flex:1}
+    html,body{margin:0;height:100%;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    body{background:linear-gradient(180deg,#fffbe8,#ffe59a 1200px);}
+    .wrap{max-width:980px;margin:0 auto;padding:12px 14px 80px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0 16px}
+    .brand{display:flex;align-items:center;gap:12px}
+      .logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#111;color:#ffd54a;font-weight:800}
+      .title{font-weight:800;font-size:20px;line-height:1.1}
+      .subtitle{color:var(--muted);font-weight:700}
+    .pill{background:#111;color:#ffd54a;border-radius:999px;padding:10px 14px;font-weight:700}
+    .btn-link{border:1px dashed #111;background:#fff9;backdrop-filter:blur(4px);padding:10px 12px;border-radius:10px;font-weight:700}
+    .btn{appearance:none;border:0;border-radius:12px;background:var(--brand);color:#111;font-weight:800;padding:14px 18px;cursor:pointer}
+    .btn:active{transform:translateY(1px)}
+    .btn.sec{background:#0ea5e9;color:#fff}
+    .btn.ghost{background:#fff;border:1px solid #e5e7eb}
+    .btn.full{width:100%}
+    .card{background:var(--card);border-radius:18px;box-shadow:0 8px 30px #00000012;border:1px solid #00000010}
+    .pad{padding:16px}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .col{flex:1 1 220px;min-width:0}
+    label{display:block;font-size:12px;color:var(--muted);margin:4px 2px 6px}
+    input,select,textarea{width:100%;padding:14px 12px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;font-size:16px}
+    textarea{min-height:120px;resize:vertical}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tab{padding:10px 14px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;cursor:pointer;font-weight:700}
+    .tab.active{background:var(--brand);border-color:#000;color:#111}
+    .searchbar{display:flex;gap:8px;flex-wrap:wrap}
+    .list{margin-top:12px;display:grid;gap:10px}
+    .item{border:1px solid #e5e7eb;border-radius:14px;background:#fff;padding:12px}
+    .item .meta{display:flex;gap:8px;flex-wrap:wrap;color:#6b7280;font-size:12px}
+    .badge{padding:4px 8px;border-radius:999px;font-weight:700}
+    .b-lost{background:#fee2e2;color:#991b1b}
+    .b-found{background:#dcfce7;color:#14532d}
+    .muted{color:#6b7280}
+    .right{margin-left:auto}
+    .grid2{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px}
+    .toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s}
+    .toast.show{opacity:1;pointer-events:auto}
   </style>
-
-  <!-- Firebase (compat) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
   <div class="wrap">
     <div class="topbar">
-      <div class="hdr">
-        <div class="brand">
-          <div class="logo">BG</div>
+      <div class="brand">
+        <div class="logo">BG</div>
+        <div>
           <div class="title">BINGO — Yo‘qotdim / Topdim</div>
+          <div class="subtitle">“Halollik — eng tez qaytadigan narsa”</div>
         </div>
-        <div class="toolbar">
-          <button class="tag" id="copyLinkBtn">Havolani nusxa olish</button>
-          <span class="pill">Onlayn saqlash: Firestore</span>
-        </div>
+      </div>
+
+      <div class="row" style="align-items:center">
+        <button id="copyLink" class="btn-link">Havolani nusxa olish</button>
+        <span class="pill" title="Onlayn saqlanadi">Onlayn saqlash: Firestore</span>
       </div>
     </div>
 
-    <div class="grid grid-2">
-      <!-- Form -->
-      <div class="card">
-        <h3 style="margin:0 0 12px 0">Yangi e’lon</h3>
-        <div class="row">
-          <div>
-            <label>Turi</label>
-            <select id="tur">
-              <option value="yoqotdim">Yo‘qotdim</option>
-              <option value="topdim">Topdim</option>
-            </select>
-          </div>
-          <div>
-            <label>Shahar</label>
-            <input id="shahar" placeholder="Toshkent, Samarqand..."/>
-          </div>
+    <!-- E'lon formasi -->
+    <div class="card pad">
+      <h2 style="margin:0 0 8px">Yangi e’lon</h2>
+      <div class="row">
+        <div class="col">
+          <label>Turi</label>
+          <select id="f_tur">
+            <option value="Yo‘qotdim">Yo‘qotdim</option>
+            <option value="Topdim">Topdim</option>
+          </select>
         </div>
-
-        <label style="margin-top:12px">Sarlavha</label>
-        <input id="sarlavha" placeholder="Masalan: Qora hamyon yo‘qolgan"/>
-
-        <label style="margin-top:12px">Tavsif</label>
-        <textarea id="tavsif" placeholder="Qayerda yo‘qoldi/topildi, belgilari va h.k."></textarea>
-
-        <div class="row" style="margin-top:12px">
-          <div>
-            <label>Telefon</label>
-            <input id="telefon" placeholder="+998 ** *** ** **"/>
-          </div>
-          <div>
-            <label>Mukofot (ixtiyoriy)</label>
-            <input id="mukofot" placeholder="150 000 so‘m"/>
-          </div>
+        <div class="col">
+          <label>Shahar</label>
+          <input id="f_shahar" placeholder="Toshkent, Samarqand..." />
         </div>
-
-        <div class="toolbar" style="margin-top:14px">
-          <button class="btn btn-primary" id="submitBtn">E’lonni joylash</button>
-          <button class="btn btn-ghost" id="clearBtn">Tozalash</button>
-          <span id="status"></span>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label>Sarlavha</label>
+          <input id="f_sarlavha" placeholder="Masalan: Qora hamyon yo‘qolgan" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label>Tavsif</label>
+          <textarea id="f_tavsif" placeholder="Qayerda yo‘qoldi/topildi, belgilar va h.k."></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label>Telefon</label>
+          <input id="f_telefon" placeholder="+998 ** *** ** **" />
+        </div>
+        <div class="col">
+          <label>Mukofot (ixtiyoriy)</label>
+          <input id="f_mukofot" placeholder="150 000 so‘m" />
         </div>
       </div>
 
-      <!-- List -->
-      <div class="card">
-        <div class="toolbar" style="justify-content:space-between">
-          <h3 style="margin:0">E’lonlar</h3>
-          <div class="search">
-            <input id="qidir" placeholder="Qidirish (sarlavha / shahar)"/>
-            <button class="btn btn-ghost" id="refreshBtn">Yangilash</button>
-          </div>
-        </div>
-        <div class="toolbar" style="margin:10px 0">
-          <span class="tag active" data-filter="hammasi">Hammasi</span>
-          <span class="tag" data-filter="yoqotdim">Yo‘qotdim</span>
-          <span class="tag" data-filter="topdim">Topdim</span>
-        </div>
-        <div id="list" class="list"></div>
+      <div class="actions">
+        <button id="saveBtn" class="btn">E’lonni joylash</button>
+        <button id="clearBtn" class="btn ghost">Tozalash</button>
       </div>
     </div>
 
-    <div class="footer">© 2025 BINGO</div>
+    <!-- Ro'yxat -->
+    <div class="card pad" style="margin-top:12px">
+      <div class="grid2">
+        <div class="tabs">
+          <button class="tab active" data-filter="hammasi">Hammasi</button>
+          <button class="tab" data-filter="Yo‘qotdim">Yo‘qotdim</button>
+          <button class="tab" data-filter="Topdim">Topdim</button>
+        </div>
+
+        <div class="searchbar">
+          <input id="qidiruv" placeholder="Qidirish (sarlavha / shahar)" />
+          <button id="refreshBtn" class="btn sec">Yangilash</button>
+        </div>
+      </div>
+
+      <div id="list" class="list"></div>
+    </div>
   </div>
 
-<script>
-/* =================== Firebase config =================== */
-const firebaseConfig = {
-  apiKey: "AIzaSyDw3_0AXL8J2N4dz1my_1XBuw1eV08x31o",
-  authDomain: "topildi.firebaseapp.com",
-  projectId: "topildi",
-  storageBucket: "topildi.appspot.com",
-  messagingSenderId: "323891530719",
-  appId: "1:323891530719:web:d57c2ce38781dc37e4926a"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+  <div id="toast" class="toast"></div>
 
-/* =================== UI helpers =================== */
-const $ = (id)=>document.getElementById(id);
-const stat = (msg, ok=true)=>{
-  $("status").innerHTML = ok ? `<span class="success">${msg}</span>` :
-                               `<span class="danger">${msg}</span>`;
-  setTimeout(()=> $("status").innerHTML="", 2500);
-};
-// localStorage bilan telefon/shaharni eslab qolish
-["telefon","shahar"].forEach(k=>{
-  const v = localStorage.getItem("bingo_"+k);
-  if(v) $(k).value = v;
-  $(k).addEventListener("change", ()=>localStorage.setItem("bingo_"+k, $(k).value.trim()));
-});
+  <!-- Firebase v10 (modular) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, serverTimestamp,
+      query, orderBy, getDocs, where
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* =================== Add document =================== */
-$("submitBtn").addEventListener("click", async ()=>{
-  const elon = {
-    tur: $("tur").value,
-    sarlavha: $("sarlavha").value.trim(),
-    tavsif: $("tavsif").value.trim(),
-    telefon: $("telefon").value.trim(),
-    shahar: $("shahar").value.trim(),
-    mukofot: $("mukofot").value.trim(),
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
-  if(!elon.sarlavha || !elon.telefon){
-    stat("Sarlavha va telefon shart!", false); return;
-  }
-  try{
-    await db.collection("Elonlar").add(elon);
-    stat("E’lon saqlandi ✅");
-    $("sarlavha").value=""; $("tavsif").value=""; $("mukofot").value="";
-    // ro‘yxat serverTimestamp bilan yozilgach, real-time listener o‘zi yangilanadi
-  }catch(e){
-    console.error(e); stat("Xatolik: saqlanmadi", false);
-  }
-});
+    // 1) 🔧 SHU YERGA O‘Z KONFIGINGIZNI QO‘YASIZ (Project settings ➜ Web app ➜ "firebaseConfig")
+    const firebaseConfig = {
+      apiKey: "PASTE_API_KEY_HERE",
+      authDomain: "PASTE_AUTH_DOMAIN",
+      projectId: "PASTE_PROJECT_ID",
+      storageBucket: "PASTE_STORAGE_BUCKET",
+      messagingSenderId: "PASTE_SENDER_ID",
+      appId: "PASTE_APP_ID"
+    };
 
-/* =================== Real-time listener =================== */
-let unsubscribe = null;
-let currentFilter = "hammasi";
-let cachedDocs = [];
+    // Init
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    const col = collection(db, "Elonlar");
 
-function attachListener(){
-  if(unsubscribe) unsubscribe();
-  unsubscribe = db.collection("Elonlar")
-    .orderBy("createdAt","desc")
-    .limit(50)
-    .onSnapshot(snap=>{
-      cachedDocs = [];
-      snap.forEach(d=>{
-        const data = d.data();
-        cachedDocs.push({id:d.id, ...data});
+    // UI elementlar
+    const toast = (msg)=>{ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); };
+    const $ = (id)=>document.getElementById(id);
+
+    // Copy link
+    $("copyLink").addEventListener("click", async ()=>{
+      try{ await navigator.clipboard.writeText(location.href); toast("Havola nusxalandi ✅"); }catch(e){ toast("Nusxalashda xatolik"); }
+    });
+
+    // Tozalash
+    $("clearBtn").addEventListener("click", ()=>{
+      ["f_shahar","f_sarlavha","f_tavsif","f_telefon","f_mukofot"].forEach(id=>$(id).value="");
+      $("f_tur").value = "Yo‘qotdim";
+    });
+
+    // Saqlash
+    $("saveBtn").addEventListener("click", async ()=>{
+      const data = {
+        turi: $("f_tur").value.trim(),
+        shahar: $("f_shahar").value.trim(),
+        sarlavha: $("f_sarlavha").value.trim(),
+        tavsif: $("f_tavsif").value.trim(),
+        telefon: $("f_telefon").value.trim(),
+        mukofot: $("f_mukofot").value.trim(),
+        createdAt: serverTimestamp()
+      };
+
+      if(!data.shahar || !data.sarlavha || !data.tavsif || !data.telefon){
+        toast("Iltimos, majburiy maydonlarni to‘ldiring."); return;
+      }
+
+      try{
+        await addDoc(col, data);
+        toast("E’lon saqlandi ✅");
+        $("clearBtn").click();
+        load(); // qayta yuklash
+      }catch(err){
+        console.error(err);
+        toast("Saqlashda xatolik!");
+      }
+    });
+
+    // Ro'yxatni yuklash
+    const listEl = $("list");
+    let activeFilter = "hammasi";
+    let lastData = [];
+
+    async function fetchAll(){
+      const q = query(col, orderBy("createdAt","desc"));
+      const snap = await getDocs(q);
+      return snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    }
+
+    function render(items){
+      listEl.innerHTML = "";
+      if(!items.length){
+        listEl.innerHTML = `<div class="muted">Hozircha e’lonlar yo‘q.</div>`;
+        return;
+      }
+      for(const it of items){
+        const badge = it.turi==="Topdim" ? `<span class="badge b-found">Topdim</span>` : `<span class="badge b-lost">Yo‘qotdim</span>`;
+        const mukofot = it.mukofot ? ` • Mukofot: <b>${it.mukofot}</b>` : "";
+        const el = document.createElement("div");
+        el.className="item";
+        el.innerHTML = `
+          <div class="meta">${badge} <span>${it.shahar || "-"}</span> <span class="muted right">${new Date(it.createdAt?.toDate?.() || Date.now()).toLocaleString()}</span></div>
+          <div style="font-weight:800;margin:6px 0">${it.sarlavha}</div>
+          <div class="muted" style="white-space:pre-wrap">${it.tavsif}</div>
+          <div style="margin-top:8px">☎️ <a href="tel:${it.telefon.replaceAll(' ','')}">${it.telefon}</a>${mukofot}</div>
+        `;
+        listEl.appendChild(el);
+      }
+    }
+
+    function applyFilter(){
+      const q = $("qidiruv").value.toLowerCase().trim();
+      let items = lastData.slice();
+      if(activeFilter!=="hammasi"){
+        items = items.filter(x=>x.turi===activeFilter);
+      }
+      if(q){
+        items = items.filter(x=>
+          (x.sarlavha||"").toLowerCase().includes(q) ||
+          (x.shahar||"").toLowerCase().includes(q)
+        );
+      }
+      render(items);
+    }
+
+    async function load(){
+      try{
+        lastData = await fetchAll();
+        applyFilter();
+      }catch(e){
+        console.error(e);
+        toast("Yuklashda xatolik");
+      }
+    }
+
+    // Filtrlar
+    document.querySelectorAll(".tab").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        activeFilter = btn.dataset.filter;
+        applyFilter();
       });
-      renderList();
-    }, err=>{ console.error(err); stat("Ulanishda xatolik", false); });
-}
-attachListener();
+    });
 
-/* =================== Render & filter/search =================== */
-function renderList(){
-  const q = $("qidir").value.trim().toLowerCase();
-  const filtered = cachedDocs.filter(x=>{
-    const fitType = (currentFilter==="hammasi") || (x.tur===currentFilter);
-    const fitQ = !q || ( (x.sarlavha||"").toLowerCase().includes(q) || (x.shahar||"").toLowerCase().includes(q) );
-    return fitType && fitQ;
-  });
+    $("qidiruv").addEventListener("input", applyFilter);
+    $("refreshBtn").addEventListener("click", load);
 
-  $("list").innerHTML = filtered.length ? filtered.map(x=>{
-    const when = x.createdAt?.toDate ? x.createdAt.toDate() : new Date();
-    const date = when.toLocaleString();
-    return `
-      <div class="item">
-        <h4>${x.sarlavha??""}</h4>
-        <div class="muted">${x.tur==="yoqotdim"?"❗️ Yo‘qotdim":"✅ Topdim"} • ${x.shahar??"-"} • ${date}</div>
-        <p style="margin:8px 0 10px">${(x.tavsif||"").replace(/\n/g,"<br/>")}</p>
-        <div class="toolbar">
-          <span class="tag">☎ ${x.telefon??""}</span>
-          ${x.mukofot?`<span class="tag">🎁 ${x.mukofot}</span>`:""}
-          <button class="btn btn-ghost" onclick="copyText('${(x.telefon||"").replace(/'/g,"&#39;")}')">Telefonni nusxa olish</button>
-        </div>
-      </div>
-    `;
-  }).join("") : `<div class="muted">Hozircha e’lon yo‘q.</div>`;
-}
-
-$("qidir").addEventListener("input", renderList);
-$("refreshBtn").addEventListener("click", renderList);
-
-// Filter tugmalari
-document.querySelectorAll('.tag[data-filter]').forEach(el=>{
-  el.addEventListener('click', ()=>{
-    document.querySelectorAll('.tag[data-filter]').forEach(t=>t.classList.remove('active'));
-    el.classList.add('active');
-    currentFilter = el.dataset.filter;
-    renderList();
-  });
-});
-
-// Havola va matn nusxa olish
-function copyText(t){
-  navigator.clipboard.writeText(t).then(()=>stat("Nusxa olindi ✅"), ()=>stat("Nusxa olinmadi", false));
-}
-$("copyLinkBtn").addEventListener("click", ()=>{
-  navigator.clipboard.writeText(location.href).then(()=>stat("Sayt havolasi nusxalandi ✅"), ()=>stat("Nusxa olinmadi", false));
-});
-
-// Tozalash
-$("clearBtn").addEventListener("click", ()=>{
-  ["sarlavha","tavsif","mukofot"].forEach(id=>$(id).value="");
-  stat("Tozalandi");
-});
-</script>
+    // Dastlabki yuklash
+    load();
+  </script>
 </body>
 </html>
