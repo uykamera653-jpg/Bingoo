@@ -1,587 +1,450 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BINGO — Yo‘qoldi / Topildi</title>
-  <meta name="theme-color" content="#f5a300" />
-  <link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;BINGO&quot;,&quot;short_name&quot;:&quot;BINGO&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#fff7e3&quot;,&quot;theme_color&quot;:&quot;#f5a300&quot;}" />
-  <style>
-    :root{
-      --bg:#fff7e3; --panel:#0f172a; --muted:#475569; --text:#0e1320;
-      --blue:#1e293b; --green:#169a34; --yellow:#f5a300; --orange:#ff8c00; --card:#101828;
-      --radius:18px; --shadow:0 10px 25px rgba(0,0,0,.08);
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;height:100%;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial}
-    body{background:linear-gradient(180deg,#fff2cc,#fff7e3 35%,#fff7e3)}
-    .wrap{max-width:980px;margin:0 auto;padding:0 14px 110px}
-    /* Yandex-like topbar */
-    .topbar{
-      position:sticky;top:0;z-index:50;
-      background:linear-gradient(180deg,#ffa800,#f5cc36);
-      box-shadow:0 4px 16px rgba(0,0,0,.15);
-    }
-    .topbar .row{display:flex;align-items:center;gap:10px;padding:12px 16px}
-    .brand{font-weight:800;letter-spacing:.5px;font-size:28px;color:#111}
-    .chip{border:none;border-radius:999px;padding:8px 14px;background:#fff;color:#111;font-weight:700;box-shadow:var(--shadow);cursor:pointer}
-    .chip.alt{background:#111;color:#fff}
-    .chip.ghost{background:#fff3;border:1px solid #0001}
-    .spacer{flex:1}
-    .btn{display:inline-flex;gap:10px;align-items:center;justify-content:center;border:none;border-radius:999px;padding:12px 18px;font-weight:800;cursor:pointer;box-shadow:var(--shadow)}
-    .btn.yellow{background:#ffe082}
-    .btn.black{background:#111;color:#fff}
-    .btn.green{background:#1aaa55;color:#fff}
-    .btn.red{background:#e11d48;color:#fff}
-    .btn.blue{background:#2563eb;color:#fff}
-    .icon{width:22px;height:22px;display:inline-block}
-    .badge{display:inline-flex;align-items:center;gap:6px;background:#111;color:#fff;padding:8px 12px;border-radius:999px;font-weight:700}
-    .badge .dot{width:10px;height:10px;border-radius:50%;background:#38bdf8}
-    /* Navigation tabs */
-    .tabs{display:flex;gap:14px;padding:12px;position:sticky;top:66px;background:linear-gradient(180deg,#ffe38a,#fff7e3);z-index:40}
-    .tab{flex:1;border-radius:16px;background:#fff;padding:16px;font-weight:800;box-shadow:var(--shadow);border:none;cursor:pointer;display:flex;align-items:center;gap:10px;justify-content:center}
-    .tab.active{background:#111;color:#fff}
-    /* pages */
-    .page{display:none;padding:10px 0}
-    .page.active{display:block}
-    /* cards */
-    .card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin:14px 0}
-    .card.dark{background:#101828;color:#fff}
-    .title{font-size:38px;line-height:1.1;margin:12px 4px 8px;font-weight:900;color:#101828}
-    .subtitle{color:#334155;margin:0 6px 12px;font-size:18px}
-    /* lists */
-    .list{display:grid;grid-template-columns:1fr;gap:12px}
-    @media (min-width:700px){.list{grid-template-columns:1fr 1fr}}
-    .item{background:#0b1220;color:#fff;border-radius:16px;padding:14px;display:grid;grid-template-columns:86px 1fr;gap:12px}
-    .thumb{width:86px;height:86px;border-radius:12px;background:#222 overflow:hidden}
-    .thumb img{width:100%;height:100%;object-fit:cover}
-    .meta{font-size:12px;color:#9aa4b2}
-    .strong{font-weight:800}
-    .pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:8px 12px;background:#0f172a;color:#fff;border:1px solid #ffffff22;font-weight:800}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-    /* form */
-    .f{display:grid;gap:12px}
-    label{font-weight:800;color:#0f172a}
-    input,select,textarea{width:100%;border-radius:14px;border:1px solid #00000018;padding:12px 14px;background:#fff}
-    textarea{min-height:110px;resize:vertical}
-    .hint{font-size:12px;color:#64748b}
-    .switcher{display:flex;gap:10px}
-    .switcher .chip{font-weight:800}
-    .kbd{border:1px solid #0002;background:#fff;border-radius:8px;padding:2px 6px;font-weight:800}
-    /* toast */
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#111;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:var(--shadow);z-index:99;font-weight:700}
-    .hidden{display:none}
-    /* header back */
-    .backbar{display:flex;align-items:center;gap:10px}
-    .backbtn{border:none;background:#111;color:#fff;border-radius:999px;padding:10px 12px;cursor:pointer}
-    /* empty state */
-    .empty{padding:40px 10px;text-align:center;color:#64748b}
-    .empty .emoji{font-size:42px}
-    /* footer nav floating */
-    .fabnav{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(180deg,#ffb400,#ff9f00);border-top-left-radius:12px;border-top-right-radius:12px;box-shadow:0 -10px 25px rgba(0,0,0,.2);padding:8px 10px;z-index:60}
-    .fabrow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .fabrow .tab{padding:12px;border-radius:14px}
-    /* lang dropdown mimic */
-    .langbar{display:flex;gap:8px}
-    /* small helpers */
-    .sr{font-size:14px}
-    .small{font-size:13px;color:#64748b}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BINGO — Yo‘qoldi/Topildi</title>
+<meta name="theme-color" content="#ffb300" />
+<style>
+  :root{
+    --brand:#ffb300; --brand2:#ffd452; --ink:#0f172a; --muted:#6b7280;
+    --paper:#fffdf6; --card:#ffffff; --dark:#0b1220; --ok:#16a34a; --danger:#e11d48;
+    --radius:16px; --shadow:0 8px 20px rgba(0,0,0,.08);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial}
+  body{background:linear-gradient(180deg,#fff4cc,#fff9df 60%,#fffdf6)}
+  .wrap{max-width:960px;margin:0 auto;padding:0 14px 70px}
+  /* ===== Topbar (Yandex uslubida) ===== */
+  .top{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,var(--brand),var(--brand2));box-shadow:0 2px 16px rgba(0,0,0,.15)}
+  .row{display:flex;align-items:center;gap:10px;padding:10px 12px}
+  .back{border:none;background:#111;color:#fff;border-radius:999px;padding:8px 10px;font-weight:800;cursor:pointer}
+  .brand{font-weight:900;font-size:26px;letter-spacing:.2px;color:#111}
+  .chips{display:flex;gap:8px;margin-left:8px}
+  .chip{border:none;border-radius:999px;background:#fff;padding:8px 12px;font-weight:800;box-shadow:var(--shadow);cursor:pointer}
+  .chip.alt{background:#111;color:#fff}
+  .sp{flex:1}
+  #signBtn{border:none;border-radius:999px;background:#111;color:#fff;padding:10px 14px;font-weight:900;cursor:pointer;box-shadow:var(--shadow)}
+  #userBadge{display:flex;align-items:center;gap:8px;background:#111;color:#fff;padding:8px 12px;border-radius:999px;font-weight:800}
+  #userBadge .dot{width:10px;height:10px;border-radius:50%;background:#22d3ee}
+  .hidden{display:none}
+  /* ===== Nav (faqat yuqorida) ===== */
+  .nav{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:10px;background:linear-gradient(180deg,#ffe69e00,#ffe69e44)}
+  .nav .btn{border:none;border-radius:14px;background:#fff;font-weight:900;padding:12px 10px;box-shadow:var(--shadow);cursor:pointer}
+  .nav .btn.active{background:#111;color:#fff}
+  /* ===== Pages ===== */
+  .page{display:none;padding:10px 0}
+  .page.active{display:block}
+  /* ===== Cards ===== */
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin:12px 0}
+  .card.dark{background:var(--dark);color:#fff}
+  .title{font-size:34px;line-height:1.15;margin:14px 6px 8px;font-weight:900;color:#0f172a}
+  .subtitle{margin:6px 8px 10px;color:#334155}
+  /* ===== Quick actions (home) ===== */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tile{border:none;border-radius:16px;padding:16px 14px;font-weight:900;box-shadow:var(--shadow);cursor:pointer;background:#fff}
+  .tile.danger{background:#fee2e2}
+  .tile.ok{background:#dcfce7}
+  .tile.blue{background:#e0ecff}
+  .tile.orange{background:#ffe7bf}
+  /* ===== Lists ===== */
+  .list{display:grid;grid-template-columns:1fr;gap:10px}
+  @media (min-width:700px){.list{grid-template-columns:1fr 1fr}}
+  .it{background:#0b1220;color:#fff;border-radius:14px;padding:12px;display:grid;grid-template-columns:82px 1fr;gap:10px}
+  .th{width:82px;height:82px;border-radius:10px;background:#111;overflow:hidden}
+  .th img{width:100%;height:100%;object-fit:cover}
+  .pill{display:inline-flex;gap:8px;align-items:center;border-radius:999px;padding:6px 10px;background:#0f172a;border:1px solid #fff2;color:#fff;font-weight:800}
+  .meta{font-size:12px;color:#9aa4b2}
+  .small{font-size:13px;color:#64748b}
+  .strong{font-weight:900}
+  /* ===== Forms ===== */
+  .f{display:grid;gap:10px}
+  label{font-weight:800;color:#0f172a}
+  input,select,textarea{width:100%;background:#fff;border:1px solid #0001;border-radius:12px;padding:10px 12px}
+  textarea{min-height:110px;resize:vertical}
+  .hint{font-size:12px;color:#6b7280}
+  .btnx{border:none;border-radius:999px;padding:12px 16px;font-weight:900;cursor:pointer;box-shadow:var(--shadow);background:#111;color:#fff}
+  .btnx.ok{background:var(--ok)} .btnx.red{background:var(--danger)} .btnx.blue{background:#2563eb}
+  /* ===== Toast ===== */
+  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#111;color:#fff;padding:10px 16px;border-radius:12px;font-weight:800;box-shadow:var(--shadow);z-index:70}
+  /* ===== Empty ===== */
+  .empty{padding:40px 6px;text-align:center;color:#6b7280}
+  .emoji{font-size:40px}
+</style>
 </head>
 <body>
-  <!-- ======= TOP BAR ======= -->
-  <header class="topbar">
-    <div class="row">
-      <button id="backBtn" class="backbtn" title="Ortga">↩</button>
-      <div class="brand">BINGO</div>
-      <div class="langbar">
-        <button class="chip" data-i18n="UZ" data-lang="uz">UZ</button>
-        <button class="chip" data-i18n="RU" data-lang="ru">RU</button>
-        <button class="chip" data-i18n="EN" data-lang="en">EN</button>
-      </div>
-      <div class="spacer"></div>
-      <button id="signBtn" class="chip alt" data-i18n="LOGIN_GOOGLE">Google bilan kirish</button>
-      <div id="userBadge" class="badge hidden"><span class="dot"></span><span id="userName">User</span></div>
+<header class="top">
+  <div class="row">
+    <button id="backBtn" class="back" title="Ortga">↩</button>
+    <div class="brand">BINGO</div>
+    <div class="chips">
+      <button class="chip" data-lang="uz">UZ</button>
+      <button class="chip" data-lang="ru">RU</button>
+      <button class="chip" data-lang="en">EN</button>
     </div>
-  </header>
-
-  <!-- ======= TABS ======= -->
-  <nav class="tabs" id="topNav">
-    <button class="tab active" data-nav="home">🏠 <span data-i18n="HOME">Bosh sahifa</span></button>
-    <button class="tab" data-nav="list">🧾 <span data-i18n="POSTS">E’lonlar</span></button>
-    <button class="tab" data-nav="add">➕ <span data-i18n="ADD">Qo‘shish</span></button>
-    <button class="tab" data-nav="profile">👤 <span data-i18n="PROFILE">Profil</span></button>
+    <div class="sp"></div>
+    <button id="signBtn">Google bilan kirish</button>
+    <div id="userBadge" class="hidden"><span class="dot"></span><span id="userName">User</span></div>
+  </div>
+  <!-- faqat yuqori nav! -->
+  <nav class="nav" id="nav">
+    <button class="btn active" data-nav="home">🏠 Bosh sahifa</button>
+    <button class="btn" data-nav="list">🧾 E’lonlar</button>
+    <button class="btn" data-nav="add">➕ Qo‘shish</button>
+    <button class="btn" data-nav="profile">👤 Profil</button>
   </nav>
+</header>
 
-  <main class="wrap">
-    <!-- ======= HOME ======= -->
-    <section id="home" class="page active">
-      <h1 class="title" data-i18n="HERO_TITLE">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</h1>
-      <p class="subtitle" data-i18n="HERO_SUB">“Halollik — eng katta mukofot.”</p>
+<main class="wrap">
+  <!-- HOME -->
+  <section id="home" class="page active">
+    <h1 class="title">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</h1>
+    <p class="subtitle">“Halollik — eng katta mukofot.”</p>
 
-      <div class="grid2">
-        <button class="tab" data-nav="add" data-type="lost">❗ <span data-i18n="BTN_LOST">Yo‘qotdim</span></button>
-        <button class="tab" data-nav="add" data-type="found">✅ <span data-i18n="BTN_FOUND">Topdim</span></button>
-      </div>
-
-      <div class="grid2">
-        <button class="tab" data-nav="list" data-filter="lost">📝 <span data-i18n="LIST_LOST">Yo‘qotilganlar</span></button>
-        <button class="tab" data-nav="list" data-filter="reward">🎁 <span data-i18n="LIST_REWARD">Mukofotli</span></button>
-      </div>
-
-      <div class="card dark">
-        <h3 data-i18n="WHY_TITLE">Nega BINGO?</h3>
-        <p data-i18n="WHY_DESC">Oddiy forma, tez natija. Barcha e’lonlar bir joyda. Xolis sharhlar va bildirishnomalar.</p>
-      </div>
-
-      <div class="card">
-        <h3 data-i18n="QUICK_SIGNIN">Tez kirish</h3>
-        <p class="small" data-i18n="QUICK_SIGNIN_DESC">Google bilan kirib, 10 soniyada e’lon qoldiring.</p>
-        <button id="ctaSign" class="btn black" data-i18n="LOGIN_GOOGLE">Google bilan kirish</button>
-      </div>
-
-      <h3 class="title" style="font-size:26px" data-i18n="LATEST">Oxirgi e’lonlar</h3>
-      <div id="latestList" class="list"></div>
-      <div id="emptyLatest" class="empty hidden"><div class="emoji">🗂️</div><div data-i18n="NO_POSTS">Hozircha e’lon yo‘q.</div></div>
-    </section>
-
-    <!-- ======= LIST ======= -->
-    <section id="list" class="page">
-      <div class="backbar card">
-        <button class="backbtn" onclick="Router.back()">↩</button>
-        <h2 style="margin:0" data-i18n="POSTS">E’lonlar</h2>
-        <div class="spacer"></div>
-        <select id="filterSelect">
-          <option value="all" data-i18n="F_ALL">Barchasi</option>
-          <option value="lost" data-i18n="F_LOST">Yo‘qotilgan</option>
-          <option value="found" data-i18n="F_FOUND">Topilgan</option>
-          <option value="reward" data-i18n="F_REWARD">Mukofotli</option>
-        </select>
-      </div>
-      <div id="listWrap" class="list"></div>
-      <div id="emptyList" class="empty hidden"><div class="emoji">🔍</div><div data-i18n="NO_POSTS">Hozircha e’lon yo‘q.</div></div>
-    </section>
-
-    <!-- ======= ADD ======= -->
-    <section id="add" class="page">
-      <div class="backbar card">
-        <button class="backbtn" onclick="Router.back()">↩</button>
-        <h2 style="margin:0" data-i18n="ADD_POST">E’lon qo‘shish</h2>
-        <div class="spacer"></div>
-        <div class="switcher">
-          <button class="chip" data-type="lost" id="chipLost">❗ <span data-i18n="BTN_LOST">Yo‘qotdim</span></button>
-          <button class="chip" data-type="found" id="chipFound">✅ <span data-i18n="BTN_FOUND">Topdim</span></button>
-        </div>
-      </div>
-
-      <form id="postForm" class="card f">
-        <div class="grid2">
-          <div>
-            <label data-i18n="CITY">Shahar</label>
-            <input id="city" required placeholder="Samarqand / Toshkent" />
-          </div>
-          <div>
-            <label data-i18n="CONTACT">Aloqa</label>
-            <input id="contact" required placeholder="+998 90 123 45 67" />
-          </div>
-        </div>
-
-        <div>
-          <label data-i18n="TITLE">Sarlavha</label>
-          <input id="title" required maxlength="80" placeholder="Pasport / Telefon / Sumka..." />
-          <div class="hint" data-i18n="TITLE_HINT">Aniq va qisqa yozing. Masalan, “iPhone 12 qora rang, Registon yaqinida”.</div>
-        </div>
-
-        <div>
-          <label data-i18n="DESC">Tavsif</label>
-          <textarea id="desc" required placeholder="Qayerda yo‘qoldi yoki topildi, belgilar, vaqt va h.k."></textarea>
-        </div>
-
-        <div class="grid3">
-          <div>
-            <label data-i18n="REWARD">Mukofot</label>
-            <input id="reward" type="number" min="0" step="1" placeholder="0" />
-          </div>
-          <div>
-            <label data-i18n="CATEGORY">Turkum</label>
-            <select id="category">
-              <option value="doc" data-i18n="C_DOC">Hujjat</option>
-              <option value="phone" data-i18n="C_PHONE">Telefon</option>
-              <option value="bag" data-i18n="C_BAG">Sumka</option>
-              <option value="pet" data-i18n="C_PET">Uy hayvoni</option>
-              <option value="other" data-i18n="C_OTHER">Boshqa</option>
-            </select>
-          </div>
-          <div>
-            <label data-i18n="LANG">Til</label>
-            <select id="postLang">
-              <option value="uz">UZ</option>
-              <option value="ru">RU</option>
-              <option value="en">EN</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label data-i18n="PHOTO">Rasm</label>
-          <input id="photo" type="file" accept="image/*" />
-          <div class="hint" data-i18n="PHOTO_HINT">Rasm ixtiyoriy, lekin tavsiya etiladi.</div>
-        </div>
-
-        <button class="btn green" type="submit" id="submitBtn" data-i18n="PUBLISH">E’lonni joylash</button>
-        <div class="small" id="dupeHint" style="display:none" data-i18n="DUPE_HINT">Xuddi shunday e’lonni yaqinda joylagansiz. Iltimos, takrorlamang.</div>
-      </form>
-    </section>
-
-    <!-- ======= PROFILE ======= -->
-    <section id="profile" class="page">
-      <div class="backbar card">
-        <button class="backbtn" onclick="Router.back()">↩</button>
-        <h2 style="margin:0" data-i18n="PROFILE">Profil</h2>
-        <div class="spacer"></div>
-        <button id="logoutBtn" class="chip" data-i18n="LOGOUT">Chiqish</button>
-      </div>
-
-      <div class="card f">
-        <div class="grid2">
-          <div>
-            <label data-i18n="NAME">Ism (ko‘rinadigan)</label>
-            <input id="displayName" placeholder="Sizning ismingiz" />
-          </div>
-          <div>
-            <label data-i18n="AVATAR">Avatar</label>
-            <input id="avatarFile" type="file" accept="image/*" />
-          </div>
-        </div>
-        <button id="saveProfile" class="btn blue" data-i18n="SAVE">Saqlash</button>
-      </div>
-
-      <div class="card">
-        <h3 data-i18n="MY_POSTS">Mening e’lonlarim</h3>
-        <div id="myPosts" class="list"></div>
-        <div id="emptyMy" class="empty hidden"><div class="emoji">📭</div><div data-i18n="NO_POSTS">Hozircha e’lon yo‘q.</div></div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ======= BOTTOM NAV (MOBILE) ======= -->
-  <footer class="fabnav">
-    <div class="fabrow" id="botNav">
-      <button class="tab active" data-nav="home">🏠 <span data-i18n="HOME">Bosh sahifa</span></button>
-      <button class="tab" data-nav="list">🧾 <span data-i18n="POSTS">E’lonlar</span></button>
-      <button class="tab" data-nav="add">➕ <span data-i18n="ADD">Qo‘shish</span></button>
-      <button class="tab" data-nav="profile">👤 <span data-i18n="PROFILE">Profil</span></button>
+    <div class="grid2">
+      <button class="tile danger" data-nav="add" data-type="lost">❗ Yo‘qotdim</button>
+      <button class="tile ok" data-nav="add" data-type="found">✅ Topdim</button>
     </div>
-  </footer>
+    <div class="grid2" style="margin-top:8px">
+      <button class="tile blue" data-nav="list" data-filter="lost">📝 Yo‘qotilganlar</button>
+      <button class="tile orange" data-nav="list" data-filter="reward">🎁 Mukofotli</button>
+    </div>
 
-  <!-- ======= TOAST ======= -->
-  <div id="toast" class="toast hidden">OK</div>
+    <div class="card dark" style="margin-top:12px">
+      <h3 style="margin:0 0 6px">Nega BINGO?</h3>
+      <p style="margin:0">Oddiy forma, tez natija. Barcha e’lonlar bir joyda. Xolis sharhlar va bildirishnomalar.</p>
+    </div>
 
-  <!-- ======= Firebase ======= -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
-    import { getDatabase, ref, push, set, onValue, query, limitToLast, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
-    import { getStorage, ref as sref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
+    <div class="card">
+      <h3 style="margin:0 0 6px">Tez kirish</h3>
+      <p class="small" style="margin:0 0 10px">Google bilan kirib, 10 soniyada e’lon qoldiring.</p>
+      <button id="ctaSign" class="btnx">Google bilan kirish</button>
+    </div>
 
-    /* ====== CONFIG — o'zingiznikini qo'ying ====== */
-    const firebaseConfig = {
-      apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
-      authDomain: "topildi.firebaseapp.com",
-      databaseURL: "https://topildi-default-rtdb.firebaseio.com",
-      projectId: "topildi",
-      storageBucket: "topildi.firebasestorage.app",
-      messagingSenderId: "323891530719",
-      appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
-      measurementId: "G-NKCMKCXZQ7"
-    };
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-    const storage = getStorage(app);
-    const provider = new GoogleAuthProvider();
+    <h3 class="title" style="font-size:24px;margin-top:20px">Oxirgi e’lonlar</h3>
+    <div id="latest" class="list"></div>
+    <div id="emptyLatest" class="empty hidden"><div class="emoji">🗂</div><div>Hozircha e’lon yo‘q.</div></div>
+  </section>
 
-    /* ====== UTIL ====== */
-    const $ = s => document.querySelector(s);
-    const $$ = s => [...document.querySelectorAll(s)];
-    const toast = (t) => { const el=$("#toast"); el.textContent=t; el.classList.remove("hidden"); setTimeout(()=>el.classList.add("hidden"),2200); };
-    const uid = () => auth.currentUser?.uid || null;
+  <!-- LIST -->
+  <section id="list" class="page">
+    <div class="card" style="display:flex;gap:10px;align-items:center">
+      <button class="back" onclick="Router.back()">↩</button>
+      <strong style="font-size:18px">E’lonlar</strong>
+      <div class="sp"></div>
+      <select id="filter">
+        <option value="all">Barchasi</option>
+        <option value="lost">Yo‘qotilgan</option>
+        <option value="found">Topilgan</option>
+        <option value="reward">Mukofotli</option>
+      </select>
+    </div>
+    <div id="listWrap" class="list"></div>
+    <div id="emptyList" class="empty hidden"><div class="emoji">🔍</div><div>Hozircha e’lon yo‘q.</div></div>
+  </section>
 
-    /* ====== I18N ====== */
-    const dict = {
-      uz:{
-        UZ:"UZ", RU:"RU", EN:"EN",
-        LOGIN_GOOGLE:"Google bilan kirish", LOGOUT:"Chiqish",
-        HOME:"Bosh sahifa", POSTS:"E’lonlar", ADD:"Qo‘shish", PROFILE:"Profil",
-        HERO_TITLE:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",
-        HERO_SUB:"“Halollik — eng katta mukofot.”",
-        BTN_LOST:"Yo‘qotdim", BTN_FOUND:"Topdim",
-        LIST_LOST:"Yo‘qotilganlar", LIST_REWARD:"Mukofotli",
-        WHY_TITLE:"Nega BINGO?", WHY_DESC:"Oddiy forma, tez natija. Barcha e’lonlar bir joyda. Xolis sharhlar va bildirishnomalar.",
-        QUICK_SIGNIN:"Tez kirish", QUICK_SIGNIN_DESC:"Google bilan kirib, 10 soniyada e’lon qoldiring.",
-        LATEST:"Oxirgi e’lonlar", NO_POSTS:"Hozircha e’lon yo‘q.",
-        F_ALL:"Barchasi", F_LOST:"Yo‘qotilgan", F_FOUND:"Topilgan", F_REWARD:"Mukofotli",
-        ADD_POST:"E’lon qo‘shish", CITY:"Shahar", CONTACT:"Aloqa",
-        TITLE:"Sarlavha", TITLE_HINT:"Aniq va qisqa yozing. Masalan, “iPhone 12 qora rang, Registon yaqinida”.",
-        DESC:"Tavsif", REWARD:"Mukofot", CATEGORY:"Turkum", LANG:"Til",
-        C_DOC:"Hujjat", C_PHONE:"Telefon", C_BAG:"Sumka", C_PET:"Uy hayvoni", C_OTHER:"Boshqa",
-        PHOTO:"Rasm", PHOTO_HINT:"Rasm ixtiyoriy, lekin tavsiya etiladi.",
-        PUBLISH:"E’lonni joylash", DUPE_HINT:"Xuddi shunday e’lonni yaqinda joylagansiz. Iltimos, takrorlamang.",
-        NAME:"Ism (ko‘rinadigan)", AVATAR:"Avatar", SAVE:"Saqlash", MY_POSTS:"Mening e’lonlarim"
-      },
-      ru:{ UZ:"УЗ", RU:"РУ", EN:"ЕН", LOGIN_GOOGLE:"Войти через Google", LOGOUT:"Выход",
-        HOME:"Главная", POSTS:"Объявления", ADD:"Добавить", PROFILE:"Профиль",
-        HERO_TITLE:"Потеряли или нашли? Разместите объявление.",
-        HERO_SUB:"«Честность — самая большая награда».",
-        BTN_LOST:"Потерял", BTN_FOUND:"Нашёл",
-        LIST_LOST:"Потерянное", LIST_REWARD:"С вознаграждением",
-        WHY_TITLE:"Почему BINGO?", WHY_DESC:"Простая форма, быстрый результат. Все объявления в одном месте.",
-        QUICK_SIGNIN:"Быстрый вход", QUICK_SIGNIN_DESC:"Войдите через Google и разместите объявление за 10 секунд.",
-        LATEST:"Последние объявления", NO_POSTS:"Пока нет объявлений.",
-        F_ALL:"Все", F_LOST:"Потеряно", F_FOUND:"Найдено", F_REWARD:"С вознаграждением",
-        ADD_POST:"Добавить объявление", CITY:"Город", CONTACT:"Контакт",
-        TITLE:"Заголовок", TITLE_HINT:"Пишите кратко и точно.",
-        DESC:"Описание", REWARD:"Вознаграждение", CATEGORY:"Категория", LANG:"Язык",
-        C_DOC:"Документ", C_PHONE:"Телефон", C_BAG:"Сумка", C_PET:"Питомец", C_OTHER:"Другое",
-        PHOTO:"Фото", PHOTO_HINT:"Фото необязательно, но рекомендуется.",
-        PUBLISH:"Опубликовать", DUPE_HINT:"Похоже, вы недавно отправляли такое же.",
-        NAME:"Имя (публично)", AVATAR:"Аватар", SAVE:"Сохранить", MY_POSTS:"Мои объявления"
-      },
-      en:{ UZ:"UZ", RU:"RU", EN:"EN", LOGIN_GOOGLE:"Sign in with Google", LOGOUT:"Log out",
-        HOME:"Home", POSTS:"Posts", ADD:"Add", PROFILE:"Profile",
-        HERO_TITLE:"Lost or found? Post an announcement.",
-        HERO_SUB:"“Honesty is the greatest reward.”",
-        BTN_LOST:"I lost", BTN_FOUND:"I found",
-        LIST_LOST:"Lost items", LIST_REWARD:"With reward",
-        WHY_TITLE:"Why BINGO?", WHY_DESC:"Simple form, fast results. All posts in one place.",
-        QUICK_SIGNIN:"Quick sign-in", QUICK_SIGNIN_DESC:"Sign in with Google and post in 10 seconds.",
-        LATEST:"Recent posts", NO_POSTS:"No posts yet.",
-        F_ALL:"All", F_LOST:"Lost", F_FOUND:"Found", F_REWARD:"Reward",
-        ADD_POST:"Add post", CITY:"City", CONTACT:"Contact",
-        TITLE:"Title", TITLE_HINT:"Be concise and specific.",
-        DESC:"Description", REWARD:"Reward", CATEGORY:"Category", LANG:"Language",
-        C_DOC:"Document", C_PHONE:"Phone", C_BAG:"Bag", C_PET:"Pet", C_OTHER:"Other",
-        PHOTO:"Photo", PHOTO_HINT:"Photo is optional but recommended.",
-        PUBLISH:"Publish", DUPE_HINT:"You posted exactly this recently.",
-        NAME:"Display name", AVATAR:"Avatar", SAVE:"Save", MY_POSTS:"My posts"
-      }
-    };
-    let LANG = localStorage.getItem("LANG") || "uz";
-    const applyI18n = ()=>{
-      $$("[data-i18n]").forEach(el=>{
-        const key = el.getAttribute("data-i18n");
-        el.textContent = dict[LANG][key] || key;
-      });
-    };
-    applyI18n();
-    $$(".langbar .chip").forEach(b=>b.addEventListener("click",()=>{
-      LANG = b.getAttribute("data-lang"); localStorage.setItem("LANG",LANG); applyI18n();
-    }));
+  <!-- ADD -->
+  <section id="add" class="page">
+    <div class="card" style="display:flex;gap:10px;align-items:center">
+      <button class="back" onclick="Router.back()">↩</button>
+      <strong style="font-size:18px">E’lon qo‘shish</strong>
+      <div class="sp"></div>
+      <div style="display:flex;gap:8px">
+        <button id="chipLost" class="chip">❗ Yo‘qotdim</button>
+        <button id="chipFound" class="chip">✅ Topdim</button>
+      </div>
+    </div>
 
-    /* ====== ROUTER ====== */
-    const Router = {
-      stack: ["home"],
-      show(id){
-        $$(".page").forEach(p=>p.classList.remove("active"));
-        $("#"+id)?.classList.add("active");
-        $$("#topNav .tab, #botNav .tab").forEach(t=>t.classList.toggle("active", t.getAttribute("data-nav")==id));
-        if(this.stack[this.stack.length-1]!==id){ this.stack.push(id); history.pushState({page:id},"","#"+id); }
-        window.scrollTo({top:0,behavior:"smooth"});
-      },
-      go(id){ this.show(id); },
-      back(){
-        this.stack.pop();
-        const prev=this.stack[this.stack.length-1]||"home";
-        $$(".page").forEach(p=>p.classList.remove("active"));
-        $("#"+prev)?.classList.add("active");
-        $$("#topNav .tab, #botNav .tab").forEach(t=>t.classList.toggle("active", t.getAttribute("data-nav")==prev));
-        history.pushState({page:prev},"","#"+prev);
-      }
-    };
-    window.Router = Router;
-    addEventListener("popstate", (e)=>{ const p=e.state?.page || "home"; $$(".page").forEach(pn=>pn.classList.remove("active")); $("#"+p)?.classList.add("active"); });
-
-    $("#topNav").addEventListener("click",(e)=>{
-      const btn = e.target.closest("[data-nav]"); if(!btn) return;
-      const page = btn.getAttribute("data-nav");
-      const type = btn.getAttribute("data-type");
-      if(page==="add" && type){ currentType = type; updateTypeChips(); }
-      Router.go(page);
-    });
-    $("#botNav").addEventListener("click",(e)=>{
-      const btn = e.target.closest("[data-nav]"); if(!btn) return;
-      Router.go(btn.getAttribute("data-nav"));
-    });
-    $("#backBtn").addEventListener("click", ()=>Router.back());
-
-    /* ====== AUTH ====== */
-    const renderUser = (user)=>{
-      if(user){
-        $("#userBadge").classList.remove("hidden");
-        $("#userName").textContent = user.displayName || user.email;
-        $("#signBtn").classList.add("hidden");
-        $("#ctaSign").classList.add("hidden");
-      }else{
-        $("#userBadge").classList.add("hidden");
-        $("#signBtn").classList.remove("hidden");
-        $("#ctaSign").classList.remove("hidden");
-      }
-    };
-    const mustLogin = ()=>{
-      if(!auth.currentUser){ toast(dict[LANG].LOGIN_GOOGLE); return false; }
-      return true;
-    };
-    $("#signBtn").onclick = ()=>signInWithPopup(auth, provider).catch(err=>toast(err.message));
-    $("#ctaSign").onclick = ()=>$("#signBtn").click();
-    $("#logoutBtn").onclick = ()=>signOut(auth);
-    onAuthStateChanged(auth, user=>{
-      renderUser(user);
-      if(user){ loadMyPosts(); }
-    });
-
-    /* ====== POSTS ====== */
-    const latestList = $("#latestList");
-    const listWrap = $("#listWrap");
-    let currentType = "lost";
-
-    const updateTypeChips = ()=>{
-      $("#chipLost").classList.toggle("alt", currentType==="lost");
-      $("#chipFound").classList.toggle("alt", currentType==="found");
-    };
-    $("#chipLost").onclick=()=>{currentType="lost";updateTypeChips();};
-    $("#chipFound").onclick=()=>{currentType="found";updateTypeChips();};
-
-    // Item template
-    const itemHTML = (id,p)=>`
-      <div class="item">
-        <div class="thumb">${p.photo?`<img src="${p.photo}">`:`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1f2937;border-radius:12px">📦</div>`}</div>
+    <form id="postForm" class="card f">
+      <div class="grid2">
         <div>
-          <div class="pill" style="margin-bottom:8px">${p.type==="lost"?"❗":"✅"} ${p.type.toUpperCase()} ${p.reward&&Number(p.reward)>0?`· 🎁 ${p.reward}`:""}</div>
-          <div class="strong" style="font-size:16px">${p.title||"(untitled)"} — <span class="meta">${p.city||""}</span></div>
-          <div class="small" style="margin:6px 0">${p.desc||""}</div>
-          <div class="small">${p.contact||""}</div>
-          <div class="meta" style="margin-top:8px">${p.userName||"Anon"} · ${new Date(p.ts||Date.now()).toLocaleString()}</div>
+          <label>Shahar</label>
+          <input id="city" required placeholder="Samarqand / Toshkent" />
+        </div>
+        <div>
+          <label>Aloqa</label>
+          <input id="contact" required placeholder="+998 90 123 45 67" />
         </div>
       </div>
-    `;
 
-    // Load latest
-    const loadLatest = ()=>{
-      onValue(query(ref(db,"posts"), orderByChild("ts"), limitToLast(10)), snap=>{
-        latestList.innerHTML="";
-        if(!snap.exists()){ $("#emptyLatest").classList.remove("hidden"); return; }
-        $("#emptyLatest").classList.add("hidden");
-        const arr=[]; snap.forEach(ch=>arr.push([ch.key, ch.val()])); arr.reverse();
-        arr.forEach(([id,p])=>{
-          const div=document.createElement("div"); div.innerHTML=itemHTML(id,p); latestList.appendChild(div.firstElementChild);
-        });
+      <div>
+        <label>Sarlavha</label>
+        <input id="title" required maxlength="80" placeholder="Pasport / Telefon / Sumka..." />
+        <div class="hint">Aniq va qisqa yozing.</div>
+      </div>
+
+      <div>
+        <label>Tavsif</label>
+        <textarea id="desc" required placeholder="Qayerda yo‘qoldi/topildi, belgilar, vaqt..."></textarea>
+      </div>
+
+      <div class="grid2">
+        <div>
+          <label>Mukofot (0 — yo‘q)</label>
+          <input id="reward" type="number" min="0" step="1" value="0" />
+        </div>
+        <div>
+          <label>Turkum</label>
+          <select id="category">
+            <option value="doc">Hujjat</option>
+            <option value="phone">Telefon</option>
+            <option value="bag">Sumka</option>
+            <option value="pet">Uy hayvoni</option>
+            <option value="other">Boshqa</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label>Rasm</label>
+        <input id="photo" type="file" accept="image/*" />
+        <div class="hint">Rasm ixtiyoriy, lekin foydali.</div>
+      </div>
+
+      <button class="btnx ok" type="submit">E’lonni joylash</button>
+      <div id="dupeHint" class="small" style="display:none;color:#b91c1c">Takror e’lon. Iltimos, yana yubormang.</div>
+    </form>
+  </section>
+
+  <!-- PROFILE -->
+  <section id="profile" class="page">
+    <div class="card" style="display:flex;gap:10px;align-items:center">
+      <button class="back" onclick="Router.back()">↩</button>
+      <strong style="font-size:18px">Profil</strong>
+      <div class="sp"></div>
+      <button id="logoutBtn" class="chip">Chiqish</button>
+    </div>
+
+    <div class="card f">
+      <div class="grid2">
+        <div>
+          <label>Ko‘rinadigan ism</label>
+          <input id="displayName" placeholder="Ismingiz" />
+        </div>
+        <div>
+          <label>Avatar</label>
+          <input id="avatarFile" type="file" accept="image/*" />
+        </div>
+      </div>
+      <button id="saveProfile" class="btnx blue">Saqlash</button>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 6px">Mening e’lonlarim</h3>
+      <div id="myPosts" class="list"></div>
+      <div id="emptyMy" class="empty hidden"><div class="emoji">📭</div><div>Hozircha e’lon yo‘q.</div></div>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast hidden">OK</div>
+
+<script type="module">
+  /* ================= Firebase ================= */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+  import { getDatabase, ref, push, set, onValue, orderByChild, limitToLast, query } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
+  import { getStorage, ref as sref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
+
+  // ---- o'zingizniki bilan almashtiring
+  const firebaseConfig = {
+    apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+    authDomain: "topildi.firebaseapp.com",
+    databaseURL: "https://topildi-default-rtdb.firebaseio.com",
+    projectId: "topildi",
+    storageBucket: "topildi.firebasestorage.app",
+    messagingSenderId: "323891530719",
+    appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
+    measurementId: "G-NKCMKCXZQ7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+  const storage = getStorage(app);
+  const provider = new GoogleAuthProvider();
+
+  /* ================= Utils ================= */
+  const $ = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+  const toast = t => { const el=$("#toast"); el.textContent=t; el.classList.remove("hidden"); setTimeout(()=>el.classList.add("hidden"),2200); };
+
+  // Router (faqat yuqori nav, pastki yo‘q)
+  const Router = {
+    stack:["home"],
+    go(id){
+      $$(".page").forEach(p=>p.classList.remove("active"));
+      $("#"+id)?.classList.add("active");
+      $$("#nav .btn").forEach(b=>b.classList.toggle("active", b.dataset.nav===id));
+      if(this.stack[this.stack.length-1]!==id){
+        this.stack.push(id); history.pushState({page:id},"","#"+id);
+      }
+      window.scrollTo({top:0,behavior:"smooth"});
+    },
+    back(){
+      this.stack.pop();
+      const prev=this.stack[this.stack.length-1]||"home";
+      $$(".page").forEach(p=>p.classList.remove("active"));
+      $("#"+prev)?.classList.add("active");
+      $$("#nav .btn").forEach(b=>b.classList.toggle("active", b.dataset.nav===prev));
+      history.pushState({page:prev},"","#"+prev);
+    }
+  };
+  window.Router=Router;
+  $("#backBtn").onclick=()=>Router.back();
+  addEventListener("popstate", e=>{
+    const p=e.state?.page||"home";
+    $$(".page").forEach(s=>s.classList.remove("active"));
+    $("#"+p)?.classList.add("active");
+  });
+
+  // Nav clicks
+  $("#nav").addEventListener("click", e=>{
+    const btn = e.target.closest("[data-nav]"); if(!btn) return;
+    Router.go(btn.dataset.nav);
+  });
+
+  // Home shortcuts
+  $("#home").addEventListener("click", e=>{
+    const b=e.target.closest("[data-nav]"); if(!b) return;
+    const type=b.dataset.type; const filter=b.dataset.filter;
+    if(b.dataset.nav==="add"&&type){ currentType=type; setTypeChip(); }
+    if(b.dataset.nav==="list"&&filter){ $("#filter").value=filter; doFilter(); }
+    Router.go(b.dataset.nav);
+  });
+
+  /* ================= Auth ================= */
+  const renderUser = (u)=>{
+    if(u){ $("#userBadge").classList.remove("hidden"); $("#userName").textContent=u.displayName||u.email; $("#signBtn").classList.add("hidden"); $("#ctaSign").classList.add("hidden"); loadMine(); }
+    else{ $("#userBadge").classList.add("hidden"); $("#signBtn").classList.remove("hidden"); $("#ctaSign").classList.remove("hidden"); $("#myPosts").innerHTML=""; }
+  };
+  $("#signBtn").onclick=()=>signInWithPopup(auth,provider).catch(e=>toast(e.message));
+  $("#ctaSign").onclick=()=>$("#signBtn").click();
+  $("#logoutBtn").onclick=()=>signOut(auth);
+  onAuthStateChanged(auth, renderUser);
+
+  /* ================= Posts ================= */
+  let currentType="lost";
+  const setTypeChip=()=>{
+    $("#chipLost").classList.toggle("alt",currentType==="lost");
+    $("#chipFound").classList.toggle("alt",currentType==="found");
+  };
+  $("#chipLost").onclick=()=>{currentType="lost";setTypeChip();}
+  $("#chipFound").onclick=()=>{currentType="found";setTypeChip();}
+
+  // template
+  const item = (id,p)=>`
+    <div class="it">
+      <div class="th">${p.photo?`<img src="${p.photo}">`:`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1f2937;border-radius:10px">📦</div>`}</div>
+      <div>
+        <div class="pill" style="margin-bottom:6px">${p.type==="lost"?"❗":"✅"} ${p.type.toUpperCase()} ${p.reward&&Number(p.reward)>0?`· 🎁 ${p.reward}`:""}</div>
+        <div class="strong" style="font-size:16px">${p.title||"(untitled)"} — <span class="meta">${p.city||""}</span></div>
+        <div class="small" style="margin:6px 0">${p.desc||""}</div>
+        <div class="small">${p.contact||""}</div>
+        <div class="meta" style="margin-top:6px">${p.userName||"Anon"} · ${new Date(p.ts||Date.now()).toLocaleString()}</div>
+      </div>
+    </div>`;
+
+  // latest
+  const latestWrap=$("#latest");
+  const loadLatest=()=>{
+    onValue(query(ref(db,"posts"),orderByChild("ts"),limitToLast(10)), s=>{
+      latestWrap.innerHTML="";
+      if(!s.exists()){ $("#emptyLatest").classList.remove("hidden"); return; }
+      $("#emptyLatest").classList.add("hidden");
+      const arr=[]; s.forEach(ch=>arr.push([ch.key,ch.val()])); arr.reverse();
+      arr.forEach(([id,p])=>{ const d=document.createElement("div"); d.innerHTML=item(id,p); latestWrap.appendChild(d.firstElementChild); });
+    });
+  };
+  loadLatest();
+
+  // list with filter
+  const listWrap=$("#listWrap");
+  const doFilter=()=>{
+    const f=$("#filter").value;
+    onValue(ref(db,"posts"), s=>{
+      listWrap.innerHTML=""; let cnt=0;
+      s.forEach(ch=>{
+        const p=ch.val();
+        if(f==="all"||p.type===f||(f==="reward"&&Number(p.reward)>0)){
+          const d=document.createElement("div"); d.innerHTML=item(ch.key,p); listWrap.appendChild(d.firstElementChild); cnt++;
+        }
       });
+      $("#emptyList").classList.toggle("hidden",cnt>0);
+    },{onlyOnce:true});
+  };
+  $("#filter").addEventListener("change",doFilter);
+
+  // dupe guard
+  const dupeKey = o => btoa(unescape(encodeURIComponent([o.type,o.title?.trim().toLowerCase(),o.city?.trim().toLowerCase(),o.contact?.trim(),o.desc?.trim()].join("|")))).slice(0,32);
+
+  // submit
+  const mustLogin=()=>{ if(!auth.currentUser){ toast("Google bilan kiring"); return false;} return true; };
+  $("#postForm").addEventListener("submit", async (e)=>{
+    e.preventDefault(); if(!mustLogin())return;
+    const u=auth.currentUser;
+    const post={
+      type:currentType, city:$("#city").value.trim(), contact:$("#contact").value.trim(),
+      title:$("#title").value.trim(), desc:$("#desc").value.trim(),
+      reward:Number($("#reward").value||0), category:$("#category").value,
+      userId:u.uid, userName:$("#displayName").value||u.displayName||u.email, ts:Date.now()
     };
-    loadLatest();
+    // dupe prevention (15 min)
+    const dk=dupeKey(post);
+    let duplicate=false;
+    await onValue(ref(db,`dupes/${u.uid}/${dk}`), s=>{ if(s.exists() && Date.now()-s.val().ts<15*60*1000) duplicate=true; },{onlyOnce:true});
+    if(duplicate){ $("#dupeHint").style.display="block"; toast("Takror e’lon"); return; }
+    $("#dupeHint").style.display="none";
 
-    // Filtered list
-    const doFilterList = (flt)=>{
-      onValue(ref(db,"posts"), snap=>{
-        listWrap.innerHTML="";
-        let cnt=0;
-        snap.forEach(ch=>{
-          const p = ch.val();
-          if(flt==="all" || p.type===flt || (flt==="reward" && Number(p.reward)>0)){
-            const div=document.createElement("div"); div.innerHTML=itemHTML(ch.key,p); listWrap.appendChild(div.firstElementChild); cnt++;
-          }
-        });
-        $("#emptyList").classList.toggle("hidden", cnt>0);
-      }, {onlyOnce:true});
-    };
-    $("#filterSelect").addEventListener("change",(e)=>doFilterList(e.target.value));
-    // open list with filter via home buttons
-    $("#home").addEventListener("click",(e)=>{
-      const b = e.target.closest("[data-filter]"); if(!b) return;
-      Router.go("list");
-      $("#filterSelect").value = b.getAttribute("data-filter");
-      doFilterList($("#filterSelect").value);
-    });
+    // upload photo
+    const file=$("#photo").files[0];
+    if(file){
+      const path=`photos/${u.uid}/${Date.now()}_${file.name.replace(/\s+/g,'_')}`;
+      await uploadBytes(sref(storage,path),file);
+      post.photo=await getDownloadURL(sref(storage,path));
+    }
 
-    // Duplicate prevention helper
-    const makeHash = (o)=> btoa(unescape(encodeURIComponent([o.type,o.title?.trim().toLowerCase(),o.city?.trim().toLowerCase(),o.contact?.trim(),o.desc?.trim()].join("|")))).slice(0,32);
+    const pRef=push(ref(db,"posts")); await set(pRef,post);
+    await set(ref(db,`dupes/${u.uid}/${dk}`),{ts:Date.now(),postId:pRef.key});
+    toast("✅ Joylandi");
+    Router.go("list"); $("#filter").value="all"; doFilter();
+    e.target.reset();
+  });
 
-    // Submit post
-    $("#postForm").addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      if(!mustLogin()) return;
-      const u = auth.currentUser;
-      const post = {
-        type: currentType,
-        city: $("#city").value.trim(),
-        contact: $("#contact").value.trim(),
-        title: $("#title").value.trim(),
-        desc: $("#desc").value.trim(),
-        reward: Number($("#reward").value||0),
-        category: $("#category").value,
-        lang: $("#postLang").value,
-        userId: u.uid,
-        userName: $("#displayName").value || u.displayName || u.email,
-        ts: Date.now()
-      };
-      const dupeKey = makeHash(post);
-      const dupeRef = ref(db, `dupes/${u.uid}/${dupeKey}`);
-      let double = false;
-      await onValue(dupeRef, s=>{ if(s.exists() && Date.now()-s.val().ts < 1000*60*15){ double=true; } }, {onlyOnce:true});
-      if(double){ $("#dupeHint").style.display="block"; toast(dict[LANG].DUPE_HINT); return; }
-      $("#dupeHint").style.display="none";
+  // my posts
+  const loadMine=()=>{
+    const u=auth.currentUser; if(!u) return;
+    const wrap=$("#myPosts"); wrap.innerHTML="";
+    onValue(ref(db,"posts"), s=>{
+      wrap.innerHTML=""; let cnt=0;
+      s.forEach(ch=>{const p=ch.val(); if(p.userId===u.uid){ const d=document.createElement("div"); d.innerHTML=item(ch.key,p); wrap.appendChild(d.firstElementChild); cnt++; }});
+      $("#emptyMy").classList.toggle("hidden",cnt>0);
+    },{onlyOnce:true});
+  };
 
-      // photo upload
-      const file = $("#photo").files[0];
-      if(file){
-        const path = `photos/${u.uid}/${Date.now()}_${file.name.replace(/\s+/g,'_')}`;
-        await uploadBytes(sref(storage, path), file);
-        post.photo = await getDownloadURL(sref(storage, path));
-      }
+  // profile save
+  $("#saveProfile").onclick=async()=>{
+    if(!mustLogin())return;
+    const u=auth.currentUser;
+    let photoURL=u.photoURL;
+    const f=$("#avatarFile").files[0];
+    if(f){
+      const path=`avatars/${u.uid}/${Date.now()}_${f.name.replace(/\s+/g,'_')}`;
+      await uploadBytes(sref(storage,path),f);
+      photoURL=await getDownloadURL(sref(storage,path));
+    }
+    const displayName=$("#displayName").value||u.displayName||u.email;
+    await updateProfile(u,{displayName,photoURL});
+    toast("✅ Profil yangilandi");
+    renderUser(auth.currentUser);
+  };
 
-      const newRef = push(ref(db, "posts"));
-      await set(newRef, post);
-      await set(dupeRef, {ts: Date.now(), postId: newRef.key});
-      toast("✅ Joylandi!");
-      Router.go("list"); $("#filterSelect").value="all"; doFilterList("all");
-      e.target.reset();
-    });
-
-    // My posts
-    const loadMyPosts = ()=>{
-      const u = auth.currentUser; if(!u) return;
-      onValue(ref(db,"posts"), snap=>{
-        const wrap = $("#myPosts"); wrap.innerHTML=""; let cnt=0;
-        snap.forEach(ch=>{
-          const p=ch.val(); if(p.userId===u.uid){ const div=document.createElement("div"); div.innerHTML=itemHTML(ch.key,p); wrap.appendChild(div.firstElementChild); cnt++; }
-        });
-        $("#emptyMy").classList.toggle("hidden", cnt>0);
-      },{onlyOnce:true});
-    };
-
-    /* ====== PROFILE SAVE ====== */
-    $("#saveProfile").addEventListener("click", async ()=>{
-      if(!mustLogin()) return;
-      const u = auth.currentUser;
-      let photoURL = u.photoURL;
-      const af = $("#avatarFile").files[0];
-      if(af){
-        const path = `avatars/${u.uid}/${Date.now()}_${af.name.replace(/\s+/g,'_')}`;
-        await uploadBytes(sref(storage, path), af);
-        photoURL = await getDownloadURL(sref(storage, path));
-      }
-      const displayName = $("#displayName").value || u.displayName || u.email;
-      await updateProfile(u, {displayName, photoURL});
-      toast("✅ Profil yangilandi");
-      renderUser(auth.currentUser);
-    });
-
-    /* ====== START ====== */
-    document.addEventListener("DOMContentLoaded", ()=>{
-      const first = location.hash ? location.hash.slice(1) : "home";
-      Router.show(first);
-      history.replaceState({page:first},"","#"+first);
-    });
-  </script>
+  // start
+  document.addEventListener("DOMContentLoaded", ()=>{
+    const first=location.hash?location.hash.slice(1):"home";
+    Router.go(first);
+    history.replaceState({page:first},"","#"+first);
+  });
+</script>
 </body>
           </html>
