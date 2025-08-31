@@ -1,741 +1,187 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>BINGO — Yo‘qotdim / Topdim</title>
-<meta name="theme-color" content="#FFD633"/>
-
-<!-- ====== Yandex Go – inspired theme (drop-in) ====== -->
-<style>
-  @font-face{font-family:Inter;src:local("Inter");font-display:swap}
-  :root{
-    --bg:#F7F7F8;            --card:#FFFFFF;
-    --muted:#8B8E95;         --text:#121212;
-    --line:#ECECEF;          --accent:#FFD633; --accent-press:#FFC800;
-    --chip:#F1F1F4;          --good:#16A34A;   --bad:#DC2626;
-    --shadow:0 6px 18px rgba(18,18,18,.06);
-    --radius-xl:22px; --radius-lg:18px; --radius-md:14px; --radius-sm:12px;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0}
-  body{
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-    background:var(--bg); color:var(--text);
-    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-  }
-  .topbar{position:sticky; top:0; z-index:60; background:var(--card); border-bottom:1px solid var(--line)}
-  .hdr{display:flex; gap:12px; align-items:center; justify-content:space-between; padding:12px 16px}
-  .brand{display:flex; align-items:center; gap:10px}
-  .logo{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--chip);font-weight:900}
-  .title{font-size:22px; font-weight:900; letter-spacing:.2px}
-  .controls{display:flex; gap:8px; align-items:center}
-  .iconbtn{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:var(--chip);border:1px solid var(--line);cursor:pointer}
-  .wrap{max-width:980px;margin:0 auto;padding:14px 14px 28px}
-  .headline{font-size:28px; line-height:1.2; font-weight:900; margin:18px 0 4px}
-  .muted{color:var(--muted); font-size:14px}
-  #mainMenu{display:flex; gap:10px; flex-wrap:wrap; margin:16px 0}
-  .btn{
-    border:1px solid var(--line); background:var(--chip); color:var(--text);
-    padding:14px 18px; border-radius:999px; font-weight:700; cursor:pointer;
-    box-shadow:var(--shadow); transition:.2s transform, .2s filter;
-  }
-  .btn:active{transform:scale(.98); filter:saturate(1.1)}
-  .btn-accent{background:var(--accent); border-color:#E9C200}
-  .btn-green{background:#EAF8EF; border-color:#D7F2E0; color:#0B6B34}
-  .btn-red{background:#FDECEC; border-color:#F8D2D2; color:#9F1D1D}
-  .btn-sm{padding:10px 14px; font-size:14px}
-  .btn-disabled{opacity:.6; filter:grayscale(.2); pointer-events:none}
-  .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-  @media (max-width:820px){.grid{grid-template-columns:1fr}}
-  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius-xl); padding:16px; box-shadow:var(--shadow); margin:10px 0}
-  .card-title{font-weight:900; font-size:18px; margin-bottom:10px}
-  label{display:block; font-size:13px; color:var(--muted); margin:8px 2px}
-  input,textarea,select{
-    width:100%; border:1px solid var(--line); background:var(--card);
-    border-radius:16px; padding:14px 14px; font-size:15px; color:var(--text); outline:none;
-  }
-  input::placeholder,textarea::placeholder{color:#B1B4BA}
-  textarea{min-height:110px; resize:vertical}
-  .post-card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg); padding:14px; box-shadow:var(--shadow); margin:12px 0}
-  .post-head{display:flex; justify-content:space-between; gap:8px; align-items:center}
-  .post-kind{font-weight:800; font-size:13px; color:#545862}
-  .post-title{font-weight:900; font-size:18px; margin-top:6px}
-  .post-meta{color:var(--muted); font-size:13px}
-  .post-img{width:100%; max-height:220px; object-fit:cover; border-radius:16px; border:1px solid var(--line); background:#EEE}
-  .actions{display:flex; gap:8px; justify-content:flex-end; margin-top:10px}
-  .chip{background:var(--chip); border:1px solid var(--line); padding:10px 14px; border-radius:999px; font-weight:700}
-  .chip-accent{background:var(--accent); border-color:#E9C200}
-  .alert{display:none;margin:10px auto 0;max-width:980px;background:#1f2937;color:#fff;padding:10px 12px;border-radius:12px}
-  .footer{text-align:center;color:var(--muted);font-size:13px;margin-top:20px}
-  .sp{height:10px}
-  .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid var(--line);background:#ddd}
-  .hero-cta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
-  .pill{display:inline-flex;align-items:center;gap:8px;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:10px 14px;font-weight:700}
-  .hidden{display:none !important}
-  .danger{color:#9F1D1D}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BINGO – Yo‘qoldi / Topildi</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff8e1;
+      color: #222;
+    }
+    header {
+      background: #ffa000;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 15px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn-google {
+      background: #fff;
+      border: 1px solid #ccc;
+      color: #444;
+    }
+    .btn-logout {
+      background: #e53935;
+      color: white;
+    }
+    .profile {
+      margin: 15px 0;
+      padding: 12px;
+      border-radius: 8px;
+      background: #fff3cd;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
+  <header>BINGO – Yo‘qoldi / Topildi</header>
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="hdr">
-    <div class="brand">
-      <div class="logo">BG</div>
-      <div class="title">BINGO</div>
+  <div class="container">
+    <h2>Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</h2>
+    <p><em>"Halollik – eng katta mukofot."</em></p>
+
+    <!-- Google login -->
+    <button id="googleLogin" class="btn btn-google">Google bilan kirish</button>
+    <!-- Logout -->
+    <button id="logout" class="btn btn-logout" style="display:none;">Chiqish</button>
+
+    <!-- User profile info -->
+    <div id="profile" class="profile" style="display:none;"></div>
+
+    <!-- Announcement form -->
+    <div id="announcementForm" style="display:none;">
+      <h3>E’lon qo‘shish</h3>
+      <input type="text" id="title" placeholder="Nima yo‘qolgan?" style="width:100%;padding:8px;margin:5px 0;">
+      <input type="text" id="reward" placeholder="Topganga mukofot" style="width:100%;padding:8px;margin:5px 0;">
+      <textarea id="desc" placeholder="Qo‘shimcha ma’lumot" style="width:100%;padding:8px;margin:5px 0;"></textarea>
+      <button id="postAd" class="btn" style="background:#43a047;color:white;">E’lonni joylash</button>
     </div>
-    <div class="controls">
-      <select id="langSel" class="iconbtn" style="width:auto;padding:0 10px">
-        <option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option>
-      </select>
-      <button id="backBtn" class="iconbtn" title="Orqaga" style="display:none">⟵</button>
-      <button id="homeBtn" class="iconbtn" title="Bosh sahifa">⌂</button>
+
+    <!-- Announcements list -->
+    <div id="adsList">
+      <h3>Oxirgi e’lonlar</h3>
+      <div id="ads"></div>
     </div>
   </div>
-</div>
 
-<div id="alert" class="alert" role="alert"></div>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
 
-<div class="wrap">
-  <div class="views">
-
-    <!-- HOME -->
-    <section id="view_home" class="view">
-      <div class="hero">
-        <div class="headline" data-i18n="hero_title">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</div>
-        <div class="muted" data-i18n="hero_sub">“Halollik — eng katta mukofot.”</div>
-
-        <div class="hero-cta">
-          <div id="userChip" class="pill hidden">
-            <img id="userPhoto" class="avatar" alt=""/>
-            <span id="userName">—</span>
-          </div>
-          <button id="googleBtn" class="btn btn-accent" data-i18n="btn_google">Google bilan kirish</button>
-          <button id="logoutBtn" class="btn hidden" data-i18n="btn_logout">Chiqish</button>
-        </div>
-      </div>
-
-      <div id="mainMenu">
-        <button class="btn btn-red"  data-nav="lostForm"  data-i18n="btn_lost">❗ Yo‘qotdim</button>
-        <button class="btn btn-green" data-nav="foundForm" data-i18n="btn_found">✅ Topdim</button>
-        <button class="btn" data-nav="lostList"  data-i18n="btn_lostlist">📋 Yo‘qotilganlar</button>
-        <button class="btn" data-nav="rewardList" data-i18n="btn_reward">🎁 Mukofotli</button>
-        <button class="btn" data-nav="foundList" data-i18n="btn_foundlist">🔎 Topilganlar</button>
-        <button class="btn btn-sm" data-nav="mine" data-i18n="btn_mine">⭐ Mening e’lonlarim</button>
-        <button class="btn btn-sm" data-nav="profile" data-i18n="btn_profile">👤 Profil</button>
-      </div>
-
-      <div class="grid">
-        <div class="card">
-          <div class="card-title" data-i18n="why_title">Nega BINGO?</div>
-          <p class="muted" data-i18n="why_text">Oddiy forma, tez natija. Barcha e’lonlar bir joyda.</p>
-        </div>
-        <div class="card">
-          <div class="card-title" data-i18n="guide_title">Qisqa yo‘riqnoma</div>
-          <ul class="muted" style="margin:0 0 6px 18px">
-            <li data-i18n="guide_1">❗ Yo‘qotdim yoki ✅ Topdim formasini to‘ldiring</li>
-            <li data-i18n="guide_2">Shahar, aloqa va “Nima yo‘qoldi/topildi” — majburiy</li>
-            <li data-i18n="guide_3">Mukofot yozilsa, alohida bo‘limda ko‘rinadi</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- LOST FORM -->
-    <section id="view_lostForm" class="view hidden">
-      <div class="card">
-        <div class="card-title"><span data-i18n="lost_form_title">Yo‘qotdim — e’lon</span></div>
-        <div id="lostAuthHint" class="muted" style="margin-bottom:10px; display:none" data-i18n="need_login">E’lon berish uchun avval Google orqali kiring.</div>
-
-        <label data-i18n="lbl_item">Nima yo‘qoldi?</label>
-        <input id="l_item" data-i18n-ph="ph_item"/>
-
-        <label data-i18n="lbl_city">Shahar/Hudud</label>
-        <input id="l_city" data-i18n-ph="ph_city"/>
-
-        <label data-i18n="lbl_place">Joy</label>
-        <input id="l_place" data-i18n-ph="ph_place_lost"/>
-
-        <label data-i18n="lbl_date">Sana/Vaqt</label>
-        <input id="l_date" data-i18n-ph="ph_date_lost"/>
-
-        <label data-i18n="lbl_contact">Aloqa</label>
-        <input id="l_contact" data-i18n-ph="ph_contact"/>
-
-        <label data-i18n="lbl_reward">Mukofot (ixtiyoriy)</label>
-        <input id="l_reward" type="number" min="0" step="1" data-i18n-ph="ph_reward"/>
-
-        <label data-i18n="lbl_notes">Qo‘shimcha</label>
-        <textarea id="l_notes" data-i18n-ph="ph_notes"></textarea>
-
-        <label data-i18n="lbl_photo">Rasm</label>
-        <input id="l_photo" type="file" accept="image/*"/>
-
-        <div class="sp"></div>
-        <button id="btnLost" class="btn btn-red" data-submit="lost" data-i18n="btn_submit">E’lon berish</button>
-      </div>
-    </section>
-
-    <!-- FOUND FORM -->
-    <section id="view_foundForm" class="view hidden">
-      <div class="card">
-        <div class="card-title"><span data-i18n="found_form_title">Topdim — e’lon</span></div>
-        <div id="foundAuthHint" class="muted" style="margin-bottom:10px; display:none" data-i18n="need_login">E’lon berish uchun avval Google orqali kiring.</div>
-
-        <label data-i18n="lbl_item_found">Nima topildi?</label>
-        <input id="f_item" data-i18n-ph="ph_item_found"/>
-
-        <label data-i18n="lbl_city">Shahar/Hudud</label>
-        <input id="f_city" data-i18n-ph="ph_city"/>
-
-        <label data-i18n="lbl_place_found">Qayerdan topildi</label>
-        <input id="f_place" data-i18n-ph="ph_place_found"/>
-
-        <label data-i18n="lbl_date">Sana/Vaqt</label>
-        <input id="f_date" data-i18n-ph="ph_date_found"/>
-
-        <label data-i18n="lbl_contact">Aloqa</label>
-        <input id="f_contact" data-i18n-ph="ph_contact"/>
-
-        <label data-i18n="lbl_notes">Qo‘shimcha</label>
-        <textarea id="f_notes" data-i18n-ph="ph_notes"></textarea>
-
-        <label data-i18n="lbl_photo">Rasm</label>
-        <input id="f_photo" type="file" accept="image/*"/>
-
-        <div class="sp"></div>
-        <button id="btnFound" class="btn btn-green" data-submit="found" data-i18n="btn_submit">E’lon berish</button>
-      </div>
-    </section>
-
-    <!-- LISTS -->
-    <section id="view_lostList" class="view hidden">
-      <div class="card">
-        <div class="card-title" data-i18n="lost_list_title">📋 Umumiy yo‘qotilganlar</div>
-        <div id="lost_list">—</div>
-      </div>
-    </section>
-
-    <section id="view_rewardList" class="view hidden">
-      <div class="card">
-        <div class="card-title" data-i18n="reward_list_title">🎁 Mukofotli</div>
-        <div id="reward_list">—</div>
-      </div>
-    </section>
-
-    <section id="view_foundList" class="view hidden">
-      <div class="card">
-        <div class="card-title" data-i18n="found_list_title">🔎 Topilganlar</div>
-        <div id="found_list">—</div>
-      </div>
-    </section>
-
-    <!-- MINE -->
-    <section id="view_mine" class="view hidden">
-      <div class="card">
-        <div class="card-title" data-i18n="mine_title">⭐ Mening e’lonlarim</div>
-        <div id="mine_list">—</div>
-        <div class="sp"></div>
-        <button class="btn danger" id="clearMineBtn" data-i18n="btn_delete_mine">Mening e’lonlarimni o‘chirish</button>
-      </div>
-    </section>
-
-    <!-- PROFILE -->
-    <section id="view_profile" class="view hidden">
-      <div class="card">
-        <div class="card-title" data-i18n="profile_title">👤 Profil</div>
-        <div id="profileGuest" class="muted">
-          <span data-i18n="need_login">Profil uchun kirish talab qilinadi.</span>
-        </div>
-        <div id="profileBox" class="hidden">
-          <div class="pill" style="margin-bottom:10px">
-            <img id="pPhoto" class="avatar" alt=""/>
-            <div>
-              <div id="pName" style="font-weight:900">—</div>
-              <div id="pEmail" class="muted" style="font-size:12px">—</div>
-            </div>
-          </div>
-
-          <div class="grid">
-            <div class="card">
-              <div class="card-title" data-i18n="profile_stats">Statistika</div>
-              <div class="muted">
-                <div><b data-i18n="profile_posts">E’lonlar</b>: <span id="statPosts">0</span></div>
-                <div><b data-i18n="profile_lost">Yo‘qotdim</b>: <span id="statLost">0</span></div>
-                <div><b data-i18n="profile_found">Topdim</b>: <span id="statFound">0</span></div>
-                <div><b data-i18n="profile_since">Ro‘yxatdan</b>: <span id="statSince">—</span></div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-title" data-i18n="profile_actions">Amallar</div>
-              <div class="hero-cta">
-                <button id="toLost"  class="btn btn-red"  data-i18n="btn_lost">❗ Yo‘qotdim</button>
-                <button id="toFound" class="btn btn-green" data-i18n="btn_found">✅ Topdim</button>
-                <button id="toMine"  class="btn" data-i18n="btn_mine">⭐ Mening e’lonlarim</button>
-                <button id="toLogout" class="btn" data-i18n="btn_logout">Chiqish</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CHAT -->
-    <section id="view_postChat" class="view hidden">
-      <div class="card">
-        <div class="card-title"><span data-i18n="chat_title">Xabar</span> — <span id="chatItemName"></span></div>
-        <div class="sp"></div>
-        <div class="card" style="max-height:46vh;overflow:auto" id="chatLog"></div>
-        <div class="sp"></div>
-        <input id="chatName" data-i18n-ph="ph_name"/>
-        <input id="chatText" data-i18n-ph="ph_message"/>
-        <div class="sp"></div>
-        <button class="btn" id="sendChatBtn" data-i18n="btn_send">Yuborish</button>
-      </div>
-    </section>
-
-  </div>
-
-  <div class="footer">© <span id="year"></span> BINGO</div>
-</div>
-
-<!-- Firebase compat SDK-lar -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
-
-<script>
-/* -------- ServiceWorker/Cache tozalash (eski PWA ta’sirini yo‘qotish) -------- */
-(async function killSW(){
-  try{
-    if('serviceWorker' in navigator){
-      const regs=await navigator.serviceWorker.getRegistrations();
-      for(const r of regs){try{await r.unregister()}catch{}}
-    }
-    if(window.caches){
-      const names=await caches.keys();
-      for(const n of names){try{await caches.delete(n)}catch{}}
-    }
-  }catch{}
-})();
-
-/* =================== I18N =================== */
-const I18N={
-  uz:{
-    hero_title:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",
-    hero_sub:"“Halollik — eng katta mukofot.”",
-    btn_lost:"❗ Yo‘qotdim",btn_found:"✅ Topdim",
-    btn_lostlist:"📋 Yo‘qotilganlar",btn_reward:"🎁 Mukofotli",btn_foundlist:"🔎 Topilganlar",
-    btn_mine:"⭐ Mening e’lonlarim",btn_profile:"👤 Profil",
-    why_title:"Nega BINGO?",why_text:"Oddiy forma, tez natija. Barcha e’lonlar bir joyda.",
-    guide_title:"Qisqa yo‘riqnoma",guide_1:"❗/✅ formani to‘ldiring",
-    guide_2:"Shahar, aloqa va sarlavha majburiy",guide_3:"Mukofot bo‘lsa alohida ko‘rinadi",
-    lost_form_title:"Yo‘qotdim — e’lon",found_form_title:"Topdim — e’lon",
-    lost_list_title:"📋 Umumiy yo‘qotilganlar",reward_list_title:"🎁 Mukofotli",found_list_title:"🔎 Topilganlar",
-    mine_title:"⭐ Mening e’lonlarim",btn_delete_mine:"Mening e’lonlarimni o‘chirish",
-    chat_title:"Xabar",btn_send:"Yuborish",btn_submit:"E’lon berish",
-    lbl_item:"Nima yo‘qoldi?",lbl_item_found:"Nima topildi?",lbl_city:"Shahar/Hudud",lbl_place:"Joy",lbl_place_found:"Qayerdan topildi",
-    lbl_date:"Sana/Vaqt",lbl_contact:"Aloqa",lbl_reward:"Mukofot (ixt.)",lbl_notes:"Qo‘shimcha",lbl_photo:"Rasm",
-    ph_item:"Masalan: Telefon",ph_item_found:"Masalan: Pasport",ph_city:"Masalan: Samarqand",
-    ph_place_lost:"Qayerda yo‘qotdingiz?",ph_place_found:"Qayerdan topdingiz?",ph_date_lost:"2025-08-25 14:00",ph_date_found:"2025-08-25 10:00",
-    ph_contact:"+998 ** *** ** **",ph_reward:"100000 so‘m",ph_notes:"Batafsil ma’lumot yozing",
-    ph_name:"Ismingiz",ph_message:"Xabar...",
-    confirm_del:"Ushbu e’lon o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi.",
-    need_login:"E’lon berish uchun avval Google orqali kiring.",
-    btn_google:"Google bilan kirish",btn_logout:"Chiqish",
-    toast_posted:"✅ E’loningiz joylandi!",toast_dup:"❗ Xuddi shunday e’lonni yaqinda yuborgansiz.",
-    toast_need:"Majburiy maydonlarni to‘ldiring.",toast_err:"Xato",toast_removed:"O‘chirildi",
-    profile_title:"👤 Profil",profile_stats:"Statistika",profile_actions:"Amallar",
-    profile_posts:"E’lonlar",profile_lost:"Yo‘qotdim",profile_found:"Topdim",profile_since:"Ro‘yxatdan"
-  },
-  ru:{
-    hero_title:"Потеряли или нашли? Оставьте объявление.",
-    hero_sub:"«Честность — самая большая награда.»",
-    btn_lost:"❗ Потерял(а)",btn_found:"✅ Нашёл(ла)",
-    btn_lostlist:"📋 Потерянные",btn_reward:"🎁 С вознаграждением",btn_foundlist:"🔎 Найденные",
-    btn_mine:"⭐ Мои объявления",btn_profile:"👤 Профиль",
-    why_title:"Почему BINGO?",why_text:"Простая форма, быстрый результат.",
-    guide_title:"Краткая инструкция",guide_1:"Заполните форму ❗/✅",
-    guide_2:"Город, контакт и заголовок обязательны",guide_3:"Вознаграждение показывается отдельно",
-    lost_form_title:"Потерял(а) — объявление",found_form_title:"Нашёл(ла) — объявление",
-    lost_list_title:"📋 Все потерянные",reward_list_title:"🎁 С вознаграждением",found_list_title:"🔎 Найденные",
-    mine_title:"⭐ Мои объявления",btn_delete_mine:"Удалить мои объявления",
-    chat_title:"Сообщение",btn_send:"Отправить",btn_submit:"Опубликовать",
-    lbl_item:"Что потеряли?",lbl_item_found:"Что нашли?",lbl_city:"Город/Регион",lbl_place:"Место",lbl_place_found:"Где нашли",
-    lbl_date:"Дата/Время",lbl_contact:"Контакт",lbl_reward:"Вознаграждение (необ.)",lbl_notes:"Дополнительно",lbl_photo:"Фото",
-    ph_item:"Например: телефон",ph_item_found:"Например: паспорт",ph_city:"Например: Самарканд",
-    ph_place_lost:"Где потеряли?",ph_place_found:"Где нашли?",ph_date_lost:"2025-08-25 14:00",ph_date_found:"2025-08-25 10:00",
-    ph_contact:"+998 ** *** ** **",ph_reward:"100000 сум",ph_notes:"Опишите подробнее",
-    ph_name:"Ваше имя",ph_message:"Сообщение...",
-    confirm_del:"Удалить объявление? Действие необратимо.",
-    need_login:"Для публикации войдите через Google.",
-    btn_google:"Войти через Google",btn_logout:"Выйти",
-    toast_posted:"✅ Объявление опубликовано!",toast_dup:"❗ Похоже, вы уже отправляли такое объявление.",
-    toast_need:"Заполните обязательные поля.",toast_err:"Ошибка",toast_removed:"Удалено",
-    profile_title:"👤 Профиль",profile_stats:"Статистика",profile_actions:"Действия",
-    profile_posts:"Объявления",profile_lost:"Потерял(а)",profile_found:"Нашёл(ла)",profile_since:"С"
-  },
-  en:{
-    hero_title:"Lost or found? Post it.",
-    hero_sub:"“Honesty is the greatest reward.”",
-    btn_lost:"❗ Lost",btn_found:"✅ Found",
-    btn_lostlist:"📋 Lost Items",btn_reward:"🎁 With Reward",btn_foundlist:"🔎 Found Items",
-    btn_mine:"⭐ My Posts",btn_profile:"👤 Profile",
-    why_title:"Why BINGO?",why_text:"Simple form, fast results.",
-    guide_title:"Quick guide",guide_1:"Fill the ❗/✅ form",
-    guide_2:"City, contact and title are required",guide_3:"Rewarded posts show separately",
-    lost_form_title:"Lost — post",found_form_title:"Found — post",
-    lost_list_title:"📋 All Lost",reward_list_title:"🎁 With Reward",found_list_title:"🔎 All Found",
-    mine_title:"⭐ My Posts",btn_delete_mine:"Delete my posts",
-    chat_title:"Message",btn_send:"Send",btn_submit:"Post",
-    lbl_item:"What is lost?",lbl_item_found:"What is found?",lbl_city:"City/Region",lbl_place:"Place",lbl_place_found:"Where found",
-    lbl_date:"Date/Time",lbl_contact:"Contact",lbl_reward:"Reward (opt.)",lbl_notes:"Notes",lbl_photo:"Photo",
-    ph_item:"e.g. Phone",ph_item_found:"e.g. Passport",ph_city:"e.g. Samarkand",
-    ph_place_lost:"Where did you lose it?",ph_place_found:"Where did you find it?",ph_date_lost:"2025-08-25 14:00",ph_date_found:"2025-08-25 10:00",
-    ph_contact:"+998 ** *** ** **",ph_reward:"100000 UZS",ph_notes:"More details",
-    ph_name:"Your name",ph_message:"Message...",
-    confirm_del:"Delete this post? Cannot be undone.",
-    need_login:"Sign in with Google to post.",
-    btn_google:"Continue with Google",btn_logout:"Sign out",
-    toast_posted:"✅ Your post is published!",toast_dup:"❗ You already submitted a similar post.",
-    toast_need:"Please fill the required fields.",toast_err:"Error",toast_removed:"Removed",
-    profile_title:"👤 Profile",profile_stats:"Stats",profile_actions:"Actions",
-    profile_posts:"Posts",profile_lost:"Lost",profile_found:"Found",profile_since:"Since"
-  }
-};
-function lang(){return localStorage.getItem('bingo_lang')||'uz'}
-function t(k){return (I18N[lang()]||I18N.uz)[k]||k}
-function setPlaceholders(){document.querySelectorAll('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.getAttribute('data-i18n-ph'))})}
-function applyI18n(){
-  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'))});
-  setPlaceholders();
-  document.getElementById('langSel').value=lang();
-}
-
-/* =================== Router =================== */
-const VIEWS=['home','lostForm','foundForm','lostList','rewardList','foundList','mine','profile','postChat'];
-let currentView='home', currentChatPostId=null, unsubChat=null;
-function showView(name){
-  VIEWS.forEach(id=>{
-    const el=document.getElementById('view_'+id);
-    if(!el) return;
-    el.classList.toggle('hidden',id!==name);
-  });
-  document.getElementById('backBtn').style.display=(name!=='home')?'grid':'none';
-  window.scrollTo(0,0);
-}
-function navigate(name,replace){
-  currentView=name; showView(name);
-  if(name==='lostList') renderLost();
-  if(name==='rewardList') renderReward();
-  if(name==='foundList') renderFound();
-  if(name==='mine') renderMine();
-  if(name==='profile') fillProfile();
-  if(name==='postChat' && currentChatPostId) openChat(currentChatPostId,true);
-  const hash='#'+name+(currentChatPostId?('-'+currentChatPostId):'');
-  if(replace) history.replaceState({view:name,id:currentChatPostId||null},'',hash);
-  else history.pushState({view:name,id:currentChatPostId||null},'',hash);
-}
-document.getElementById('homeBtn').addEventListener('click',()=>navigate('home'));
-document.getElementById('backBtn').addEventListener('click',()=>history.back());
-document.querySelectorAll('#mainMenu .btn, #view_profile .btn').forEach(b=>{
-  if(b.dataset.nav) b.addEventListener('click',()=>navigate(b.dataset.nav));
-});
-window.addEventListener('popstate',e=>{
-  const st=e.state||{view:'home'}; currentChatPostId=st.id||null; showView(st.view||'home');
-});
-(function(){
-  const h=location.hash?location.hash.substring(1):'home';
-  const p=h.split('-'); const v=p[0]||'home'; currentChatPostId=p[1]||null;
-  showView(v); history.replaceState({view:v,id:currentChatPostId||null},'', '#'+v+(currentChatPostId?('-'+currentChatPostId):''));
-})();
-
-/* =================== Firebase =================== */
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
-  authDomain: "topildi.firebaseapp.com",
-  projectId: "topildi",
-  storageBucket: "topildi.firebasestorage.app",
-  messagingSenderId: "323891530719",
-  appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
-  measurementId: "G-NKCMKCXZQ7"
-};
-firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth();
-const db=firebase.firestore();
-const storage=firebase.storage();
-
-/* =================== Auth (Google) =================== */
-const provider = new firebase.auth.GoogleAuthProvider();
-provider.setCustomParameters({prompt:'select_account'});
-const googleBtn=document.getElementById('googleBtn');
-const logoutBtn=document.getElementById('logoutBtn');
-const userChip=document.getElementById('userChip');
-const userPhoto=document.getElementById('userPhoto');
-const userName=document.getElementById('userName');
-
-googleBtn.addEventListener('click', async ()=>{
-  try{
-    await auth.signInWithPopup(provider).catch(async(e)=>{
-      // mobil brauzerda popup bloklansa
-      if(e.code==='auth/popup-blocked') await auth.signInWithRedirect(provider);
-      else throw e;
-    });
-  }catch(err){ toast(t('toast_err')+': '+err.message,false); }
-});
-logoutBtn.addEventListener('click',()=>auth.signOut());
-
-let CURRENT_USER=null;
-auth.onAuthStateChanged(u=>{
-  CURRENT_USER=u;
-  const signed=!!u;
-  googleBtn.classList.toggle('hidden',signed);
-  logoutBtn.classList.toggle('hidden',!signed);
-  userChip.classList.toggle('hidden',!signed);
-  document.getElementById('lostAuthHint').style.display=signed?'none':'block';
-  document.getElementById('foundAuthHint').style.display=signed?'none':'block';
-  if(signed){
-    userName.textContent=u.displayName||u.email||'User';
-    userPhoto.src=u.photoURL||'';
-    localStorage.setItem('bingo_uid',u.uid);
-    fillProfile();
-  }else{
-    userName.textContent='—'; userPhoto.removeAttribute('src');
-  }
-});
-
-/* =================== Helpers =================== */
-document.getElementById('year').textContent=new Date().getFullYear();
-applyI18n();
-document.getElementById('langSel').addEventListener('change',e=>{
-  localStorage.setItem('bingo_lang',e.target.value); applyI18n();
-});
-
-function banner(msg){const a=document.getElementById('alert');a.textContent=msg||'';a.style.display=msg?'block':'none';if(msg)setTimeout(()=>banner(''),3000)}
-function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&gt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function val(id){const el=document.getElementById(id);return el?el.value.trim():''}
-function num(n){const x=parseInt(n,10);return isNaN(x)?0:x}
-function toast(msg, ok=true){
-  const old=document.getElementById('__toast__'); if(old) old.remove();
-  const box=document.createElement('div');
-  box.id='__toast__'; box.setAttribute('role','status');
-  box.style.cssText=['position:fixed','left:50%','top:50%','transform:translate(-50%,-50%) scale(0.95)',`background:${ok?'#16a34a':'#dc2626'}`,'color:#fff','padding:14px 22px','border-radius:12px','font-weight:800','min-width:260px','text-align:center','z-index:99999','box-shadow:0 14px 32px rgba(0,0,0,.35)','opacity:0','transition:.25s all'].join(';');
-  box.textContent=msg; document.body.appendChild(box);
-  requestAnimationFrame(()=>{box.style.opacity='1';box.style.transform='translate(-50%,-50%) scale(1)';});
-  setTimeout(()=>{box.style.opacity='0';box.style.transform='translate(-50%,-50%) scale(0.95)';setTimeout(()=>box.remove(),260)},2500);
-}
-
-/* ====== Realtime posts feed ====== */
-let ALL_POSTS=[];
-db.collection('posts').orderBy('created','desc').onSnapshot(snap=>{
-  ALL_POSTS=snap.docs.map(d=>({id:d.id,...d.data()}));
-  if(currentView==='lostList') renderLost();
-  if(currentView==='rewardList') renderReward();
-  if(currentView==='foundList') renderFound();
-  if(currentView==='mine') renderMine();
-},err=>banner("Firestore: "+err.message));
-
-/* ====== Submit (double-submit guard + image upload to Storage) ====== */
-function enableFormButtons(){
-  ['btnLost','btnFound'].forEach(id=>{
-    const b=document.getElementById(id); if(b){b.disabled=false; b.classList.remove('btn-disabled')}
-  });
-}
-async function uploadImage(file, uid){
-  if(!file) return null;
-  const safe=file.name.replace(/[^\w.\-]+/g,'_');
-  const ref=storage.ref().child(`${uid}/${Date.now()}_${safe}`);
-  await ref.put(file);
-  return await ref.getDownloadURL();
-}
-function postHash(p){
-  return btoa(unescape(encodeURIComponent([p.kind,p.item,p.city,p.place,p.date,p.contact,p.reward,p.notes].join('|'))));
-}
-document.querySelectorAll('[data-submit]').forEach(btn=>{
-  btn.addEventListener('click', async ()=>{
-    if(btn.disabled) return;
-    if(!CURRENT_USER){ toast(t('need_login'),false); return; }
-    const isLost=(btn.dataset.submit==='lost');
-    const p={
-      kind:isLost?'lost':'found',
-      item: val(isLost?'l_item':'f_item'),
-      city: val(isLost?'l_city':'f_city'),
-      place:isLost?val('l_place'):val('f_place'),
-      date: isLost?val('l_date'):val('f_date'),
-      contact: val(isLost?'l_contact':'f_contact'),
-      reward: isLost? num(val('l_reward')) : 0,
-      notes: isLost?val('l_notes'):val('f_notes'),
-      photoURL:null,
-      uid: CURRENT_USER.uid,
-      authorName: CURRENT_USER.displayName || CURRENT_USER.email || 'User',
-      authorPhoto: CURRENT_USER.photoURL || null,
-      created: Date.now()
+  <script>
+    // ✅ Faqat yangi config – Topildi loyihasi
+    const firebaseConfig = {
+      apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+      authDomain: "topildi.firebaseapp.com",
+      databaseURL: "https://topildi-default-rtdb.firebaseio.com",
+      projectId: "topildi",
+      storageBucket: "topildi.firebasestorage.app",
+      messagingSenderId: "323891530719",
+      appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
+      measurementId: "G-NKCMKCXZQ7"
     };
-    if(!p.item || !p.city || !p.contact){ toast(t('toast_need'),false); return; }
-    const input=document.getElementById(isLost?'l_photo':'f_photo');
-    if(input && input.files && input.files[0]){
-      try{ p.photoURL=await uploadImage(input.files[0], CURRENT_USER.uid); }
-      catch(e){ toast(t('toast_err')+': '+e.message,false); return; }
-    }
-    // duplicate guard (local)
-    const h=postHash(p); const last=localStorage.getItem('last_post_hash');
-    if(last===h){ toast(t('toast_dup'),false); return; }
-    btn.disabled=true; btn.classList.add('btn-disabled');
-    try{
-      await db.collection('posts').add(p);
-      localStorage.setItem('last_post_hash',h);
-      clearForm(isLost);
-      toast(t('toast_posted'));
-      navigate(isLost?'lostList':'foundList');
-    }catch(e){
-      toast(t('toast_err')+': '+e.message,false);
-    }finally{
-      setTimeout(enableFormButtons,1000);
-    }
-  });
-});
-function clearForm(isLost){
-  const ids=isLost?['l_item','l_city','l_place','l_date','l_contact','l_reward','l_notes','l_photo']
-                  :['f_item','f_city','f_place','f_date','f_contact','f_notes','f_photo'];
-  ids.forEach(id=>{
-    const el=document.getElementById(id);
-    if(!el) return;
-    if(el.type==='file') el.value='';
-    else el.value='';
-  });
-}
 
-/* ====== Renderers ====== */
-function card(p, allowDelete){
-  const L=lang();
-  const kindLabel = p.kind==='lost'
-     ? (L==='ru'?'❗ Потеряно':(L==='en'?'❗ Lost':'❗ Yo‘qoldi'))
-     : (L==='ru'?'✅ Найдено':(L==='en'?'✅ Found':'✅ Topildi'));
-  const msgBtn = L==='en'?'✉️ Message':(L==='ru'?'✉️ Написать':'✉️ Xabar');
-  const byTxt = L==='en'?'by':(L==='ru'?'от':'tomonidan');
-  const rew = (p.reward&&p.reward>0)? `<span class="chip chip-accent">🎁 ${Number(p.reward).toLocaleString()} UZS</span>`:'';
-  return `
-  <div class="post-card">
-    ${p.photoURL?`<img class="post-img" src="${esc(p.photoURL)}" alt="">`:''}
-    <div class="post-head">
-      <div class="post-kind">${kindLabel} · <span class="muted">${new Date(p.created||Date.now()).toLocaleString()}</span></div>
-      ${rew}
-    </div>
-    <div class="post-title">${esc(p.item)}</div>
-    <div class="post-meta">${esc(p.city||'-')} · ${esc(p.place||'-')} · ${esc(p.date||'-')}</div>
-    <div style="margin-top:6px">${esc(p.notes||'')}</div>
-    <div class="post-meta" style="margin-top:6px">👤 ${esc(p.authorName||'-')} · 📞 ${esc(p.contact||'-')}</div>
-    <div class="actions">
-      ${allowDelete?`<button class="btn" onclick="delPost('${p.id}')">🗑️ ${t('btn_delete_mine')}</button>`:''}
-      <button class="btn" onclick="openChat('${p.id}')">${msgBtn}</button>
-    </div>
-  </div>`;
-}
-function renderLost(){
-  const el=document.getElementById('lost_list'); if(!el) return;
-  const arr=ALL_POSTS.filter(p=>p.kind==='lost');
-  el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—';
-}
-function renderReward(){
-  const el=document.getElementById('reward_list'); if(!el) return;
-  const arr=ALL_POSTS.filter(p=>p.kind==='lost'&&(p.reward||0)>0);
-  el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—';
-}
-function renderFound(){
-  const el=document.getElementById('found_list'); if(!el) return;
-  const arr=ALL_POSTS.filter(p=>p.kind==='found');
-  el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—';
-}
-function renderMine(){
-  const el=document.getElementById('mine_list'); if(!el) return;
-  const uid=(CURRENT_USER&&CURRENT_USER.uid)||localStorage.getItem('bingo_uid');
-  const arr=ALL_POSTS.filter(p=>p.uid===uid);
-  el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—';
-}
+    // Init
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-/* ====== Delete only mine ====== */
-window.delPost = async function(id){
-  const post=ALL_POSTS.find(p=>p.id===id);
-  if(!post || !CURRENT_USER || post.uid!==CURRENT_USER.uid) return;
-  if(!confirm(t('confirm_del'))) return;
-  try{
-    await db.collection('posts').doc(id).delete();
-    const chats=await db.collection('posts').doc(id).collection('chats').get();
-    const batch=db.batch(); chats.forEach(d=>batch.delete(d.ref)); await batch.commit();
-    toast(t('toast_removed'));
-  }catch(e){ banner("Del: "+e.message); }
-}
+    // Elements
+    const loginBtn = document.getElementById("googleLogin");
+    const logoutBtn = document.getElementById("logout");
+    const profileDiv = document.getElementById("profile");
+    const formDiv = document.getElementById("announcementForm");
+    const adsDiv = document.getElementById("ads");
 
-/* ====== Chat ====== */
-function logEmpty(){
-  const L=lang(); return L==='en'?'No messages yet.':(L==='ru'?'Нет сообщений.':'Xabarlar yo‘q.');
-}
-window.openChat = function(postId, keep){
-  const post=ALL_POSTS.find(p=>p.id===postId); if(!post) return;
-  currentChatPostId=postId; document.getElementById('chatItemName').textContent=post.item;
-  if(unsubChat) unsubChat();
-  unsubChat=db.collection('posts').doc(postId).collection('chats').orderBy('ts')
-    .onSnapshot(s=>{
-      const log=document.getElementById('chatLog');
-      const arr=s.docs.map(d=>d.data());
-      log.innerHTML = arr.length
-        ? arr.map(m=>`<div class="pill" style="margin:6px 0;${m.uid===((CURRENT_USER&&CURRENT_USER.uid)||'')?'background:#EAF8EF;border-color:#D7F2E0':''}">
-              <b>${esc(m.name||'Anon')}</b>
-              <span class="muted" style="font-size:12px">· ${new Date(m.ts).toLocaleTimeString()}</span>
-              <div style="margin-left:6px">${esc(m.text)}</div>
-           </div>`).join('')
-        : `<div class="muted">${logEmpty()}</div>`;
-      const box=document.getElementById('chatLog'); box.scrollTop=box.scrollHeight;
-    }, e=> banner("Chat: "+e.message));
-  if(!keep) navigate('postChat');
-}
-document.getElementById('sendChatBtn').addEventListener('click',async()=>{
-  if(!currentChatPostId) return;
-  const name=(document.getElementById('chatName').value.trim()||(CURRENT_USER&&CURRENT_USER.displayName)||'Anon');
-  const text=document.getElementById('chatText').value.trim(); if(!text) return;
-  try{
-    await db.collection('posts').doc(currentChatPostId).collection('chats').add({name,uid:(CURRENT_USER&&CURRENT_USER.uid)||'guest',text,ts:Date.now()});
-    document.getElementById('chatText').value='';
-  }catch(e){ banner("Chat write: "+e.message); }
-});
+    // Google login
+    loginBtn.onclick = async () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      try {
+        await auth.signInWithPopup(provider);
+      } catch (err) {
+        alert("Kirishda xato: " + err.message);
+      }
+    };
 
-/* ====== Profile ====== */
-async function fillProfile(){
-  const guest=document.getElementById('profileGuest');
-  const box=document.getElementById('profileBox');
-  if(!CURRENT_USER){ guest.classList.remove('hidden'); box.classList.add('hidden'); return; }
-  guest.classList.add('hidden'); box.classList.remove('hidden');
+    // Logout
+    logoutBtn.onclick = () => auth.signOut();
 
-  document.getElementById('pPhoto').src=CURRENT_USER.photoURL||'';
-  document.getElementById('pName').textContent=CURRENT_USER.displayName||'—';
-  document.getElementById('pEmail').textContent=CURRENT_USER.email||'—';
-  document.getElementById('statSince').textContent=new Date(CURRENT_USER.metadata.creationTime).toLocaleDateString();
+    // Auth state
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "block";
+        profileDiv.style.display = "block";
+        formDiv.style.display = "block";
+        profileDiv.innerHTML = `
+          <b>👤 ${user.displayName}</b><br>
+          ${user.email}
+        `;
+      } else {
+        loginBtn.style.display = "block";
+        logoutBtn.style.display = "none";
+        profileDiv.style.display = "none";
+        formDiv.style.display = "none";
+      }
+    });
 
-  const my=ALL_POSTS.filter(p=>p.uid===CURRENT_USER.uid);
-  document.getElementById('statPosts').textContent=my.length;
-  document.getElementById('statLost').textContent=my.filter(p=>p.kind==='lost').length;
-  document.getElementById('statFound').textContent=my.filter(p=>p.kind==='found').length;
-}
-document.getElementById('toLost').addEventListener('click',()=>navigate('lostForm'));
-document.getElementById('toFound').addEventListener('click',()=>navigate('foundForm'));
-document.getElementById('toMine').addEventListener('click',()=>navigate('mine'));
-document.getElementById('toLogout').addEventListener('click',()=>auth.signOut());
+    // E’lon qo‘shish
+    document.getElementById("postAd").onclick = async () => {
+      const user = auth.currentUser;
+      if (!user) return alert("Avval tizimga kiring!");
+      const title = document.getElementById("title").value;
+      const reward = document.getElementById("reward").value;
+      const desc = document.getElementById("desc").value;
+      if (!title) return alert("Sarlavha kerak!");
 
-/* ====== Mass actions ====== */
-document.getElementById('clearMineBtn').addEventListener('click', async ()=>{
-  if(!CURRENT_USER) return;
-  if(!confirm(t('confirm_del'))) return;
-  const arr=ALL_POSTS.filter(p=>p.uid===CURRENT_USER.uid);
-  const batch=db.batch();
-  arr.forEach(p=>batch.delete(db.collection('posts').doc(p.id)));
-  try{ await batch.commit(); renderMine(); toast(t('toast_removed')); }catch(e){ banner(e.message); }
-});
+      await db.collection("ads").add({
+        title, reward, desc,
+        author: user.displayName,
+        email: user.email,
+        created: new Date()
+      });
 
-/* ====== Page init ====== */
-applyI18n();
-</script>
+      document.getElementById("title").value = "";
+      document.getElementById("reward").value = "";
+      document.getElementById("desc").value = "";
+      alert("E’lon joylandi!");
+    };
+
+    // E’lonlarni ko‘rsatish
+    db.collection("ads").orderBy("created", "desc").onSnapshot(snap => {
+      adsDiv.innerHTML = "";
+      snap.forEach(doc => {
+        const ad = doc.data();
+        adsDiv.innerHTML += `
+          <div style="border:1px solid #ddd;padding:10px;margin:5px;border-radius:6px;background:#fff;">
+            <b>${ad.title}</b><br>
+            Mukofot: ${ad.reward || "-"}<br>
+            ${ad.desc || ""}<br>
+            <small>By: ${ad.author}</small>
+          </div>
+        `;
+      });
+    });
+  </script>
 </body>
-  </html>
+</html>
