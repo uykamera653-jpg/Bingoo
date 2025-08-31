@@ -1,187 +1,904 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BINGO – Yo‘qoldi / Topildi</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>BINGO — Yo‘qoldi / Topildi</title>
+  <meta name="theme-color" content="#f59e0b"/>
+
+  <!-- =========================
+       STYLES (Yandex Go vibes)
+       ========================= -->
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fff8e1;
-      color: #222;
+    :root{
+      --brand:#f59e0b;           /* shapkadagi sariq */
+      --bg:#fff7e0;              /* umumiy fon */
+      --bg2:#fff2cc;             /* oqsariq gradient */
+      --panel:#ffffff;           /* kartalar foni */
+      --ink:#0f172a;             /* matn */
+      --muted:#64748b;           /* ikkilamchi matn */
+      --ring:#e5e7eb;            /* chiziqlar */
+      --ok:#16a34a;
+      --bad:#dc2626;
+      --blue:#1e293b;
     }
-    header {
-      background: #ffa000;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--ink);
+      background:
+        linear-gradient(180deg,var(--bg),var(--bg2));
     }
-    .container {
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 15px;
+
+    /* Top nav */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      background:linear-gradient(180deg,#ffbe33,#f6a912);
+      color:#1b1200;
+      border-bottom:1px solid #f2c266;
     }
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
+    .topbar .row{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 14px;
     }
-    .btn-google {
-      background: #fff;
-      border: 1px solid #ccc;
-      color: #444;
+    .brand{display:flex; align-items:center; gap:10px}
+    .badge{
+      width:36px; height:36px; border-radius:10px; display:grid; place-items:center;
+      background:rgba(255,255,255,.9); border:1px solid #f2c266; font-weight:900; color:#b45309;
     }
-    .btn-logout {
-      background: #e53935;
-      color: white;
+    .title{font-weight:900; font-size:18px; letter-spacing:.3px}
+
+    /* language + bell + home */
+    .controls{display:flex; gap:8px; align-items:center}
+    .pill{
+      background:#fff7e0; color:#1c1917; border:1px solid #f2c266;
+      height:36px; padding:0 12px; border-radius:12px; display:flex; align-items:center; gap:6px; cursor:pointer;
     }
-    .profile {
-      margin: 15px 0;
-      padding: 12px;
-      border-radius: 8px;
-      background: #fff3cd;
-      font-size: 14px;
+    .iconbtn{
+      width:36px; height:36px; display:grid; place-items:center; border-radius:10px;
+      background:#fff7e0; border:1px solid #f2c266; cursor:pointer;
     }
+    .bell-dot{position:absolute; margin-top:-18px; margin-left:18px; width:10px; height:10px; border-radius:10px; background:#ef4444; display:none}
+
+    /* wrapper */
+    .wrap{max-width:1040px; margin:0 auto; padding:14px}
+
+    /* hero */
+    .hero{margin:14px 0 6px}
+    .h1{
+      font-size:36px; line-height:1.25; font-weight:900;
+      letter-spacing:.2px;
+    }
+    .sub{color:#6b7280; margin-top:8px; font-size:15px}
+
+    /* main menu buttons */
+    .menu{
+      display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:18px 0;
+    }
+    @media (min-width:720px){
+      .menu{grid-template-columns:repeat(3,minmax(0,1fr))}
+    }
+    .btn{
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      padding:16px 18px; border-radius:16px; font-weight:800; border:1px solid #e7e5e4;
+      background:#111827; color:#e5eef7; cursor:pointer; transition:.2s;
+      font-size:16px;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-green{background:var(--ok); color:#052e13}
+    .btn-red{background:#c2410c; color:#fff7ed}
+    .btn-blue{background:#1f2937}
+    .btn-ghost{
+      background:#fff7e0; color:#1c1917; border:1px dashed #eab308;
+    }
+    .btn-sm{font-size:14px; padding:10px 12px; border-radius:12px}
+    .btn-disabled{opacity:.55; cursor:not-allowed; filter:grayscale(40%)}
+
+    /* simple cards */
+    .grid{display:grid; grid-template-columns:1fr; gap:10px}
+    @media(min-width:740px){ .grid{grid-template-columns:1fr 1fr} }
+    .card{
+      background:var(--panel); border:1px solid var(--ring); border-radius:18px;
+      padding:14px; box-shadow:0 4px 16px rgba(0,0,0,.08);
+    }
+    .card h3{margin:6px 0 8px; font-size:18px}
+    .muted{color:var(--muted)}
+
+    /* forms */
+    label{display:block; margin:8px 0 4px; color:#64748b; font-size:13px}
+    input,textarea,select{
+      width:100%; padding:12px 12px; border-radius:12px; border:1px solid #cbd5e1;
+      background:#fff; color:#0f172a; font-size:15px;
+    }
+    textarea{min-height:100px; resize:vertical}
+    .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
+    .hint{font-size:12px; color:#94a3b8}
+
+    /* posts */
+    .post{background:#0f172a; color:#e5eef7; border:1px solid #223047; border-radius:14px; padding:12px; margin:10px 0}
+    .post .hd{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .post .kind{font-weight:900}
+    .post .date{font-size:12px; opacity:.8}
+    .post .title{font-size:18px; font-weight:900; margin:8px 0 2px}
+    .post .meta{font-size:13px; opacity:.9}
+    .actions{display:flex; gap:8px; justify-content:flex-end; align-items:center; margin-top:8px}
+    .pic{width:100%; max-height:260px; object-fit:cover; background:#0b1220; border:1px solid #223047; border-radius:12px}
+
+    /* chat */
+    .chatlog{height:46vh; overflow:auto; background:#0b1220; border:1px solid #223047; padding:10px; border-radius:12px}
+    .msg{margin:6px 0; padding:8px 10px; border-radius:12px; background:#0e1728; border:1px solid #223047}
+    .me{background:#0b2a1f; border-color:#0a7a46}
+
+    /* tabs / views */
+    .view{display:none}
+    .view.active{display:block}
+
+    /* toast */
+    #__toast__{position:fixed; left:50%; top:50%; transform:translate(-50%,-50%) scale(.95); opacity:0;
+      background:#111827; color:#fff; padding:14px 20px; border-radius:12px; font-weight:800; z-index:9999;
+      box-shadow:0 14px 36px rgba(0,0,0,.35); transition:.22s}
+    #__toast__.show{opacity:1; transform:translate(-50%,-50%) scale(1)}
+
+    /* footer small texts */
+    .footer{margin:18px 0 24px; text-align:center; color:#64748b; font-size:12px}
+    .sp{height:10px}
   </style>
 </head>
 <body>
-  <header>BINGO – Yo‘qoldi / Topildi</header>
 
-  <div class="container">
-    <h2>Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</h2>
-    <p><em>"Halollik – eng katta mukofot."</em></p>
+  <!-- =========================
+       TOP BAR
+       ========================= -->
+  <div class="topbar">
+    <div class="row">
+      <div class="brand">
+        <div class="badge">BG</div>
+        <div class="title">BINGO</div>
+      </div>
 
-    <!-- Google login -->
-    <button id="googleLogin" class="btn btn-google">Google bilan kirish</button>
-    <!-- Logout -->
-    <button id="logout" class="btn btn-logout" style="display:none;">Chiqish</button>
-
-    <!-- User profile info -->
-    <div id="profile" class="profile" style="display:none;"></div>
-
-    <!-- Announcement form -->
-    <div id="announcementForm" style="display:none;">
-      <h3>E’lon qo‘shish</h3>
-      <input type="text" id="title" placeholder="Nima yo‘qolgan?" style="width:100%;padding:8px;margin:5px 0;">
-      <input type="text" id="reward" placeholder="Topganga mukofot" style="width:100%;padding:8px;margin:5px 0;">
-      <textarea id="desc" placeholder="Qo‘shimcha ma’lumot" style="width:100%;padding:8px;margin:5px 0;"></textarea>
-      <button id="postAd" class="btn" style="background:#43a047;color:white;">E’lonni joylash</button>
-    </div>
-
-    <!-- Announcements list -->
-    <div id="adsList">
-      <h3>Oxirgi e’lonlar</h3>
-      <div id="ads"></div>
+      <div class="controls">
+        <div class="pill" id="langBtn"> <span id="langSelTxt">UZ</span> ▾ </div>
+        <div class="iconbtn" id="homeBtn" title="Bosh sahifa">⌂</div>
+        <div class="iconbtn" id="notifBtn" title="Bildirishnomalar" style="position:relative">🔔<span id="bellDot" class="bell-dot"></span></div>
+        <div class="iconbtn" id="profileBtn" title="Profil">👤</div>
+      </div>
     </div>
   </div>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  <div class="wrap">
+
+    <!-- =========================
+         ALERT BOX
+         ========================= -->
+    <div id="alert" style="display:none; background:#7c2d12; color:#fff; padding:10px 12px; border-radius:12px; margin:8px 0"></div>
+
+    <!-- =========================
+         VIEWS
+         ========================= -->
+    <section id="view_home" class="view active">
+      <div class="hero">
+        <div class="h1" data-i18n="hero_title">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</div>
+        <div class="sub" data-i18n="hero_sub">“Halollik – eng katta mukofot.”</div>
+      </div>
+
+      <div class="menu">
+        <button class="btn btn-red"   data-nav="newLost">❗ <span data-i18n="btn_lost">Yo‘qotdim</span></button>
+        <button class="btn btn-green" data-nav="newFound">✅ <span data-i18n="btn_found">Topdim</span></button>
+        <button class="btn btn-blue"  data-nav="lostList">📋 <span data-i18n="btn_lostlist">Yo‘qotilganlar</span></button>
+        <button class="btn btn-blue"  data-nav="rewardList">🎁 <span data-i18n="btn_reward">Mukofotli</span></button>
+        <button class="btn btn-blue"  data-nav="foundList">🔎 <span data-i18n="btn_foundlist">Topilganlar</span></button>
+        <button class="btn btn-ghost" data-nav="mine">⭐ <span data-i18n="btn_mine">Mening e’lonlarim</span></button>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3 data-i18n="why_title">Nega BINGO?</h3>
+          <div class="muted" data-i18n="why_text">Oddiy forma, tez natija. Barcha e’lonlar bir joyda.</div>
+        </div>
+        <div class="card">
+          <h3 data-i18n="quick_title">Tez kirish</h3>
+          <div class="muted" data-i18n="quick_info">Google bilan kirib, 10 soniyada e’lon qoldiring.</div>
+          <div class="sp"></div>
+          <button id="googleBtn" class="btn" style="width:100%">🔑 <span data-i18n="google_sign">Google bilan kirish</span></button>
+        </div>
+      </div>
+
+      <div class="sp"></div>
+      <h3 style="font-size:22px; margin:8px 0" data-i18n="latest_title">Oxirgi e’lonlar</h3>
+      <div id="latest_list">—</div>
+      <div class="sp"></div>
+    </section>
+
+    <!-- NEW LOST -->
+    <section id="view_newLost" class="view">
+      <div class="card">
+        <h3 style="font-size:22px" data-i18n="lost_form_title">❗ Yo‘qotdim — e’lon</h3>
+        <div class="row2">
+          <div>
+            <label data-i18n="lbl_item">Narsa</label>
+            <input id="l_item" data-i18n-ph="ph_item"/>
+            <div class="hint" data-i18n="h_item">Masalan, “Telefon” yoki “Hujjat”.</div>
+          </div>
+          <div>
+            <label data-i18n="lbl_city">Shahar/Hudud</label>
+            <input id="l_city" data-i18n-ph="ph_city"/>
+          </div>
+        </div>
+
+        <label style="margin-top:8px" data-i18n="lbl_title">Nima yo‘qoldi (kattaroq sarlavha)</label>
+        <input id="l_title" data-i18n-ph="ph_title"/>
+
+        <div class="row2">
+          <div>
+            <label data-i18n="lbl_place">Joy</label>
+            <input id="l_place" data-i18n-ph="ph_place_lost"/>
+          </div>
+          <div>
+            <label data-i18n="lbl_date">Sana/Vaqt</label>
+            <input id="l_date" data-i18n-ph="ph_date_lost"/>
+          </div>
+        </div>
+
+        <div class="row3">
+          <div>
+            <label data-i18n="lbl_contact">Aloqa</label>
+            <input id="l_contact" data-i18n-ph="ph_contact"/>
+          </div>
+          <div>
+            <label data-i18n="lbl_reward">Mukofot (ixtiyoriy)</label>
+            <input id="l_reward" type="number" min="0" step="1000" data-i18n-ph="ph_reward"/>
+          </div>
+          <div>
+            <label data-i18n="lbl_photo">Rasm</label>
+            <input id="l_photo" type="file" accept="image/*"/>
+          </div>
+        </div>
+
+        <label data-i18n="lbl_notes">Qo‘shimcha</label>
+        <textarea id="l_notes" data-i18n-ph="ph_notes"></textarea>
+
+        <div class="sp"></div>
+        <button id="btnLost" class="btn btn-red" data-submit="lost" data-i18n="btn_submit">E’lon berish</button>
+      </div>
+    </section>
+
+    <!-- NEW FOUND -->
+    <section id="view_newFound" class="view">
+      <div class="card">
+        <h3 style="font-size:22px" data-i18n="found_form_title">✅ Topdim — e‘lon</h3>
+
+        <div class="row2">
+          <div>
+            <label data-i18n="lbl_item">Narsa</label>
+            <input id="f_item" data-i18n-ph="ph_item_found"/>
+            <div class="hint" data-i18n="h_item_found">Masalan, “Pasport” yoki “Kalit”.</div>
+          </div>
+          <div>
+            <label data-i18n="lbl_city">Shahar/Hudud</label>
+            <input id="f_city" data-i18n-ph="ph_city"/>
+          </div>
+        </div>
+
+        <label style="margin-top:8px" data-i18n="lbl_title_found">Topilgan narsa (kattaroq sarlavha)</label>
+        <input id="f_title" data-i18n-ph="ph_title_found"/>
+
+        <div class="row2">
+          <div>
+            <label data-i18n="lbl_place">Qayerdan topildi</label>
+            <input id="f_place" data-i18n-ph="ph_place_found"/>
+          </div>
+          <div>
+            <label data-i18n="lbl_date">Sana/Vaqt</label>
+            <input id="f_date" data-i18n-ph="ph_date_found"/>
+          </div>
+        </div>
+
+        <div class="row3">
+          <div>
+            <label data-i18n="lbl_contact">Aloqa</label>
+            <input id="f_contact" data-i18n-ph="ph_contact"/>
+          </div>
+          <div>
+            <label data-i18n="lbl_reward">Mukofot (ixtiyoriy)</label>
+            <input id="f_reward" type="number" min="0" step="1000" data-i18n-ph="ph_reward"/>
+          </div>
+          <div>
+            <label data-i18n="lbl_photo">Rasm</label>
+            <input id="f_photo" type="file" accept="image/*"/>
+          </div>
+        </div>
+
+        <label data-i18n="lbl_notes">Qo‘shimcha</label>
+        <textarea id="f_notes" data-i18n-ph="ph_notes"></textarea>
+
+        <div class="sp"></div>
+        <button id="btnFound" class="btn btn-green" data-submit="found" data-i18n="btn_submit">E’lon berish</button>
+      </div>
+    </section>
+
+    <!-- LISTS -->
+    <section id="view_lostList" class="view">
+      <h3 style="font-size:22px" data-i18n="lost_list_title">📋 Umumiy yo‘qotilganlar</h3>
+      <div id="lost_list">—</div>
+    </section>
+
+    <section id="view_rewardList" class="view">
+      <h3 style="font-size:22px" data-i18n="reward_list_title">🎁 Mukofotli</h3>
+      <div id="reward_list">—</div>
+    </section>
+
+    <section id="view_foundList" class="view">
+      <h3 style="font-size:22px" data-i18n="found_list_title">🔎 Topilganlar</h3>
+      <div id="found_list">—</div>
+    </section>
+
+    <section id="view_mine" class="view">
+      <h3 style="font-size:22px" data-i18n="mine_title">⭐ Mening e’lonlarim</h3>
+      <div id="mine_list">—</div>
+      <div class="sp"></div>
+      <button class="btn btn-ghost" id="clearMineBtn" data-i18n="btn_delete_mine">Mening e’lonlarimni o‘chirish</button>
+    </section>
+
+    <!-- POST CHAT -->
+    <section id="view_chat" class="view">
+      <div class="card">
+        <h3><span data-i18n="chat_title">Xabar</span> — <span id="chatItem"></span></h3>
+        <div class="chatlog" id="chatLog"></div>
+        <div class="sp"></div>
+        <div class="row2">
+          <input id="chatName" data-i18n-ph="ph_name"/>
+          <input id="chatText" data-i18n-ph="ph_message"/>
+        </div>
+        <div class="sp"></div>
+        <button class="btn btn-blue" id="sendChatBtn" data-i18n="btn_send">Yuborish</button>
+      </div>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section id="view_notifs" class="view">
+      <h3 style="font-size:22px" data-i18n="notif_title">🔔 Bildirishnomalar</h3>
+      <div id="notif_list">—</div>
+      <div class="sp"></div>
+      <button class="btn btn-ghost btn-sm" id="markAllRead" data-i18n="notif_mark">Barchasini o‘qilgan qilish</button>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="view_profile" class="view">
+      <div class="card">
+        <h3 style="font-size:22px" data-i18n="profile_title">👤 Profil</h3>
+        <div class="row2">
+          <div>
+            <label data-i18n="lbl_display">Profil nomi</label>
+            <input id="p_name" placeholder="Ism"/>
+          </div>
+          <div>
+            <label data-i18n="lbl_avatar">Avatar</label>
+            <input id="p_photo" type="file" accept="image/*"/>
+            <div class="hint" data-i18n="h_avatar">Rasm yuklasangiz, e’lonlarda ko‘rinadi.</div>
+          </div>
+        </div>
+        <div class="sp"></div>
+        <div class="row2">
+          <button id="saveProfileBtn" class="btn btn-blue" data-i18n="btn_save">Saqlash</button>
+          <button id="logoutBtn" class="btn btn-ghost" data-i18n="btn_logout">Chiqib ketish</button>
+        </div>
+        <div class="sp"></div>
+        <div id="meCard"></div>
+      </div>
+    </section>
+
+    <div class="footer">© <span id="year"></span> BINGO · <span data-i18n="footer_small">Oddiy matnlar pastda kichikroq, asosiy bo‘limlar katta.</span></div>
+  </div>
+
+  <!-- =========================
+       Firebase (COMPAT)
+       ========================= -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
 
   <script>
-    // ✅ Faqat yangi config – Topildi loyihasi
-    const firebaseConfig = {
-      apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
-      authDomain: "topildi.firebaseapp.com",
-      databaseURL: "https://topildi-default-rtdb.firebaseio.com",
-      projectId: "topildi",
-      storageBucket: "topildi.firebasestorage.app",
-      messagingSenderId: "323891530719",
-      appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
-      measurementId: "G-NKCMKCXZQ7"
-    };
+  /* ==========================================================
+     0) HELPERLAR + I18N
+     ========================================================== */
+  const I18N={
+    uz:{
+      hero_title:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",
+      hero_sub:"“Halollik – eng katta mukofot.”",
+      btn_lost:"Yo‘qotdim", btn_found:"Topdim", btn_lostlist:"Yo‘qotilganlar",
+      btn_reward:"Mukofotli", btn_foundlist:"Topilganlar", btn_mine:"Mening e’lonlarim",
+      why_title:"Nega BINGO?", why_text:"Oddiy forma, tez natija. Barcha e’lonlar bir joyda.",
+      quick_title:"Tez kirish", quick_info:"Google bilan kirib, 10 soniyada e’lon qoldiring.",
+      google_sign:"Google bilan kirish", latest_title:"Oxirgi e’lonlar",
+      lost_form_title:"Yo‘qotdim — e’lon", found_form_title:"Topdim — e’lon",
+      lbl_item:"Narsa", lbl_city:"Shahar/Hudud", lbl_place:"Joy", lbl_date:"Sana/Vaqt",
+      lbl_contact:"Aloqa", lbl_reward:"Mukofot (ixt.)", lbl_photo:"Rasm", lbl_notes:"Qo‘shimcha",
+      lbl_title:"Nima yo‘qoldi (kattaroq sarlavha)", lbl_title_found:"Topilgan narsa (kattaroq sarlavha)",
+      ph_item:"Masalan: Telefon", ph_item_found:"Masalan: Pasport",
+      ph_city:"Masalan: Samarqand", ph_place_lost:"Qayerda yo‘qotdingiz?",
+      ph_place_found:"Qayerdan topdingiz?", ph_date_lost:"2025-08-25 14:00",
+      ph_date_found:"2025-08-25 10:00", ph_contact:"+998 ** *** ** **",
+      ph_reward:"100000 so‘m", ph_notes:"Batafsil ma’lumot yozing",
+      ph_title:"Masalan: \"Qora iPhone 12 yo‘qoldi\"", ph_title_found:"Masalan: \"Qizil pasport topildi\"",
+      h_item:"Masalan, “Telefon” yoki “Hujjat”.", h_item_found:"Masalan, “Pasport” yoki “Kalit”.",
+      lost_list_title:"📋 Umumiy yo‘qotilganlar", reward_list_title:"🎁 Mukofotli",
+      found_list_title:"🔎 Topilganlar", mine_title:"⭐ Mening e’lonlarim",
+      btn_delete_mine:"Mening e’lonlarimni o‘chirish", btn_submit:"E’lon berish",
+      chat_title:"Xabar", btn_send:"Yuborish", ph_name:"Ismingiz", ph_message:"Xabar...",
+      notif_title:"Bildirishnomalar", notif_mark:"Barchasini o‘qilgan qilish",
+      profile_title:"Profil", lbl_display:"Profil nomi", lbl_avatar:"Avatar", btn_save:"Saqlash", btn_logout:"Chiqib ketish",
+      confirm_del:"Ushbu e’lon o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi.",
+      footer_small:"Oddiy matnlar pastda kichikroq, asosiy bo‘limlar katta.",
+      toast_posted:"✅ E’loningiz joylandi!", toast_need:"Shahar, aloqa va sarlavha majburiy.",
+      login_need:"Kirish zarur. Avval Google bilan kiring.",
+      dup_block:"❗ Takror e’lon bloklandi (1 daqiqada bir marta).",
+      no_notif:"Hozircha bildirishnoma yo‘q.", no_posts:"Hali e’lon yo‘q.",
+      you:"Siz"
+    },
+    ru:{
+      hero_title:"Потеряли или нашли? Оставьте объявление.",
+      hero_sub:"«Честность — самая большая награда.»",
+      btn_lost:"Потерял(а)", btn_found:"Нашёл(ла)", btn_lostlist:"Потерянные",
+      btn_reward:"С вознаграждением", btn_foundlist:"Найденные", btn_mine:"Мои объявления",
+      why_title:"Почему BINGO?", why_text:"Простая форма, быстрый результат.",
+      quick_title:"Быстрый вход", quick_info:"Войдите через Google и публикуйте за 10 секунд.",
+      google_sign:"Войти через Google", latest_title:"Последние объявления",
+      lost_form_title:"Потерял(а) — объявление", found_form_title:"Нашёл(ла) — объявление",
+      lbl_item:"Предмет", lbl_city:"Город/Регион", lbl_place:"Место", lbl_date:"Дата/Время",
+      lbl_contact:"Контакт", lbl_reward:"Вознаграждение (необ.)", lbl_photo:"Фото", lbl_notes:"Дополнительно",
+      lbl_title:"Что потеряно (крупный заголовок)", lbl_title_found:"Что найдено (крупный заголовок)",
+      ph_item:"Напр.: Телефон", ph_item_found:"Напр.: Паспорт",
+      ph_city:"Напр.: Самарканд", ph_place_lost:"Где потеряли?",
+      ph_place_found:"Где нашли?", ph_date_lost:"2025-08-25 14:00",
+      ph_date_found:"2025-08-25 10:00", ph_contact:"+998 ** *** ** **",
+      ph_reward:"100000 сум", ph_notes:"Опишите подробнее",
+      ph_title:"Напр.: «Потерян чёрный iPhone 12»", ph_title_found:"Напр.: «Найден красный паспорт»",
+      h_item:"Например, «Телефон» или «Документ».", h_item_found:"Например, «Паспорт» или «Ключи».",
+      lost_list_title:"📋 Все потерянные", reward_list_title:"🎁 С вознаграждением",
+      found_list_title:"🔎 Найденные", mine_title:"⭐ Мои объявления",
+      btn_delete_mine:"Удалить мои объявления", btn_submit:"Опубликовать",
+      chat_title:"Сообщение", btn_send:"Отправить", ph_name:"Ваше имя", ph_message:"Сообщение...",
+      notif_title:"Уведомления", notif_mark:"Пометить как прочитанные",
+      profile_title:"Профиль", lbl_display:"Имя профиля", lbl_avatar:"Аватар", btn_save:"Сохранить", btn_logout:"Выйти",
+      confirm_del:"Удалить объявление? Действие необратимо.",
+      footer_small:"Нижние тексты меньше, крупные — в разделах.",
+      toast_posted:"✅ Ваше объявление опубликовано!", toast_need:"Город, контакт и заголовок обязательны.",
+      login_need:"Нужно войти. Сначала войдите через Google.",
+      dup_block:"❗ Повторная публикация заблокирована (раз в минуту).",
+      no_notif:"Пока нет уведомлений.", no_posts:"Пока нет объявлений.",
+      you:"Вы"
+    },
+    en:{
+      hero_title:"Lost or found? Post it.",
+      hero_sub:"“Honesty is the greatest reward.”",
+      btn_lost:"Lost", btn_found:"Found", btn_lostlist:"Lost Items",
+      btn_reward:"With Reward", btn_foundlist:"Found Items", btn_mine:"My Posts",
+      why_title:"Why BINGO?", why_text:"Simple form, fast results.",
+      quick_title:"Quick sign-in", quick_info:"Sign in with Google and post in 10s.",
+      google_sign:"Sign in with Google", latest_title:"Latest posts",
+      lost_form_title:"Lost — post", found_form_title:"Found — post",
+      lbl_item:"Item", lbl_city:"City/Region", lbl_place:"Place", lbl_date:"Date/Time",
+      lbl_contact:"Contact", lbl_reward:"Reward (opt.)", lbl_photo:"Photo", lbl_notes:"Notes",
+      lbl_title:"What is lost (big title)", lbl_title_found:"What is found (big title)",
+      ph_item:"E.g. Phone", ph_item_found:"E.g. Passport",
+      ph_city:"E.g. Samarkand", ph_place_lost:"Where did you lose it?",
+      ph_place_found:"Where did you find it?", ph_date_lost:"2025-08-25 14:00",
+      ph_date_found:"2025-08-25 10:00", ph_contact:"+998 ** *** ** **",
+      ph_reward:"100000 UZS", ph_notes:"Add more details",
+      ph_title:"E.g. “Black iPhone 12 lost”", ph_title_found:"E.g. “Red passport found”",
+      h_item:"For example, “Phone” or “Document”.", h_item_found:"For example, “Passport” or “Keys”.",
+      lost_list_title:"📋 All lost", reward_list_title:"🎁 With reward",
+      found_list_title:"🔎 All found", mine_title:"⭐ My posts",
+      btn_delete_mine:"Delete my posts", btn_submit:"Post",
+      chat_title:"Message", btn_send:"Send", ph_name:"Your name", ph_message:"Message...",
+      notif_title:"Notifications", notif_mark:"Mark all read",
+      profile_title:"Profile", lbl_display:"Display name", lbl_avatar:"Avatar", btn_save:"Save", btn_logout:"Log out",
+      confirm_del:"Delete this post? This cannot be undone.",
+      footer_small:"Small text at bottom, large titles in sections.",
+      toast_posted:"✅ Your post is published!", toast_need:"City, contact and title are required.",
+      login_need:"Please sign in first (Google).",
+      dup_block:"❗ Duplicate blocked (once per minute).",
+      no_notif:"No notifications yet.", no_posts:"No posts yet.",
+      you:"You"
+    }
+  };
+  const $=sel=>document.querySelector(sel);
+  const $$=sel=>Array.from(document.querySelectorAll(sel));
+  const byId=id=>document.getElementById(id);
+  function t(key){const L=localStorage.getItem('lang')||'uz'; return (I18N[L]||I18N.uz)[key]||key}
+  function applyI18n(){
+    $$('#langSelTxt').forEach(el=>el.textContent=(localStorage.getItem('lang')||'uz').toUpperCase());
+    $$('[data-i18n]').forEach(el=>el.textContent=t(el.getAttribute('data-i18n')));
+    $$('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.getAttribute('data-i18n-ph'))});
+  }
+  function toast(msg,ok=true){
+    let el=byId('__toast__'); if(!el){el=document.createElement('div'); el.id='__toast__'; document.body.appendChild(el)}
+    el.style.background=ok?'#111827':'#7c2d12'; el.textContent=msg; el.classList.add('show');
+    setTimeout(()=>el.classList.remove('show'),2200);
+  }
+  function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 
-    // Init
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+  // simple router
+  let currentView='home';
+  function show(name){
+    ['home','newLost','newFound','lostList','rewardList','foundList','mine','chat','profile','notifs'].forEach(v=>{
+      const el=byId('view_'+v); if(el) el.classList.toggle('active',v===name);
+    });
+    currentView=name;
+    if(name==='lostList') renderLost();
+    if(name==='foundList') renderFound();
+    if(name==='rewardList') renderReward();
+    if(name==='mine') renderMine();
+    if(name==='notifs') renderNotifs();
+    history.replaceState({v:name},'', '#'+name);
+    window.scrollTo(0,0);
+  }
 
-    // Elements
-    const loginBtn = document.getElementById("googleLogin");
-    const logoutBtn = document.getElementById("logout");
-    const profileDiv = document.getElementById("profile");
-    const formDiv = document.getElementById("announcementForm");
-    const adsDiv = document.getElementById("ads");
+  // events for nav/menu
+  $('#homeBtn').onclick = ()=>show('home');
+  $('#profileBtn').onclick = ()=>show('profile');
+  $('#notifBtn').onclick = ()=>show('notifs');
+  $$('#view_home .menu .btn').forEach(b=>b.onclick=()=>show(b.dataset.nav));
+  $('#langBtn').onclick=()=>{
+    const seq=['uz','ru','en'];
+    let L=localStorage.getItem('lang')||'uz';
+    L=seq[(seq.indexOf(L)+1)%seq.length];
+    localStorage.setItem('lang',L); applyI18n();
+  };
 
-    // Google login
-    loginBtn.onclick = async () => {
+  // year
+  byId('year').textContent=(new Date).getFullYear();
+
+  /* ==========================================================
+     1) FIREBASE INIT
+     ========================================================== */
+  const firebaseConfig = {
+    apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+    authDomain: "topildi.firebaseapp.com",
+    databaseURL: "https://topildi-default-rtdb.firebaseio.com",
+    projectId: "topildi",
+    storageBucket: "topildi.firebasestorage.app",
+    messagingSenderId: "323891530719",
+    appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
+    measurementId: "G-NKCMKCXZQ7"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
+  const stg  = firebase.storage();
+
+  // my UID local (for guest chat name until auth)
+  const MY_UID_LOCAL = (function(){
+    let id=localStorage.getItem('bingo_uid'); if(!id){id='u_'+Math.random().toString(36).slice(2); localStorage.setItem('bingo_uid',id)}
+    return id;
+  })();
+
+  /* ==========================================================
+     2) AUTH — Google + Profile
+     ========================================================== */
+  let ME=null; // {uid, displayName, photoURL, email}
+  let unsubNotifs=null;
+
+  async function signInGoogle(){
+    try{
       const provider = new firebase.auth.GoogleAuthProvider();
-      try {
-        await auth.signInWithPopup(provider);
-      } catch (err) {
-        alert("Kirishda xato: " + err.message);
+      // Prefer popup, fallback to redirect
+      let cred=null;
+      try{ cred=await auth.signInWithPopup(provider) }
+      catch(e){
+        if(e.code==='auth/operation-not-supported-in-this-environment' || e.code==='auth/popup-blocked'){
+          await auth.signInWithRedirect(provider); return;
+        }else throw e;
       }
+      await afterLogin(cred.user);
+    }catch(e){
+      toast(e.message||'Login error',false);
+    }
+  }
+  $('#googleBtn').onclick=signInGoogle;
+
+  async function afterLogin(user){
+    if(!user) return;
+    // profile doc
+    const ref = db.collection('users').doc(user.uid);
+    const snap= await ref.get();
+    if(!snap.exists){
+      await ref.set({
+        uid:user.uid, email:user.email||null,
+        displayName:user.displayName||'',
+        photoURL:user.photoURL||'',
+        created: Date.now(), lang:(localStorage.getItem('lang')||'uz')
+      });
+    }
+    ME = { uid:user.uid, email:user.email||null,
+           displayName: user.displayName|| (snap.data()?.displayName||''),
+           photoURL: user.photoURL || (snap.data()?.photoURL||'') };
+    // If no display name -> open profile to set
+    if(!ME.displayName){ show('profile'); toast('Ismingizni saqlang', true) }
+    startNotifListener();
+    renderMeCard();
+  }
+
+  auth.onAuthStateChanged(async user=>{
+    if(user){ await afterLogin(user) } else { ME=null; stopNotifListener(); renderMeCard(); }
+  });
+
+  async function saveProfile(){
+    if(!auth.currentUser){ toast(t('login_need'),false); return }
+    const name = byId('p_name').value.trim();
+    let url = ME?.photoURL||'';
+    const file = byId('p_photo').files[0];
+    if(file){
+      const path = `avatars/${auth.currentUser.uid}/${Date.now()}_${file.name}`;
+      const snap = await stg.ref(path).put(file);
+      url = await snap.ref.getDownloadURL();
+    }
+    await db.collection('users').doc(auth.currentUser.uid).set({
+      displayName:name||ME?.displayName||'',
+      photoURL:url||'',
+      updated: Date.now()
+    },{merge:true});
+    // Update local
+    ME.displayName = name||ME.displayName;
+    ME.photoURL = url||ME.photoURL;
+    toast('✅ Saved');
+    renderMeCard();
+  }
+  $('#saveProfileBtn').onclick=saveProfile;
+  $('#logoutBtn').onclick=()=>auth.signOut().then(()=>toast('OK'));
+
+  function renderMeCard(){
+    const c = byId('meCard');
+    const u = auth.currentUser;
+    if(!u){ c.innerHTML=`<div class="muted">${t('login_need')}</div>`; return }
+    const name = ME?.displayName || u.displayName || t('you');
+    const photo= ME?.photoURL || u.photoURL || '';
+    byId('p_name').value = name;
+    c.innerHTML = `
+      <div class="post">
+        <div class="hd"><div class="kind">👤 ${esc(name)}</div><div class="date">${u.email||''}</div></div>
+        ${photo?`<img class="pic" src="${photo}"/>`:''}
+      </div>`;
+  }
+
+  /* ==========================================================
+     3) NOTIFICATIONS (in-app)
+     users/{uid}/notifs/{id} : {text, postId, chatId, ts, read:false}
+     ========================================================== */
+  function startNotifListener(){
+    stopNotifListener();
+    if(!auth.currentUser) return;
+    unsubNotifs = db.collection('users').doc(auth.currentUser.uid)
+      .collection('notifs').where('read','==',false).orderBy('ts','desc')
+      .onSnapshot(s=>{
+        const has = s.docs.length>0;
+        byId('bellDot').style.display = has?'block':'none';
+      });
+  }
+  function stopNotifListener(){ if(unsubNotifs){unsubNotifs(); unsubNotifs=null; byId('bellDot').style.display='none'} }
+
+  async function renderNotifs(){
+    if(!auth.currentUser){ byId('notif_list').innerHTML=`<div class="muted">${t('login_need')}</div>`; return }
+    const q = await db.collection('users').doc(auth.currentUser.uid).collection('notifs').orderBy('ts','desc').limit(50).get();
+    if(q.empty){ byId('notif_list').innerHTML=`<div class="muted">${t('no_notif')}</div>`; return }
+    const html = q.docs.map(d=>{
+      const n=d.data(); return `
+        <div class="post">
+          <div class="hd"><div class="kind">🔔 ${new Date(n.ts).toLocaleString()}</div>
+            <div class="date">${n.read?'': '• new'}</div></div>
+          <div>${esc(n.text||'')}</div>
+          <div class="actions"><button class="btn btn-sm" onclick="openPostChat('${n.postId}')">💬 Chat</button></div>
+        </div>`;
+    }).join('');
+    byId('notif_list').innerHTML=html;
+  }
+  byId('markAllRead').onclick=async()=>{
+    if(!auth.currentUser) return;
+    const col = db.collection('users').doc(auth.currentUser.uid).collection('notifs');
+    const snap = await col.where('read','==',false).get();
+    const batch=db.batch(); snap.forEach(doc=>batch.update(doc.ref,{read:true}));
+    await batch.commit(); toast('OK');
+  }
+
+  /* ==========================================================
+     4) POSTS — CRUD
+     Structure: posts/{id} + chats subcollection
+     ========================================================== */
+  let ALL_POSTS=[]; // real-time cache for lists
+  db.collection('posts').orderBy('created','desc').onSnapshot(s=>{
+    ALL_POSTS = s.docs.map(d=>({id:d.id, ...d.data()}));
+    if(currentView==='lostList') renderLost();
+    if(currentView==='foundList') renderFound();
+    if(currentView==='rewardList') renderReward();
+    if(currentView==='mine') renderMine();
+    if(currentView==='home') renderLatest();
+  });
+
+  function card(p, mine=false){
+    const L = localStorage.getItem('lang')||'uz';
+    const kind = p.kind==='lost'? (L==='ru'?'❗ Потеряно':(L==='en'?'❗ Lost':'❗ Yo‘qoldi'))
+                              : (L==='ru'?'✅ Найдено':(L==='en'?'✅ Found':'✅ Topildi'));
+    const reward = (p.reward||0)>0?` · 🎁 ${Number(p.reward).toLocaleString()} UZS`:``;
+    const name = p.userName || 'Anon';
+    const avatar = p.userPhoto||'';
+    return `
+    <div class="post">
+      ${p.photoURL?`<img class="pic" src="${p.photoURL}">`:''}
+      <div class="hd">
+        <div class="kind">${kind}${reward}</div>
+        <div class="date">${new Date(p.created).toLocaleString()}</div>
+      </div>
+      <div class="title">${esc(p.title||p.item||'')}</div>
+      <div class="meta">${esc(p.city||'-')} · ${esc(p.place||'-')} · ${esc(p.date||'-')}</div>
+      <div style="margin-top:6px">${esc(p.notes||'')}</div>
+      <div class="meta" style="margin-top:6px">👤 ${avatar?`<img src="${avatar}" style="width:18px;height:18px;border-radius:50%;vertical-align:-3px;margin-right:4px">`:''}${esc(name)}</div>
+      <div class="meta" style="margin-top:4px">📞 ${esc(p.contact||'-')}</div>
+      <div class="actions">
+        ${mine?`<button class="btn btn-ghost btn-sm" onclick="delPost('${p.id}')">🗑️ ${t('btn_delete_mine')}</button>`:''}
+        <button class="btn btn-blue btn-sm" onclick="openPostChat('${p.id}')">✉️ ${L==='ru'?'Написать':(L==='en'?'Message':'Xabar')}</button>
+      </div>
+    </div>`;
+  }
+
+  function renderLatest(){
+    const el=byId('latest_list'); if(!el) return;
+    const arr = ALL_POSTS.slice(0,6);
+    el.innerHTML = arr.length? arr.map(p=>card(p,false)).join('') : `<div class="muted">${t('no_posts')}</div>`;
+  }
+  function renderLost(){ const el=byId('lost_list'); if(!el) return;
+    const arr=ALL_POSTS.filter(p=>p.kind==='lost'); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):`<div class="muted">${t('no_posts')}</div>`;
+  }
+  function renderFound(){ const el=byId('found_list'); if(!el) return;
+    const arr=ALL_POSTS.filter(p=>p.kind==='found'); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):`<div class="muted">${t('no_posts')}</div>`;
+  }
+  function renderReward(){ const el=byId('reward_list'); if(!el) return;
+    const arr=ALL_POSTS.filter(p=>p.kind==='lost' && (p.reward||0)>0); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):`<div class="muted">${t('no_posts')}</div>`;
+  }
+  function renderMine(){ const el=byId('mine_list'); if(!el) return;
+    if(!auth.currentUser){ el.innerHTML=`<div class="muted">${t('login_need')}</div>`; return }
+    const arr=ALL_POSTS.filter(p=>p.uid===auth.currentUser.uid); el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):`<div class="muted">${t('no_posts')}</div>`;
+  }
+
+  // delete my post
+  window.delPost = async function(id){
+    const p=ALL_POSTS.find(x=>x.id===id); if(!p || !auth.currentUser || p.uid!==auth.currentUser.uid) return;
+    if(!confirm(t('confirm_del'))) return;
+    await db.collection('posts').doc(id).delete();
+    // delete sub-chats
+    const chats = await db.collection('posts').doc(id).collection('chats').get();
+    const batch = db.batch(); chats.forEach(d=>batch.delete(d.ref)); await batch.commit();
+  };
+
+  // submit forms — duplicate guard
+  function formVals(isLost){
+    const g = isLost?{
+      item:byId('l_item').value.trim(), title:byId('l_title').value.trim(),
+      city:byId('l_city').value.trim(), place:byId('l_place').value.trim(),
+      date:byId('l_date').value.trim(), contact:byId('l_contact').value.trim(),
+      reward: parseInt(byId('l_reward').value||'0',10), notes:byId('l_notes').value.trim(),
+      file:byId('l_photo').files[0]
+    }:{
+      item:byId('f_item').value.trim(), title:byId('f_title').value.trim(),
+      city:byId('f_city').value.trim(), place:byId('f_place').value.trim(),
+      date:byId('f_date').value.trim(), contact:byId('f_contact').value.trim(),
+      reward: parseInt(byId('f_reward').value||'0',10), notes:byId('f_notes').value.trim(),
+      file:byId('f_photo').files[0]
     };
+    return g;
+  }
 
-    // Logout
-    logoutBtn.onclick = () => auth.signOut();
+  async function submit(kind, btnId){
+    if(!auth.currentUser){ toast(t('login_need'),false); show('home'); return }
+    const isLost = kind==='lost';
+    const v = formVals(isLost);
+    if(!(v.city && v.contact && (v.title||v.item))){ toast(t('toast_need'),false); return }
 
-    // Auth state
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "block";
-        profileDiv.style.display = "block";
-        formDiv.style.display = "block";
-        profileDiv.innerHTML = `
-          <b>👤 ${user.displayName}</b><br>
-          ${user.email}
-        `;
-      } else {
-        loginBtn.style.display = "block";
-        logoutBtn.style.display = "none";
-        profileDiv.style.display = "none";
-        formDiv.style.display = "none";
+    // duplicate guard (1 minute)
+    const hash = (kind+'|'+v.city+'|'+v.contact+'|'+(v.title||v.item)).toLowerCase();
+    const lastHash = localStorage.getItem('last_post_hash');
+    const lastTs   = parseInt(localStorage.getItem('last_post_ts')||'0',10);
+    if(lastHash===hash && Date.now()-lastTs<60*1000){ toast(t('dup_block'),false); return }
+    localStorage.setItem('last_post_hash',hash); localStorage.setItem('last_post_ts',Date.now().toString());
+
+    const btn=byId(btnId); btn.disabled=true; btn.classList.add('btn-disabled');
+
+    try{
+      let photoURL=null;
+      if(v.file){
+        const path=`posts/${auth.currentUser.uid}/${Date.now()}_${v.file.name}`;
+        const snap=await stg.ref(path).put(v.file);
+        photoURL=await snap.ref.getDownloadURL();
       }
-    });
+      const udoc = await db.collection('users').doc(auth.currentUser.uid).get();
+      const user = udoc.data()||{};
+      const post = {
+        kind, item:v.item, title:v.title, city:v.city, place:v.place, date:v.date,
+        contact:v.contact, reward: v.reward||0, notes:v.notes||'',
+        photoURL:photoURL||'', uid:auth.currentUser.uid,
+        userName: user.displayName || auth.currentUser.displayName || 'Anon',
+        userPhoto: user.photoURL  || auth.currentUser.photoURL  || '',
+        created: Date.now()
+      };
+      await db.collection('posts').add(post);
+      // clear fields
+      if(isLost){
+        ['l_item','l_title','l_city','l_place','l_date','l_contact','l_reward','l_notes'].forEach(id=>byId(id).value='');
+        byId('l_photo').value='';
+      }else{
+        ['f_item','f_title','f_city','f_place','f_date','f_contact','f_reward','f_notes'].forEach(id=>byId(id).value='');
+        byId('f_photo').value='';
+      }
+      toast(t('toast_posted'));
+      show(isLost?'lostList':'foundList');
+    }catch(e){
+      toast(e.message||'Error',false);
+    }finally{
+      setTimeout(()=>{btn.disabled=false; btn.classList.remove('btn-disabled')}, 1000);
+    }
+  }
+  byId('btnLost').onclick = ()=>submit('lost','btnLost');
+  byId('btnFound').onclick= ()=>submit('found','btnFound');
 
-    // E’lon qo‘shish
-    document.getElementById("postAd").onclick = async () => {
-      const user = auth.currentUser;
-      if (!user) return alert("Avval tizimga kiring!");
-      const title = document.getElementById("title").value;
-      const reward = document.getElementById("reward").value;
-      const desc = document.getElementById("desc").value;
-      if (!title) return alert("Sarlavha kerak!");
+  // clear my posts
+  byId('clearMineBtn').onclick=async()=>{
+    if(!auth.currentUser) return;
+    const mine = ALL_POSTS.filter(p=>p.uid===auth.currentUser.uid);
+    const batch=db.batch();
+    mine.forEach(p=>batch.delete(db.collection('posts').doc(p.id)));
+    await batch.commit(); toast('OK');
+  };
 
-      await db.collection("ads").add({
-        title, reward, desc,
-        author: user.displayName,
-        email: user.email,
-        created: new Date()
-      });
+  /* ==========================================================
+     5) CHAT + NOTIF creation
+     ========================================================== */
+  let CURRENT_CHAT_POST=null;
+  window.openPostChat = function(postId){
+    const p = ALL_POSTS.find(x=>x.id===postId); if(!p) return;
+    CURRENT_CHAT_POST = p;
+    byId('chatItem').textContent = p.title||p.item||'';
+    byId('chatLog').innerHTML='...';
+    // listener
+    if(window._unsubChat) window._unsubChat();
+    window._unsubChat = db.collection('posts').doc(postId).collection('chats').orderBy('ts')
+      .onSnapshot(s=>{
+        const html = s.docs.map(d=>{
+          const m=d.data(); const me = (auth.currentUser && m.uid===auth.currentUser.uid);
+          return `<div class="msg ${me?'me':''}"><b>${esc(m.name||'Anon')}</b> · <span style="opacity:.8;font-size:12px">${new Date(m.ts).toLocaleTimeString()}</span><div>${esc(m.text)}</div></div>`;
+        }).join('');
+        byId('chatLog').innerHTML = html || `<div class="muted">No messages</div>`;
+        const log=byId('chatLog'); log.scrollTop=log.scrollHeight;
+      },e=>toast(e.message,false));
+    show('chat');
+  };
 
-      document.getElementById("title").value = "";
-      document.getElementById("reward").value = "";
-      document.getElementById("desc").value = "";
-      alert("E’lon joylandi!");
-    };
+  byId('sendChatBtn').onclick=async()=>{
+    if(!CURRENT_CHAT_POST) return;
+    const text = byId('chatText').value.trim(); if(!text) return;
+    const name = (byId('chatName').value.trim() || (ME?.displayName) || (auth.currentUser?.displayName) || 'Anon');
+    const uid  = auth.currentUser? auth.currentUser.uid : MY_UID_LOCAL;
+    await db.collection('posts').doc(CURRENT_CHAT_POST.id).collection('chats').add({name,uid,text,ts:Date.now()});
+    byId('chatText').value='';
+    // create notif for owner (if not self)
+    if(auth.currentUser && CURRENT_CHAT_POST.uid !== auth.currentUser.uid){
+      const col = db.collection('users').doc(CURRENT_CHAT_POST.uid).collection('notifs');
+      await col.add({text:`${name}: ${text}`, postId: CURRENT_CHAT_POST.id, chatId:null, ts:Date.now(), read:false});
+    }
+  };
 
-    // E’lonlarni ko‘rsatish
-    db.collection("ads").orderBy("created", "desc").onSnapshot(snap => {
-      adsDiv.innerHTML = "";
-      snap.forEach(doc => {
-        const ad = doc.data();
-        adsDiv.innerHTML += `
-          <div style="border:1px solid #ddd;padding:10px;margin:5px;border-radius:6px;background:#fff;">
-            <b>${ad.title}</b><br>
-            Mukofot: ${ad.reward || "-"}<br>
-            ${ad.desc || ""}<br>
-            <small>By: ${ad.author}</small>
-          </div>
-        `;
-      });
-    });
+  /* ==========================================================
+     6) INIT
+     ========================================================== */
+  (function init(){
+    applyI18n();
+    const h=location.hash?location.hash.substring(1):'home';
+    const valid=['home','newLost','newFound','lostList','rewardList','foundList','mine','chat','profile','notifs'];
+    show(valid.includes(h)?h:'home');
+  })();
   </script>
 </body>
-</html>
+  </html>
