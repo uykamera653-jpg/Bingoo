@@ -2,90 +2,446 @@
 <html lang="uz">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>BINGO — Kirish (Google bilan)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <title>BINGO — Yo‘qoldi / Topildi</title>
   <meta name="theme-color" content="#f59e0b" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
+    /* =========================
+       BINGO – Full Single-File App
+       Dizayn: yandex go ruhida, katta sarlavhalar,
+       yumaloq kartalar, bir xil ranglar
+       ========================= */
+
     :root{
-      --bg1:#FFF7D6; --bg2:#FFE59A;
-      --brand:#f59e0b; --ink:#0f172a;
-      --panel:#0f172a; --ring:#223047;
-      --muted:#475569; --good:#16a34a; --bad:#dc2626;
+      --bg: #fff7e6;           /* umumiy fonda iliq rang */
+      --paper: #0f172a;        /* kartalar fon (to'q ko'k) */
+      --text: #0f172a;         /* matn */
+      --muted: #475569;        /* past matn */
+      --brand: #f59e0b;        /* sariq */
+      --brand-2: #fbbf24;      /* sariq-2 */
+      --ok: #16a34a;           /* yashil */
+      --bad: #ef4444;          /* qizil */
+      --card: #111827;         /* qora kartalar */
+      --chip: #eab30822;
+      --ring: #f59e0b55;
+      --shadow: 0 12px 30px rgba(0,0,0,.08);
+      --radius: 18px;
     }
+
     *{box-sizing:border-box}
-    html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
-    body{background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--ink)}
-    .wrap{max-width:980px;margin:0 auto;padding:16px 14px 40px}
-    .topbar{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(255,243,204,.92),rgba(255,236,173,.78));border-bottom:1px solid #f1d28a}
-    .hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px}
-    .brand{display:flex;align-items:center;gap:10px}
-    .logo{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:#fff3c4;border:1px solid #f1d28a;font-weight:900;color:#b45309}
-    .title{font-weight:800;letter-spacing:.2px}
-    .profile{display:flex;align-items:center;gap:10px}
-    .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #f1d28a;background:#fff}
-    .btn{border-radius:14px;padding:12px 16px;border:1px solid #e2e8f0;background:#111a2b;color:#e5eef7;font-weight:700;cursor:pointer}
-    .btn.alt{background:#fff;color:#0f172a;border-color:#e2e8f0}
-    .btn.good{background:var(--good)} .btn.bad{background:var(--bad)}
-    .hero{margin:24px 0 14px}
-    .headline{font-size:34px;line-height:1.25;font-weight:900}
-    .muted{color:#475569;margin-top:6px}
-    .card{background:var(--panel);color:#e5eef7;border:1px solid var(--ring);border-radius:18px;padding:14px;margin:16px 0}
-    .alert{display:none;margin:10px 0;background:#dc2626;color:#fff;padding:12px;border-radius:12px;font-weight:700;white-space:pre-wrap}
-    .ok{background:#16a34a}
-    .row{display:flex;gap:10px;flex-wrap:wrap}
-    .hidden{display:none !important}
+    html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:linear-gradient(180deg,#fff7e6,#fff0d6)}
+    img{max-width:100%;height:auto;display:block}
+    a{color:inherit;text-decoration:none}
+    button,input,select,textarea{font-family:inherit}
+
+    /* Topbar */
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      display:flex;align-items:center;gap:10px;
+      padding:12px 16px;background:linear-gradient(180deg,var(--brand),#f59e0b);
+      color:#111;
+      border-bottom:1px solid #00000010;
+    }
+    .topbar .logo{
+      display:flex;align-items:center;gap:10px;font-weight:800;
+      background:#00000010;color:#111;padding:8px 12px;border-radius:14px
+    }
+    .topbar .right{margin-left:auto;display:flex;gap:10px;align-items:center}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      background:#0b0b0b10;color:#111;padding:10px 14px;border-radius:999px;
+      font-weight:600;border:1px solid #ffffff33;backdrop-filter: blur(4px);
+    }
+    .btn{cursor:pointer;border:0}
+    .btn.primary{background:#111;color:#fff;padding:10px 18px;border-radius:999px}
+    .btn.ghost{background:transparent;border:1px solid #00000020}
+    .btn.warn{background:var(--bad);color:#fff}
+
+    /* Layout */
+    .wrap{max-width:1024px;margin:0 auto;padding:16px}
+    .grid{display:grid;gap:16px}
+    .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    @media (max-width:860px){.grid.cols-2,.grid.cols-3{grid-template-columns:1fr}}
+
+    /* Sections */
+    .section{margin:18px 0}
+    .title-xl{
+      font-size:42px;line-height:1.05;letter-spacing:-.02em;
+      font-weight:800;margin:8px 0 12px;
+    }
+    .subtitle{color:#374151;font-size:16px;margin-bottom:18px}
+
+    .huge-cta{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:20px 0}
+    @media (max-width:860px){.huge-cta{grid-template-columns:1fr}}
+    .cta{
+      background:#fff;border:1px solid #00000010;border-radius:24px;padding:18px 20px;
+      display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);
+      transition:.2s transform, .2s box-shadow; cursor:pointer
+    }
+    .cta:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,0,0,.12)}
+    .cta .ico{
+      width:44px;height:44px;display:grid;place-items:center;
+      border-radius:14px;font-size:22px
+    }
+    .cta.red .ico{background:#fee2e2;color:#b91c1c}
+    .cta.green .ico{background:#dcfce7;color:#166534}
+    .cta.dark{background:#0f172a;color:#fff;border-color:#0f172a}
+    .cta.dark .ico{background:#111827;color:#eab308}
+    .cta .txt{font-weight:700;font-size:20px}
+
+    /* Cards */
+    .card{
+      background:var(--paper);color:#fff;border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:16px;border:1px solid #ffffff08
+    }
+    .card .h{font-weight:700;font-size:18px;margin-bottom:8px}
+    .muted{color:#9ca3af}
+    .badge{display:inline-flex;gap:6px;align-items:center;background:var(--chip);padding:6px 10px;border-radius:999px;font-weight:600}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+    /* Forms */
+    .form{display:grid;gap:14px}
+    .field{display:grid;gap:6px}
+    .label{font-weight:700}
+    .hint{font-size:12px;color:#64748b}
+    .in{
+      background:#fff;border:1.5px solid #e5e7eb;padding:12px 14px;border-radius:12px;
+      outline:0;transition:border-color .15s, box-shadow .15s
+    }
+    .in:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--ring)}
+    .switch{display:flex;gap:6px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:12px;padding:4px}
+    .switch .sw{flex:1;text-align:center;padding:10px;border-radius:10px;cursor:pointer;font-weight:700}
+    .switch .sw.active{background:#fff;border:1px solid #e5e7eb}
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn.big{padding:14px 18px;border-radius:14px;font-weight:800}
+
+    /* Ad list */
+    .ad{display:grid;grid-template-columns:96px 1fr;gap:14px;border-bottom:1px dashed #ffffff22;padding:12px 0}
+    .ad:last-child{border-bottom:0}
+    .ad .thumb{width:96px;height:96px;border-radius:12px;background:#111827;overflow:hidden}
+    .ad .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+    /* Toasts & modal */
+    .toast{
+      position:fixed;left:50%;transform:translateX(-50%);
+      bottom:18px;background:#111;color:#fff;border-radius:14px;padding:12px 16px;
+      box-shadow:var(--shadow);z-index:1000;display:none;max-width:90vw
+    }
+    .toast.ok{background:var(--ok)} .toast.err{background:var(--bad)} .toast.warn{background:#ca8a04}
+    .notice{background:#ef44441a;border:1px dashed #ef4444;padding:12px;border-radius:14px}
+
+    /* Tabs (page routing) */
+    .page{display:none}
+    .page.active{display:block}
+
+    /* Bottom nav (mobile) */
+    .bottom{
+      position:sticky;bottom:0;background:#111827;color:#fff;border-top:1px solid #ffffff10;
+      display:flex;gap:10px;justify-content:space-between;padding:10px
+    }
+    .bn{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;border-radius:10px;background:#ffffff08}
+    .bn.active{outline:2px solid #eab30855}
+
+    /* Avatar */
+    .avatar{width:42px;height:42px;border-radius:999px;object-fit:cover;border:2px solid #ffffff88}
+
+    /* Hide on signed-in / signed-out */
+    [data-auth="in"]{display:none}
+    .authed [data-auth="out"]{display:none}
+    .authed [data-auth="in"]{display:initial}
+
+    /* Language dropdown */
+    .select{appearance:none;background:#fff;border:1px solid #e5e7eb;padding:10px 12px;border-radius:10px}
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="hdr">
-      <div class="brand">
-        <div class="logo">BG</div>
-        <div class="title">BINGO</div>
-      </div>
-      <div class="profile" id="profileBox">
-        <!-- auth holatiga qarab JS to‘ldiradi -->
-        <button id="googleLoginBtn" class="btn">🔑 Google bilan kirish</button>
-      </div>
-    </div>
-  </div>
 
-  <div class="wrap">
-    <div id="banner" class="alert" role="alert"></div>
-
-    <div class="hero">
-      <div class="headline">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</div>
-      <div class="muted">“Halollik — eng katta mukofot.”</div>
+  <!-- ======================= TOPBAR ======================= -->
+  <header class="topbar" id="topbar">
+    <div class="logo pill">
+      <strong>BG</strong> <span>BINGO</span>
     </div>
 
-    <div class="card">
-      <b>Kirish</b>
-      <p style="margin:8px 0 12px;color:#cbd5e1">Hisobga kirish uchun quyidagi tugmani bosing. Agar ruxsat berilmagan domen xatosi chiqsa — Firebase’dagi <i>Authentication → Settings → Authorized domains</i> ga saytingiz domenini qo‘shing.</p>
-      <div class="row">
-        <button id="loginBtn2" class="btn">🔐 Google bilan kirish</button>
-        <button id="logoutBtn" class="btn alt hidden">↩️ Chiqish</button>
-      </div>
-    </div>
+    <div class="right">
+      <select class="select" id="langSelect" title="Language">
+        <option value="uz">UZ</option>
+        <option value="ru">RU</option>
+        <option value="en">EN</option>
+      </select>
 
-    <div class="card hidden" id="meCard">
-      <b>Mening profilim</b>
-      <div class="row" style="align-items:center;margin-top:10px">
-        <img id="meAvatar" class="avatar" alt="">
-        <div id="meText"></div>
-      </div>
-    </div>
-  </div>
+      <button class="btn pill" id="openNoti" data-auth="in">🔔 <span id="notiCount">0</span></button>
 
-  <!-- Firebase (modular, CDN) -->
+      <button class="btn pill" id="btnLogin" data-auth="out">🔐 <span data-i18n="login_google">Google bilan kirish</span></button>
+      <button class="btn pill" id="btnLogout" data-auth="in">↩️ <span data-i18n="logout">Chiqish</span></button>
+
+      <img id="avatarTop" class="avatar" src="https://ui-avatars.com/api/?background=f59e0b&color=111&name=BG" alt="avatar"/>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- =============== SUCCESS/AUTH ERROR BANNER =============== -->
+    <div id="authBanner" class="section" style="display:none"></div>
+
+    <!-- =============== HOME PAGE =============== -->
+    <section class="page active" id="page-home">
+      <h1 class="title-xl" data-i18n="hero_title">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</h1>
+      <div class="subtitle" data-i18n="hero_sub">“Halollik — eng katta mukofot.”</div>
+
+      <div class="huge-cta">
+        <div class="cta red" onclick="openPage('create&type=lost',true)">
+          <div class="ico">❗</div>
+          <div class="txt" data-i18n="cta_lost">Yo‘qotdim</div>
+        </div>
+        <div class="cta green" onclick="openPage('create&type=found',true)">
+          <div class="ico">✅</div>
+          <div class="txt" data-i18n="cta_found">Topdim</div>
+        </div>
+        <div class="cta dark" onclick="openPage('list&type=lost',true)">
+          <div class="ico">🗒️</div>
+          <div class="txt" data-i18n="cta_lost_list">Yo‘qotilganlar</div>
+        </div>
+        <div class="cta dark" onclick="openPage('list&type=reward',true)">
+          <div class="ico">🎁</div>
+          <div class="txt" data-i18n="cta_reward_list">Mukofotli</div>
+        </div>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="card">
+          <div class="h" data-i18n="why_title">Nega BINGO?</div>
+          <div class="muted" data-i18n="why_desc">Oddiy forma, tez natija. Barcha e’lonlar bir joyda.</div>
+        </div>
+        <div class="card">
+          <div class="h" data-i18n="fast_title">Tez kirish</div>
+          <div class="muted" data-i18n="fast_desc">Google bilan kirib, 10 soniyada e’lon qoldiring.</div>
+          <div class="actions" style="margin-top:8px">
+            <button class="btn big" id="heroLogin" data-auth="out">🔑 <span data-i18n="login_google">Google bilan kirish</span></button>
+            <button class="btn big ghost" onclick="openPage('create',true)" data-i18n="post_ad">E’lon berish</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <h2 style="margin:0" data-i18n="latest_ads">Oxirgi e’lonlar</h2>
+          <div class="row">
+            <button class="btn pill ghost" onclick="openPage('list&type=lost',true)" data-i18n="see_lost">Yo‘qotilganlar</button>
+            <button class="btn pill ghost" onclick="openPage('list&type=found',true)" data-i18n="see_found">Topilganlar</button>
+          </div>
+        </div>
+        <div id="latestList" class="card" style="margin-top:10px">
+          <div id="latestAds"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============== LIST PAGE (ads) =============== -->
+    <section class="page" id="page-list">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <h1 class="title-xl" id="listTitle">E’lonlar</h1>
+        <div class="actions">
+          <button class="btn pill" onclick="openPage('create',true)" data-i18n="post_ad">E’lon berish</button>
+          <button class="btn pill ghost" onclick="openPage('home')">⬅️ <span data-i18n="back_home">Ortga</span></button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:10px">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <div class="row">
+            <div class="badge">🔎 <span data-i18n="filters">Filtrlar</span></div>
+          </div>
+          <div class="row">
+            <select class="select" id="filterType">
+              <option value="all" data-i18n="all">Hammasi</option>
+              <option value="lost" data-i18n="lost">Yo‘qotilgan</option>
+              <option value="found" data-i18n="found">Topilgan</option>
+              <option value="reward" data-i18n="rewarded">Mukofotli</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="listAds" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <!-- =============== CREATE PAGE (post ad) =============== -->
+    <section class="page" id="page-create">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <h1 class="title-xl" data-i18n="create_title">E’lon berish</h1>
+        <div class="actions">
+          <button class="btn pill ghost" onclick="openPage('home')">⬅️ <span data-i18n="back_home">Ortga</span></button>
+        </div>
+      </div>
+
+      <div class="notice" data-auth="out" style="margin:10px 0" data-i18n="create_notice">
+        E’lon berish uchun avval tizimga kiring.
+      </div>
+
+      <div class="card" data-auth="in">
+        <form id="formCreate" class="form">
+          <div class="field">
+            <label class="label" data-i18n="ad_type">E’lon turi</label>
+            <div class="switch">
+              <div class="sw active" data-sw="lost" id="swLost" data-i18n="lost">Yo‘qotdim</div>
+              <div class="sw" data-sw="found" id="swFound" data-i18n="found">Topdim</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" data-i18n="what_lost">Nima yo‘qoldi / topildi?</label>
+            <input class="in" id="inTitle" required maxlength="80" placeholder="Masalan: qora Paspport, Samsung A52..." />
+            <div class="hint" id="exTitle">Masalan: qora Paspport, Samsung A52...</div>
+          </div>
+
+          <div class="field">
+            <label class="label" data-i18n="description">Qo‘shimcha ma’lumot</label>
+            <textarea class="in" id="inDesc" rows="4" placeholder="Qachon, qayerda. E’tiborli belgilar..."></textarea>
+          </div>
+
+          <div class="grid cols-2">
+            <div class="field">
+              <label class="label" data-i18n="reward">Mukofot (ixtiyoriy)</label>
+              <input class="in" id="inReward" type="number" min="0" placeholder="0" />
+              <div class="hint" data-i18n="reward_hint">Agar mukofot bo‘lsa, summani kiriting.</div>
+            </div>
+            <div class="field">
+              <label class="label" data-i18n="city">Shahar</label>
+              <input class="in" id="inCity" placeholder="Samarqand" />
+            </div>
+          </div>
+
+          <div class="grid cols-2">
+            <div class="field">
+              <label class="label" data-i18n="date">Sana</label>
+              <input class="in" id="inDate" type="date" />
+            </div>
+            <div class="field">
+              <label class="label" data-i18n="photo">Rasm (ixtiyoriy)</label>
+              <input class="in" id="inPhoto" type="file" accept="image/*" />
+              <div class="hint" data-i18n="photo_hint">JPG/PNG, 3 MB gacha.</div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn big primary" type="submit" id="btnPost"><span data-i18n="post_ad">E’lon berish</span> 🚀</button>
+            <button class="btn big ghost" type="button" onclick="formCreate.reset()"><span data-i18n="clear">Tozalash</span></button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- =============== DETAILS PAGE (ad & comments) =============== -->
+    <section class="page" id="page-details">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <h1 class="title-xl" id="detailTitle">E’lon</h1>
+        <div class="actions">
+          <button class="btn pill ghost" onclick="openPage('list')">⬅️ <span data-i18n="back_list">Ro‘yxatga qaytish</span></button>
+        </div>
+      </div>
+
+      <div id="detailCard" class="card"></div>
+
+      <div class="card" style="margin-top:10px">
+        <div class="h" data-i18n="comments">Izohlar</div>
+        <div id="comments"></div>
+
+        <div data-auth="in" style="margin-top:10px">
+          <form id="formComment" class="row" onsubmit="return false">
+            <input class="in" id="inComment" placeholder="Izoh yozing..." style="flex:1">
+            <button class="btn primary" id="btnComment" type="button" data-i18n="send">Yuborish</button>
+          </form>
+        </div>
+        <div class="hint" data-auth="out" data-i18n="login_to_comment">Izoh qoldirish uchun tizimga kiring.</div>
+      </div>
+    </section>
+
+    <!-- =============== PROFILE PAGE =============== -->
+    <section class="page" id="page-profile">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <h1 class="title-xl" data-i18n="profile">Profil</h1>
+        <div class="actions">
+          <button class="btn pill ghost" onclick="openPage('home')">⬅️ <span data-i18n="back_home">Ortga</span></button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="align-items:center">
+          <img id="avatarBig" class="avatar" style="width:72px;height:72px" src="https://ui-avatars.com/api/?background=f59e0b&color=111&name=U" alt="avatar"/>
+          <div>
+            <div id="pfName" style="font-size:22px;font-weight:800">—</div>
+            <div id="pfEmail" class="muted">—</div>
+          </div>
+        </div>
+
+        <div class="grid cols-2" style="margin-top:12px">
+          <div class="field">
+            <label class="label" data-i18n="username">Ism (ko‘rinadigan)</label>
+            <input class="in" id="inUserName" maxlength="30" placeholder="Masalan: Diyor" />
+          </div>
+          <div class="field">
+            <label class="label" data-i18n="avatar">Avatar</label>
+            <input class="in" id="inAvatar" type="file" accept="image/*" />
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top:8px">
+          <button class="btn primary" id="btnSaveProfile" data-i18n="save">Saqlash</button>
+          <button class="btn ghost" onclick="openPage('list&mine=1')" data-i18n="my_ads">E’lonlarim</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============== NOTIFICATIONS PAGE =============== -->
+    <section class="page" id="page-noti">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <h1 class="title-xl" data-i18n="notifications">Bildirishnomalar</h1>
+        <div class="actions">
+          <button class="btn pill ghost" onclick="openPage('home')">⬅️ <span data-i18n="back_home">Ortga</span></button>
+        </div>
+      </div>
+
+      <div id="notiList" class="card"></div>
+    </section>
+
+    <!-- Bottom navigation (mobile) -->
+    <nav class="bottom">
+      <div class="bn" onclick="openPage('home')">🏠<small data-i18n="home">Bosh sahifa</small></div>
+      <div class="bn" onclick="openPage('list')">📋<small data-i18n="ads">E’lonlar</small></div>
+      <div class="bn" onclick="openPage('create',true)">➕<small data-i18n="post">Qo‘shish</small></div>
+      <div class="bn" onclick="openPage('profile')">👤<small data-i18n="profile">Profil</small></div>
+    </nav>
+
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- ======================= Firebase & App Script ======================= -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+    /* ============================================================
+       Firebase (v10+ modular) – sizning “topildi” konfiguratsiyangiz
+       Agar xohlasangiz o‘zingizning config’ingiz bilan almashtiring.
+       ============================================================ */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
     import {
-      getAuth, GoogleAuthProvider, signInWithPopup,
-      onAuthStateChanged, signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+      getAuth, onAuthStateChanged, GoogleAuthProvider,
+      signInWithPopup, signOut, updateProfile
+    } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+    import {
+      getFirestore, doc, setDoc, getDoc, updateDoc,
+      collection, addDoc, getDocs, query, orderBy, limit,
+      where, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+    import {
+      getStorage, ref as sRef, uploadBytes, getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js";
 
-    // ✅ Siz bergan config
+    // ======= CONFIG (topildi) =======
     const firebaseConfig = {
       apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
       authDomain: "topildi.firebaseapp.com",
@@ -97,83 +453,498 @@
       measurementId: "G-NKCMKCXZQ7"
     };
 
-    // Init
+    // ======= INIT =======
     const app = initializeApp(firebaseConfig);
-    getAnalytics(app); // optional
     const auth = getAuth(app);
+    const db = getFirestore(app);
+    const st = getStorage(app);
     const provider = new GoogleAuthProvider();
 
-    // UI refs
-    const banner = document.getElementById('banner');
-    const profileBox = document.getElementById('profileBox');
-    const googleBtn = document.getElementById('googleLoginBtn');
-    const loginBtn2 = document.getElementById('loginBtn2');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const meCard = document.getElementById('meCard');
-    const meText = document.getElementById('meText');
-    const meAvatar = document.getElementById('meAvatar');
+    // ======= DOM HELPERS =======
+    const $ = (sel)=>document.querySelector(sel);
+    const $$ = (sel)=>document.querySelectorAll(sel);
+    const toast = (msg,type="ok")=>{
+      const t=$("#toast"); t.className="toast "+type; t.innerHTML=msg; t.style.display="block";
+      setTimeout(()=>t.style.display="none",3000);
+    };
+    const qs = new URLSearchParams(location.search);
+    const getRoute = ()=> (qs.get("page")||"home");
+    const toQuery = (obj)=>{
+      const u=new URL(location.href); Object.keys(obj).forEach(k=>u.searchParams.set(k,obj[k])); return u.toString();
+    };
 
-    function showBanner(msg, ok=false){
-      banner.textContent = msg;
-      banner.classList.toggle('ok', ok);
-      banner.style.display = msg ? 'block' : 'none';
+    // ======= I18N =======
+    const i18n = {
+      uz:{
+        login_google:"Google bilan kirish", logout:"Chiqish",
+        hero_title:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",
+        hero_sub:"“Halollik — eng katta mukofot.”",
+        cta_lost:"Yo‘qotdim", cta_found:"Topdim", cta_lost_list:"Yo‘qotilganlar", cta_reward_list:"Mukofotli",
+        why_title:"Nega BINGO?", why_desc:"Oddiy forma, tez natija. Barcha e’lonlar bir joyda.",
+        fast_title:"Tez kirish", fast_desc:"Google bilan kirib, 10 soniyada e’lon qoldiring.",
+        post_ad:"E’lon berish", latest_ads:"Oxirgi e’lonlar", see_lost:"Yo‘qotilganlar", see_found:"Topilganlar",
+        back_home:"Ortga", filters:"Filtrlar", all:"Hammasi", lost:"Yo‘qotilgan", found:"Topilgan", rewarded:"Mukofotli",
+        create_title:"E’lon berish", create_notice:"E’lon berish uchun avval tizimga kiring.",
+        ad_type:"E’lon turi", what_lost:"Nima yo‘qoldi / topildi?", description:"Qo‘shimcha ma’lumot",
+        reward:"Mukofot (ixtiyoriy)", reward_hint:"Agar mukofot bo‘lsa, summani kiriting.",
+        city:"Shahar", date:"Sana", photo:"Rasm (ixtiyoriy)", photo_hint:"JPG/PNG, 3 MB gacha.",
+        clear:"Tozalash", back_list:"Ro‘yxatga qaytish", comments:"Izohlar", send:"Yuborish",
+        login_to_comment:"Izoh qoldirish uchun tizimga kiring.", profile:"Profil", username:"Ism (ko‘rinadigan)", avatar:"Avatar",
+        save:"Saqlash", my_ads:"E’lonlarim", notifications:"Bildirishnomalar",
+        home:"Bosh sahifa", ads:"E’lonlar", post:"Qo‘shish",
+        ex_title_lost:"Masalan: qora pasport, kalit bog‘lam...",
+        ex_title_found:"Masalan: ko‘k hamyon, AirPods qutisi...",
+        ad_posted:"E’lon joylandi ✅", ad_duplicate:"Xuddi shu sarlavha bilan e’loningiz bor. 24 soat kutib turib qayta urinib ko‘ring.",
+        need_login:"Avval tizimga kiring.",
+        noti_comment:"Sizning e’loningiz ostiga yangi izoh qoldirildi.",
+        unauthorized_domain:"Firebase: Ushbu domen OAuth uchun ruxsat etilmagan. Firebase → Authentication → Settings → Authorized domains ga saytingiz domenini qo‘shing."
+      },
+      ru:{
+        login_google:"Войти через Google", logout:"Выйти",
+        hero_title:"Потеряли или нашли? Разместите объявление.",
+        hero_sub:"«Честность — самая большая награда».",
+        cta_lost:"Потерял", cta_found:"Нашёл", cta_lost_list:"Потерянные", cta_reward_list:"С вознаграждением",
+        why_title:"Почему BINGO?", why_desc:"Простая форма — быстрый результат. Все объявления в одном месте.",
+        fast_title:"Быстрый вход", fast_desc:"Войдите через Google и разместите объявление за 10 секунд.",
+        post_ad:"Разместить", latest_ads:"Последние объявления", see_lost:"Потерянные", see_found:"Найденные",
+        back_home:"Назад", filters:"Фильтры", all:"Все", lost:"Потеряно", found:"Найдено", rewarded:"С вознаграждением",
+        create_title:"Создать объявление", create_notice:"Для размещения объявления войдите в систему.",
+        ad_type:"Тип объявления", what_lost:"Что потеряно / найдено?", description:"Описание",
+        reward:"Вознаграждение (необязательно)", reward_hint:"Если есть, укажите сумму.",
+        city:"Город", date:"Дата", photo:"Фото (необязательно)", photo_hint:"JPG/PNG, до 3 МБ.",
+        clear:"Очистить", back_list:"К списку", comments:"Комментарии", send:"Отправить",
+        login_to_comment:"Чтобы оставить комментарий, войдите в систему.", profile:"Профиль", username:"Имя (публичное)", avatar:"Аватар",
+        save:"Сохранить", my_ads:"Мои объявления", notifications:"Уведомления",
+        home:"Главная", ads:"Объявления", post:"Добавить",
+        ex_title_lost:"Например: чёрный паспорт, связка ключей...",
+        ex_title_found:"Например: синий кошелёк, кейс AirPods...",
+        ad_posted:"Объявление размещено ✅", ad_duplicate:"У вас уже есть объявление с таким заголовком. Попробуйте снова через 24 часа.",
+        need_login:"Сначала войдите.",
+        noti_comment:"Новый комментарий к вашему объявлению.",
+        unauthorized_domain:"Firebase: Домен не авторизован для OAuth. Добавьте домен в Firebase → Authentication → Settings → Authorized domains."
+      },
+      en:{
+        login_google:"Sign in with Google", logout:"Sign out",
+        hero_title:"Lost or found? Post an ad.",
+        hero_sub:"“Honesty is the greatest reward.”",
+        cta_lost:"I lost", cta_found:"I found", cta_lost_list:"Lost items", cta_reward_list:"Rewarded",
+        why_title:"Why BINGO?", why_desc:"Simple form, fast result. All ads in one place.",
+        fast_title:"Quick sign-in", fast_desc:"Sign in with Google and post in 10 seconds.",
+        post_ad:"Post ad", latest_ads:"Latest ads", see_lost:"Lost", see_found:"Found",
+        back_home:"Back", filters:"Filters", all:"All", lost:"Lost", found:"Found", rewarded:"Rewarded",
+        create_title:"Create ad", create_notice:"Please sign in to post an ad.",
+        ad_type:"Ad type", what_lost:"What is lost / found?", description:"Description",
+        reward:"Reward (optional)", reward_hint:"If any, enter amount.",
+        city:"City", date:"Date", photo:"Photo (optional)", photo_hint:"JPG/PNG, up to 3 MB.",
+        clear:"Clear", back_list:"Back to list", comments:"Comments", send:"Send",
+        login_to_comment:"Sign in to comment.", profile:"Profile", username:"Display name", avatar:"Avatar",
+        save:"Save", my_ads:"My ads", notifications:"Notifications",
+        home:"Home", ads:"Ads", post:"Add",
+        ex_title_lost:"e.g., black passport, keychain...",
+        ex_title_found:"e.g., blue wallet, AirPods case...",
+        ad_posted:"Ad posted ✅", ad_duplicate:"You already posted the same title within 24h.",
+        need_login:"Please sign in first.",
+        noti_comment:"New comment under your ad.",
+        unauthorized_domain:"Firebase: This domain is not authorized for OAuth. Add it under Firebase → Authentication → Settings → Authorized domains."
+      }
+    };
+    const setLang = (lang)=>{
+      localStorage.setItem("lang",lang);
+      $("#langSelect").value = lang;
+      $$("[data-i18n]").forEach(el=>{
+        const k=el.getAttribute("data-i18n");
+        el.innerText = i18n[lang][k] || el.innerText;
+      });
+      // examples in create form
+      const type = currentType();
+      $("#exTitle").innerText = i18n[lang][ type==="lost" ? "ex_title_lost" : "ex_title_found"];
+    };
+    $("#langSelect").addEventListener("change",e=>setLang(e.target.value));
+    setLang(localStorage.getItem("lang")||"uz");
+
+    // ======= AUTH =======
+    const setAuthed = (yes)=>{
+      document.body.classList.toggle("authed", yes);
+    }
+    const showAuthBanner = (html,color="ok")=>{
+      const b=$("#authBanner"); b.innerHTML = `<div class="toast ${color}" style="display:block;position:static">${html}</div>`;
+      b.style.display="block";
+      setTimeout(()=>b.style.display="none",3500);
     }
 
-    async function doGoogleLogin(){
-      showBanner('');
+    const signIn = async()=>{
       try{
         const res = await signInWithPopup(auth, provider);
-        const user = res.user;
-        showBanner('Kirish muvaffaqiyatli ✅', true);
-        console.log('Signed in:', user.uid, user.email);
+        const u = res.user;
+        // create user doc if not exists
+        const dref = doc(db,"users",u.uid);
+        const snap = await getDoc(dref);
+        if(!snap.exists()){
+          await setDoc(dref,{
+            uid:u.uid, email:u.email, name:u.displayName||"User",
+            photo:u.photoURL||"", createdAt:serverTimestamp()
+          });
+        }
       }catch(e){
-        console.error(e);
-        // Authorized domain xatosini foydalanuvchiga tushunarli ko‘rsatamiz
-        if(String(e.message).includes('auth/unauthorized-domain')){
-          showBanner(
-            'Firebase: Ushbu domen OAuth uchun ruxsat etilmagan (auth/unauthorized-domain).\n' +
-            '- Firebase Console → Authentication → Settings → Authorized domains ga saytingiz domenini qo‘shing.\n' +
-            `- Sizning domeningiz: ${location.hostname}`
-          );
+        // unauthorized-domain
+        if((e && (e.code||"").includes("auth/unauthorized-domain")) || String(e).includes("unauthorized")){
+          showAuthBanner(i18n[$("#langSelect").value].unauthorized_domain,"err");
         }else{
-          showBanner('Xato: ' + e.message);
+          toast(e.message||String(e),"err");
+        }
+      }
+    };
+    const signOutNow = ()=>signOut(auth);
+
+    $("#btnLogin").onclick = signIn; $("#heroLogin").onclick = signIn;
+    $("#btnLogout").onclick = signOutNow;
+
+    onAuthStateChanged(auth, async(user)=>{
+      setAuthed(!!user);
+      if(user){
+        $("#avatarTop").src = user.photoURL || `https://ui-avatars.com/api/?background=f59e0b&color=111&name=${encodeURIComponent(user.displayName||'U')}`;
+        $("#avatarBig").src = $("#avatarTop").src;
+        $("#pfName").innerText = user.displayName || "User";
+        $("#pfEmail").innerText = user.email||"";
+
+        // noti count
+        loadNotiCount();
+      }else{
+        $("#avatarTop").src = "https://ui-avatars.com/api/?background=f59e0b&color=111&name=BG";
+        $("#pfName").innerText = "—"; $("#pfEmail").innerText = "—";
+        $("#notiCount").innerText = "0";
+      }
+    });
+
+    // ======= ROUTING (single-file, new tab qo'llab-quvvatlash) =======
+    const pages=["home","list","create","details","profile","noti"];
+    function openPage(route, newTab=false){
+      // route format: "list&type=lost" yoki "details&id=xxx"
+      const url = new URL(location.href);
+      url.search = ""; // tozalaymiz
+      const [name, query] = route.split("&");
+      url.searchParams.set("page", name);
+      if(query){
+        for(const pair of query.split("&")){
+          const [k,v] = pair.split("=");
+          url.searchParams.set(k,v);
+        }
+      }
+      if(newTab) window.open(url.toString(), "_blank");
+      else location.href = url.toString();
+    }
+
+    function showPage(name){
+      pages.forEach(p=>$("#page-"+p).classList.remove("active"));
+      const el = $("#page-"+name); if(el) el.classList.add("active");
+      // active bn in bottom nav
+      $$(".bottom .bn").forEach(b=>b.classList.remove("active"));
+      const idx = Math.max(0, pages.indexOf(name));
+      if($$(".bottom .bn")[idx]) $$(".bottom .bn")[idx].classList.add("active");
+
+      // loader by page
+      if(name==="home"){ loadLatest(); }
+      if(name==="list"){ const t = qs.get("type")||"all"; $("#filterType").value = t; loadList(); }
+      if(name==="create"){ presetTypeFromQuery(); }
+      if(name==="details"){ const id = qs.get("id"); if(id) loadDetails(id); }
+      if(name==="profile"){ /* nothing special */ }
+      if(name==="noti"){ loadNotifications(); }
+    }
+
+    // init first view
+    showPage(getRoute());
+
+    // ======= ADS (Firestore) =======
+    const normalize = s=>(s||"").toLowerCase().trim().replace(/\s+/g," ");
+    const currentType = ()=> document.querySelector(".switch .sw.active")?.getAttribute("data-sw") || "lost";
+
+    // Switch Yo'qotdim/Topdim
+    $("#swLost").onclick = ()=>{ $("#swLost").classList.add("active"); $("#swFound").classList.remove("active"); setLang(localStorage.getItem("lang")||"uz"); }
+    $("#swFound").onclick = ()=>{ $("#swFound").classList.add("active"); $("#swLost").classList.remove("active"); setLang(localStorage.getItem("lang")||"uz"); }
+    const presetTypeFromQuery = ()=>{
+      const t = qs.get("type");
+      if(t==="found"){ $("#swFound").click(); } else { $("#swLost").click(); }
+    }
+    presetTypeFromQuery();
+
+    // Latest ads (homepage)
+    async function loadLatest(){
+      const list = $("#latestAds"); list.innerHTML = "";
+      try{
+        const qy = query(collection(db,"ads"), orderBy("createdAt","desc"), limit(10));
+        const snaps = await getDocs(qy);
+        if(snaps.empty){
+          list.innerHTML = `<div class="muted">—</div>`;
+          return;
+        }
+        const frag = document.createDocumentFragment();
+        snaps.forEach(d=>{
+          const a = d.data(); a.id = d.id;
+          frag.appendChild(adRow(a, true));
+        });
+        list.appendChild(frag);
+
+        // cache to localStorage (fallback)
+        const cached = [];
+        snaps.forEach(d=>cached.push({id:d.id,...d.data()}));
+        localStorage.setItem("latestCache", JSON.stringify(cached));
+      }catch(e){
+        // offline? use cache
+        const c = localStorage.getItem("latestCache");
+        if(c){
+          JSON.parse(c).forEach(a=>$("#latestAds").appendChild(adRow(a,true)));
+        }else{
+          list.innerHTML = `<div class="muted">Error: ${e.message||String(e)}</div>`;
         }
       }
     }
 
-    googleBtn.addEventListener('click', doGoogleLogin);
-    loginBtn2.addEventListener('click', doGoogleLogin);
-    logoutBtn.addEventListener('click', async()=>{
-      showBanner('');
-      await signOut(auth);
-      showBanner('Hisobdan chiqildi.', true);
+    // List page
+    $("#filterType").addEventListener("change", ()=>{
+      const t=$("#filterType").value; openPage(`list&type=${t}`);
     });
 
-    // Auth holatini kuzatish
-    onAuthStateChanged(auth, (user)=>{
-      if(user){
-        // headerdagi profil
-        profileBox.innerHTML = `
-          <img class="avatar" src="${user.photoURL || ''}" alt="">
-          <div style="font-weight:800">${user.displayName || user.email}</div>
-        `;
-        // kartochka
-        meCard.classList.remove('hidden');
-        logoutBtn.classList.remove('hidden');
-        meText.innerHTML = `
-          <div style="font-size:18px;font-weight:800">${user.displayName || 'Ism kiritilmagan'}</div>
-          <div style="opacity:.8">${user.email || ''}</div>
-          <div style="opacity:.7">UID: ${user.uid}</div>
-        `;
-        meAvatar.src = user.photoURL || '';
-      }else{
-        // headerda login tugmasi
-        profileBox.innerHTML = `<button id="googleLoginBtn2" class="btn">🔑 Google bilan kirish</button>`;
-        document.getElementById('googleLoginBtn2').addEventListener('click', doGoogleLogin);
-        meCard.classList.add('hidden');
-        logoutBtn.classList.add('hidden');
+    async function loadList(){
+      $("#listAds").innerHTML = "";
+      const t = qs.get("type")||"all";
+      const lang = $("#langSelect").value;
+      const titleMap = {all:"E’lonlar", lost:i18n[lang].see_lost, found:i18n[lang].see_found, reward:i18n[lang].cta_reward_list};
+      $("#listTitle").innerText = titleMap[t] || "E’lonlar";
+
+      let qy;
+      if(t==="lost") qy = query(collection(db,"ads"), where("type","==","lost"), orderBy("createdAt","desc"), limit(30));
+      else if(t==="found") qy = query(collection(db,"ads"), where("type","==","found"), orderBy("createdAt","desc"), limit(30));
+      else if(t==="reward") qy = query(collection(db,"ads"), where("reward",">",0), orderBy("reward","desc"), limit(30));
+      else qy = query(collection(db,"ads"), orderBy("createdAt","desc"), limit(30));
+
+      const snaps = await getDocs(qy);
+      if(snaps.empty){ $("#listAds").innerHTML = `<div class="muted">—</div>`; return; }
+      const f = document.createDocumentFragment();
+      snaps.forEach(d=>f.appendChild(adRow({id:d.id,...d.data()})));
+      $("#listAds").appendChild(f);
+    }
+
+    // Ad row component
+    function adRow(a, compact=false){
+      const el = document.createElement("div"); el.className="ad";
+      const photo = a.photo || "https://placehold.co/300x300/png?text=No+Image";
+      el.innerHTML = `
+        <div class="thumb"><img src="${photo}" alt=""></div>
+        <div>
+          <div class="row meta">
+            <div class="badge">${a.type==="lost"?"❗":"✅"} ${a.type==="lost"?"Yo‘qotildi":"Topildi"}</div>
+            ${a.reward>0? `<div class="badge">🎁 ${a.reward}</div>` : ""}
+            ${a.city? `<div class="badge">📍 ${a.city}</div>` : ""}
+          </div>
+          <div style="font-weight:800;font-size:${compact? '16px':'20px'};margin-top:6px">${a.title||"-"}</div>
+          <div class="muted" style="margin-top:4px">${(a.by && a.by.name) ? `👤 ${a.by.name}`:""}</div>
+          <div class="row" style="margin-top:8px">
+            <button class="btn pill" onclick="openPage('details&id=${a.id}', true)">👁️ Ko‘rish</button>
+            ${auth.currentUser && a.by && a.by.uid===auth.currentUser.uid ? `<button class="btn pill ghost" onclick="openPage('details&id=${a.id}')">✏️ Tahrirlash</button>`:""}
+          </div>
+        </div>`;
+      return el;
+    }
+
+    // Create ad
+    $("#formCreate").addEventListener("submit", async(e)=>{
+      e.preventDefault();
+      if(!auth.currentUser){ toast(i18n[$("#langSelect").value].need_login,"warn"); return; }
+
+      const title = normalize($("#inTitle").value);
+      if(title.length<3){ toast("Sarlavha juda qisqa","warn"); return; }
+
+      // duplicate guard – same user, same title within 24h
+      const qy = query(collection(db,"ads"),
+        where("by.uid","==",auth.currentUser.uid),
+        where("titleNorm","==",title),
+        orderBy("createdAt","desc"), limit(1));
+      const snap = await getDocs(qy);
+      if(!snap.empty){
+        const last = snap.docs[0].data();
+        const lastMs = last.createdAt?.toMillis?.() || Date.now();
+        if(Date.now()-lastMs < 24*3600*1000){
+          toast(i18n[$("#langSelect").value].ad_duplicate,"warn"); return;
+        }
+      }
+
+      const type = currentType();
+      const desc = $("#inDesc").value.trim();
+      const reward = Number($("#inReward").value||0);
+      const city = $("#inCity").value.trim();
+      const date = $("#inDate").value || null;
+
+      let photoURL = "";
+      const file = $("#inPhoto").files[0];
+      if(file){
+        if(file.size > 3*1024*1024){ toast("Rasm 3MB dan kichik bo‘lsin","warn"); return; }
+        const ref = sRef(st, `ads/${auth.currentUser.uid}/${Date.now()}_${file.name}`);
+        await uploadBytes(ref, file);
+        photoURL = await getDownloadURL(ref);
+      }
+
+      const ad = {
+        type, title:$("#inTitle").value.trim(), titleNorm:title,
+        desc, reward, city, date, photo:photoURL,
+        by:{ uid:auth.currentUser.uid, name:auth.currentUser.displayName||"User", email:auth.currentUser.email, photo:auth.currentUser.photoURL||"" },
+        createdAt:serverTimestamp(), status:"active"
+      };
+
+      const d = await addDoc(collection(db,"ads"), ad);
+      toast(i18n[$("#langSelect").value].ad_posted,"ok");
+      // tozalash va detailga o'tish
+      e.target.reset(); openPage(`details&id=${d.id}`, true);
+    });
+
+    // Details page
+    async function loadDetails(id){
+      $("#detailCard").innerHTML = "…";
+      $("#comments").innerHTML = "…";
+      const dr = doc(db,"ads",id);
+      const ds = await getDoc(dr);
+      if(!ds.exists()){ $("#detailCard").innerHTML = `<div class="muted">Topilmadi</div>`; return; }
+      const a = ds.data();
+
+      $("#detailTitle").innerText = a.title||"E’lon";
+      $("#detailCard").innerHTML = `
+        <div class="grid cols-2">
+          <div>${a.photo? `<img src="${a.photo}" style="border-radius:12px">`:"<div class='muted'>Rasm yo‘q</div>"}</div>
+          <div>
+            <div class="row meta">
+              <div class="badge">${a.type==="lost"?"❗Yo‘qotildi":"✅Topildi"}</div>
+              ${a.reward>0? `<div class="badge">🎁 ${a.reward}</div>` : ""}
+              ${a.city? `<div class="badge">📍 ${a.city}</div>` : ""}
+              ${a.date? `<div class="badge">📅 ${a.date}</div>` : ""}
+            </div>
+            <h2 style="margin:10px 0">${a.title||"-"}</h2>
+            <div class="muted">${a.desc||""}</div>
+            <div class="row" style="margin-top:12px">
+              <div class="badge">👤 ${(a.by&&a.by.name)||"-"}</div>
+              ${a.by&&a.by.email? `<div class="badge">✉️ ${a.by.email}</div>`:""}
+            </div>
+          </div>
+        </div>`;
+
+      // comments list
+      await loadComments(id);
+      // bind comment send
+      $("#btnComment").onclick = ()=>sendComment(id, ds.data());
+    }
+
+    async function loadComments(adId){
+      $("#comments").innerHTML = "";
+      const qy = query(collection(db,"comments"), where("adId","==",adId), orderBy("createdAt","desc"), limit(50));
+      const snaps = await getDocs(qy);
+      if(snaps.empty){ $("#comments").innerHTML = `<div class="muted">—</div>`; return; }
+      const f = document.createDocumentFragment();
+      snaps.forEach(d=>{
+        const c = d.data();
+        const el = document.createElement("div");
+        el.className="ad"; el.style.gridTemplateColumns="48px 1fr";
+        el.innerHTML = `
+          <div class="thumb" style="width:48px;height:48px"><img src="${c.by.photo||'https://ui-avatars.com/api/?name=U'}"></div>
+          <div><div style="font-weight:700">${c.by.name||'User'}</div><div>${c.text}</div></div>`;
+        f.appendChild(el);
+      });
+      $("#comments").appendChild(f);
+    }
+
+    async function sendComment(adId, adData){
+      const lang = $("#langSelect").value;
+      if(!auth.currentUser){ toast(i18n[lang].need_login,"warn"); return; }
+      const text = $("#inComment").value.trim(); if(text.length<1) return;
+      const c = {
+        adId, text, by:{uid:auth.currentUser.uid,name:auth.currentUser.displayName||"User",photo:auth.currentUser.photoURL||""},
+        createdAt:serverTimestamp()
+      };
+      const d = await addDoc(collection(db,"comments"), c);
+      $("#inComment").value="";
+      await loadComments(adId);
+
+      // notification to the owner
+      try{
+        if(adData && adData.by && adData.by.uid && adData.by.uid!==auth.currentUser.uid){
+          await addDoc(collection(db,"notifications"), {
+            to: adData.by.uid,
+            adId, commentId: d.id,
+            text: i18n[lang].noti_comment,
+            createdAt: serverTimestamp(), read:false
+          });
+          loadNotiCount();
+        }
+      }catch(_){}
+    }
+
+    // ======= PROFILE =======
+    $("#btnSaveProfile").onclick = async()=>{
+      if(!auth.currentUser){ toast(i18n[$("#langSelect").value].need_login,"warn"); return; }
+      const name = $("#inUserName").value.trim();
+      const file = $("#inAvatar").files[0];
+
+      let photoURL = auth.currentUser.photoURL || "";
+      if(file){
+        if(file.size > 3*1024*1024){ toast("Rasm 3MB dan kichik bo‘lsin","warn"); return; }
+        const ref = sRef(st, `avatars/${auth.currentUser.uid}.jpg`);
+        await uploadBytes(ref, file);
+        photoURL = await getDownloadURL(ref);
+      }
+
+      if(name || photoURL){
+        await updateProfile(auth.currentUser, {
+          displayName: name || auth.currentUser.displayName || "User",
+          photoURL
+        });
+        await updateDoc(doc(db,"users",auth.currentUser.uid), {
+          name: auth.currentUser.displayName, photo: photoURL
+        }).catch(async()=> await setDoc(doc(db,"users",auth.currentUser.uid), {
+          uid:auth.currentUser.uid, email:auth.currentUser.email, name:auth.currentUser.displayName, photo:photoURL, createdAt:serverTimestamp()
+        }));
+
+        $("#avatarTop").src = photoURL || $("#avatarTop").src;
+        $("#avatarBig").src = $("#avatarTop").src;
+        $("#pfName").innerText = auth.currentUser.displayName||"User";
+        toast("Profil saqlandi","ok");
+      }
+    };
+
+    // ======= NOTIFICATIONS =======
+    $("#openNoti").onclick = ()=>openPage("noti", true);
+
+    async function loadNotiCount(){
+      if(!auth.currentUser){ $("#notiCount").innerText = "0"; return; }
+      const qy = query(collection(db,"notifications"), where("to","==",auth.currentUser.uid), where("read","==",false));
+      const snaps = await getDocs(qy);
+      $("#notiCount").innerText = String(snaps.size||0);
+    }
+
+    async function loadNotifications(){
+      if(!auth.currentUser){ $("#notiList").innerHTML = `<div class="muted">—</div>`; return; }
+      const qy = query(collection(db,"notifications"), where("to","==",auth.currentUser.uid), orderBy("createdAt","desc"), limit(50));
+      const snaps = await getDocs(qy);
+      if(snaps.empty){ $("#notiList").innerHTML = `<div class="muted">—</div>`; return; }
+      const f = document.createDocumentFragment();
+      snaps.forEach(d=>{
+        const n = d.data();
+        const el = document.createElement("div"); el.className="ad"; el.style.gridTemplateColumns="1fr";
+        el.innerHTML = `<div><div>${n.text||"—"}</div><div class="muted">${n.adId? `<a href="${toQuery({page:"details",id:n.adId})}" target="_blank">E’lonni ochish</a>`:""}</div></div>`;
+        f.appendChild(el);
+      });
+      $("#notiList").innerHTML = ""; $("#notiList").appendChild(f);
+    }
+
+    // ======= STARTUP: if unauthorized-domain error was the last, show hint =======
+    (()=>{
+      const hash = sessionStorage.getItem("oauth_err");
+      if(hash==="unauthorized"){ showAuthBanner(i18n[$("#langSelect").value].unauthorized_domain,"err"); sessionStorage.removeItem("oauth_err"); }
+    })();
+
+    // If auth popup fails because of domain, catch globally (best-effort)
+    window.addEventListener("unhandledrejection",(e)=>{
+      if(String(e.reason).includes("unauthorized-domain")){
+        sessionStorage.setItem("oauth_err","unauthorized");
+        showAuthBanner(i18n[$("#langSelect").value].unauthorized_domain,"err");
       }
     });
   </script>
 </body>
-</html>
+      </html>
