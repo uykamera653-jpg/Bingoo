@@ -1,752 +1,312 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>BINGO — Yo‘qoldi / Topildi</title>
-  <meta name="theme-color" content="#f59f0b" />
-  <meta name="color-scheme" content="light only" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BINGO – Yo‘qoldi / Topildi</title>
   <style>
-    /* ====== Dizayn (Yandex Go ruhida) ====== */
-    :root{
-      --bg:#FFF7E6; --paper:#FFFAF0; --ink:#101827; --muted:#475569;
-      --primary:#f59f0b; --primary-ink:#111827; --accent:#16a34a; --danger:#ef4444;
-      --card:#0f172a; --card-ink:#f8fafc; --ring:#eab308; --shadow:0 10px 30px rgba(0,0,0,.08);
-      --radius:24px;
+    /* ====== GLOBAL STYLES ====== */
+    :root {
+      --primary: #f9a825;
+      --secondary: #fff8e1;
+      --dark: #212121;
+      --panel: #fafafa;
+      --accent: #ff7043;
+      --success: #43a047;
+      --danger: #e53935;
+      --info: #1e88e5;
+      --radius: 12px;
     }
-    *{box-sizing:border-box}
-    html,body{margin:0;height:100%;background:linear-gradient(180deg,#FFE8B5 0%,var(--bg) 20%);}
-    body{color:var(--ink);font:16px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:980px;margin:0 auto;padding:0 16px 100px}
-
-    /* Topbar */
-    .topbar{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,#ffb82e,#f59f0b);
-      color:#000;box-shadow:0 2px 0 rgba(17,24,39,.06)}
-    .topbar .row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:12px 16px}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.3px}
-    .badge{width:38px;height:38px;border-radius:50%;background:#fff3;display:inline-grid;place-items:center;font-weight:800}
-    .lang{display:flex;gap:8px}
-    .pill{background:#fff8;border:1px solid #0001;border-radius:16px;padding:9px 13px;font-weight:700}
-    .btn{display:inline-flex;align-items:center;gap:8px;background:#0f172a;color:#fff;border-radius:999px;padding:10px 14px;
-      border:2px solid #0002;box-shadow:var(--shadow);font-weight:700}
-    .btn[disabled]{opacity:.5;pointer-events:none}
-    .btn-ghost{background:#ffffffaa;color:#111;border-color:#0002}
-    .btn-primary{background:var(--card);color:var(--card-ink)}
-    .btn-green{background:var(--accent)}
-    .btn-red{background:var(--danger)}
-    .icon{width:18px;height:18px;display:inline-block}
-
-    /* Hero */
-    .hero{padding:24px 16px 6px}
-    h1{font-size:clamp(28px,7vw,56px);line-height:1.05;margin:0 0 8px;font-weight:900;letter-spacing:.2px}
-    .lead{color:var(--muted);font-size:18px;margin:8px 0 18px}
-
-    /* Grid quick actions */
-    .quick{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:8px 0 10px}
-    .q{background:var(--paper);border-radius:20px;padding:18px;border:1px solid #0000000d;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;font-size:22px;font-weight:800}
-    .q.red{outline:3px solid #fecaca}
-    .q.green{outline:3px solid #bbf7d0}
-
-    /* Sections */
-    .section{background:var(--card);color:var(--card-ink);border-radius:24px;padding:18px 16px;margin:20px 0;box-shadow:var(--shadow)}
-    .section h3{margin:0 0 14px;font-size:22px}
-    .section.light{background:#0b1220}
-    .notice{background:#fee2e2;color:#7f1d1d;border:2px dashed #ef4444;padding:14px;border-radius:18px;font-weight:700}
-
-    /* Cards */
-    .card{background:#0b1220;border-radius:20px;padding:14px 14px;border:1px solid #ffffff0d;box-shadow:var(--shadow)}
-    .row{display:flex;gap:10px;align-items:center}
-    .col{display:flex;flex-direction:column;gap:8px}
-
-    /* Inputs */
-    .field{display:flex;flex-direction:column;gap:6px}
-    label{font-weight:700;color:#CBD5E1}
-    input,select,textarea{width:100%;border-radius:14px;border:1px solid #1f2937;background:#0f172a;color:#fff;padding:10px 12px;font-size:16px}
-    textarea{min-height:110px;resize:vertical}
-    .hint{color:#94a3b8;font-size:13px}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .chips{display:flex;flex-wrap:wrap;gap:8px}
-    .chip{border-radius:999px;border:1px solid #ffffff1a; padding:6px 10px;background:#0f172a;color:#fff}
-    .chip.active{background:#1f2937}
-    .placeholder{opacity:.7}
-
-    /* List */
-    .list{display:grid;gap:12px}
-    .item{background:#0b1220;border-radius:18px;padding:12px;border:1px solid #ffffff15;display:grid;grid-template-columns:auto 1fr;gap:12px}
-    .thumb{width:76px;height:76px;border-radius:14px;background:#111;background-size:cover;background-position:center}
-    .meta{font-size:12px;color:#94a3b8}
-    .title{font-weight:800;font-size:18px;margin-bottom:4px}
-
-    /* Bottom bar */
-    .bottom{position:fixed;left:0;right:0;bottom:0;z-index:49;background:linear-gradient(180deg,transparent,rgba(0,0,0,.06)),#f59f0b;padding:10px 8px 16px;border-top:2px solid #0000000d}
-    .tabs{max-width:980px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .bn{display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;background:#0f172a;color:#fff;border-radius:16px;padding:10px 8px;border:2px solid #ffffff12}
-    .bn.active{outline:3px solid #ffe08a}
-    .bn .txt{font-size:12px;font-weight:700}
-
-    .hide{display:none}
-    .center{display:grid;place-items:center}
-    .active{display:block}
-    .page{display:none;padding:10px 0 60px}
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;background:#16a34a;color:#fff;padding:10px 14px;border-radius:12px;box-shadow:var(--shadow);z-index:60;font-weight:800}
-    .toast.err{background:#ef4444}
-    .empty{color:#94a3b8}
-
-    @media (max-width:560px){
-      .q{font-size:18px}
-      .quick{gap:12px}
-      .title{font-size:16px}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", "Roboto", sans-serif;
+      background: var(--secondary);
+      color: var(--dark);
+      line-height: 1.5;
     }
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 { font-size: 20px; font-weight: bold; }
+    nav { display: flex; gap: 10px; }
+    nav button {
+      background: white;
+      border: none;
+      border-radius: var(--radius);
+      padding: 5px 12px;
+      font-weight: bold;
+    }
+    main { padding: 20px; }
+
+    /* ====== NAVIGATION PAGES ====== */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ====== BUTTONS ====== */
+    .btn {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: var(--radius);
+      font-weight: bold;
+      margin: 5px 0;
+      text-align: center;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-info { background: var(--info); color: white; }
+
+    /* ====== FOOTER NAV ====== */
+    footer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--primary);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+    footer button {
+      background: none;
+      border: none;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /* ====== CARDS ====== */
+    .card {
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 15px;
+      margin: 10px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* ====== PROFILE ====== */
+    .profile {
+      text-align: center;
+    }
+    .profile img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary);
+      margin-bottom: 10px;
+    }
+    .profile h3 { margin: 5px 0; }
+
+    /* ====== FORMS ====== */
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: var(--radius);
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    /* ====== NOTIFICATIONS ====== */
+    .notif {
+      position: fixed;
+      top: 20px; right: 20px;
+      background: var(--accent);
+      color: white;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      display: none;
+    }
+    .notif.show { display: block; }
   </style>
 </head>
 <body>
-  <!-- ======= TOPBAR ======= -->
-  <header class="topbar">
-    <div class="row">
-      <div class="brand">
-        <div class="badge">BG</div>
-        <div style="font-size:22px">BINGO</div>
-      </div>
 
-      <div class="lang">
-        <button class="pill" data-i18n="langUZ" data-lang="uz">UZ</button>
-        <button class="pill" data-i18n="langRU" data-lang="ru">RU</button>
-        <button class="pill" data-i18n="langEN" data-lang="en">EN</button>
-      </div>
-
-      <div class="row">
-        <a href="#/profile" class="btn btn-ghost" id="btnProfile"><span class="icon">👤</span><span data-i18n="profile">Profil</span></a>
-        <button class="btn btn-primary" id="btnLogin"><span class="icon">🔑</span><span data-i18n="loginGoogle">Google bilan kirish</span></button>
-        <button class="btn btn-red hide" id="btnLogout"><span class="icon">🚪</span><span data-i18n="logout">Chiqish</span></button>
-      </div>
-    </div>
-  </header>
-
-  <main class="wrap" id="app">
-    <!-- OAuth domain xatosi ko‘rsatkichi -->
-    <div id="oauthAlert" class="notice hide" role="alert"></div>
-
-    <!-- ======= HOME PAGE ======= -->
-    <section id="page-home" class="page active">
-      <div class="hero">
-        <h1 data-i18n="heroTitle">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</h1>
-        <div class="lead" data-i18n="heroLead">“Halollik — eng katta mukofot.”</div>
-      </div>
-
-      <div class="quick">
-        <a class="q red" href="#/create?type=lost">❗️ <span data-i18n="lost">Yo‘qotdim</span></a>
-        <a class="q green" href="#/create?type=found">✅ <span data-i18n="found">Topdim</span></a>
-      </div>
-
-      <div class="section light">
-        <h3 data-i18n="fastLogin">Tez kirish</h3>
-        <div class="row" style="justify-content:space-between;align-items:center">
-          <div class="col" style="max-width:620px">
-            <div class="hint" data-i18n="fastLoginHint">
-              Hisobga kirish uchun quyidagi tugmani bosing. Agar ruxsat berilmagan domen xatosi chiqsa — Firebase’dagi Authentication → Settings → Authorized domains ga saytingiz domenini qo‘shing.
-            </div>
-          </div>
-          <button id="btnLogin2" class="btn btn-primary">🔑 <span data-i18n="loginGoogle">Google bilan kirish</span></button>
-        </div>
-      </div>
-
-      <div class="section">
-        <h3 data-i18n="latest">Oxirgi e’lonlar</h3>
-        <div class="list" id="latestList"></div>
-        <div class="center"><a href="#/list" class="btn btn-ghost" style="margin-top:10px" data-i18n="seeAll">Barchasini ko‘rish</a></div>
-      </div>
-    </section>
-
-    <!-- ======= LIST PAGE ======= -->
-    <section id="page-list" class="page">
-      <div class="section">
-        <h3 data-i18n="allAds">E’lonlar</h3>
-        <div class="grid2">
-          <div class="field">
-            <label data-i18n="filterType">Tur bo‘yicha</label>
-            <select id="filterType">
-              <option value="all" data-i18n="typeAll">Barchasi</option>
-              <option value="lost" data-i18n="lost">Yo‘qotdim</option>
-              <option value="found" data-i18n="found">Topdim</option>
-              <option value="reward" data-i18n="reward">Mukofotli</option>
-            </select>
-          </div>
-          <div class="field">
-            <label data-i18n="search">Qidirish</label>
-            <input id="search" type="search" placeholder="kalit so‘z…" />
-          </div>
-        </div>
-        <div id="listWrap" class="list" style="margin-top:12px"></div>
-        <div class="row center" style="gap:10px;margin-top:10px">
-          <button id="prevPage" class="btn btn-ghost">⬅️</button>
-          <div id="pageInfo" class="hint">1 / 1</div>
-          <button id="nextPage" class="btn btn-ghost">➡️</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======= CREATE PAGE ======= -->
-    <section id="page-create" class="page">
-      <div class="section">
-        <h3 data-i18n="createTitle">E’lon qoldirish</h3>
-        <div class="chips" id="typeChips">
-          <button class="chip" data-type="lost">❗️ <span data-i18n="lost">Yo‘qotdim</span></button>
-          <button class="chip" data-type="found">✅ <span data-i18n="found">Topdim</span></button>
-          <button class="chip" data-type="reward">🎁 <span data-i18n="reward">Mukofotli</span></button>
-        </div>
-        <div class="grid2" style="margin-top:12px">
-          <div class="field">
-            <label data-i18n="title">Sarlavha</label>
-            <input id="adTitle" maxlength="80" placeholder="Masalan: “Qora hamyon yo‘qoldi”" />
-            <div class="hint" data-i18n="titleHint">Soddaroq va aniqlik bilan yozing.</div>
-          </div>
-          <div class="field">
-            <label data-i18n="city">Shahar/joy</label>
-            <input id="adCity" placeholder="Masalan: Samarqand, Registon" />
-          </div>
-        </div>
-
-        <div class="field">
-          <label data-i18n="desc">Tavsif</label>
-          <textarea id="adDesc" placeholder="Qachon, qayerda va qanday yo‘qotdingiz/topdingiz? Aloqa usuli."></textarea>
-        </div>
-
-        <div class="grid2">
-          <div class="field">
-            <label data-i18n="lang">Til</label>
-            <select id="adLang">
-              <option value="uz">O‘zbekcha</option>
-              <option value="ru">Русский</option>
-              <option value="en">English</option>
-            </select>
-          </div>
-          <div class="field">
-            <label data-i18n="rewardAmt">Mukofot (ixtiyoriy)</label>
-            <input id="adReward" type="number" placeholder="0" min="0" />
-          </div>
-        </div>
-
-        <div class="field">
-          <label data-i18n="photos">Rasmlar (4 tagacha)</label>
-          <input id="adPhotos" type="file" accept="image/*" multiple />
-          <div class="hint" data-i18n="photosHint">Birlamchi rasm ro‘yxatda ko‘rsatiladi.</div>
-          <div id="photoPreview" class="grid3" style="margin-top:8px"></div>
-        </div>
-
-        <div class="row" style="justify-content:space-between;margin-top:14px">
-          <div class="hint" id="dupHint"></div>
-          <button id="btnSubmit" class="btn btn-green">📢 <span data-i18n="publish">E’loni yuborish</span></button>
-        </div>
-
-        <div id="submitOK" class="notice hide" style="margin-top:14px" data-i18n="postedOK">
-          E’lon joylandi! Rahmat.
-        </div>
-      </div>
-    </section>
-
-    <!-- ======= DETAILS PAGE ======= -->
-    <section id="page-details" class="page">
-      <div class="section" id="detailsBox">
-        <!-- dinamik to‘ldiriladi -->
-      </div>
-      <div class="section">
-        <h3 data-i18n="comments">Izohlar</h3>
-        <div id="cList" class="list"></div>
-        <div class="row" style="margin-top:8px;gap:8px">
-          <input id="cInput" class="col" placeholder="Izoh yozing…" />
-          <button id="cSend" class="btn btn-primary">✉️ <span data-i18n="send">Yuborish</span></button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======= PROFILE PAGE ======= -->
-    <section id="page-profile" class="page">
-      <div class="section">
-        <h3 data-i18n="myProfile">Mening profilim</h3>
-        <div class="row" style="gap:14px;align-items:center">
-          <div id="avatar" class="thumb" style="width:92px;height:92px;border-radius:50%"></div>
-          <div class="col">
-            <div id="pName" class="title">—</div>
-            <div id="pEmail" class="meta">—</div>
-            <div id="pUID" class="meta">UID: —</div>
-          </div>
-        </div>
-
-        <div class="grid2" style="margin-top:14px">
-          <div class="field">
-            <label data-i18n="nickname">Foydalanuvchi nomi</label>
-            <input id="nick" placeholder="Masalan: Diyor" />
-          </div>
-          <div class="field">
-            <label data-i18n="avatar">Avatar</label>
-            <input id="pickAvatar" type="file" accept="image/*" />
-          </div>
-        </div>
-        <div class="row" style="margin-top:10px;gap:10px">
-          <button id="saveProfile" class="btn btn-green" data-i18n="save">Saqlash</button>
-          <a href="#/list?mine=1" class="btn btn-ghost" data-i18n="myAds">E’lonlarim</a>
-          <a href="#/noti" class="btn btn-ghost" data-i18n="notifications">Bildirishnomalar</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======= NOTIFICATIONS PAGE ======= -->
-    <section id="page-noti" class="page">
-      <div class="section">
-        <h3 data-i18n="notifications">Bildirishnomalar</h3>
-        <div id="notiList" class="list"></div>
-        <div id="notiEmpty" class="empty">Hozircha xabar yo‘q.</div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Bottom tabs -->
-  <nav class="bottom">
-    <div class="tabs">
-      <a class="bn active" href="#/home"><div>🏠</div><div class="txt" data-i18n="tabHome">Bosh sahifa</div></a>
-      <a class="bn" href="#/list"><div>📋</div><div class="txt" data-i18n="tabList">E’lonlar</div></a>
-      <a class="bn" href="#/create"><div>➕</div><div class="txt" data-i18n="tabAdd">Qo‘shish</div></a>
-      <a class="bn" href="#/profile"><div>👤</div><div class="txt" data-i18n="tabProfile">Profil</div></a>
-    </div>
+<header>
+  <h1>🔑 BINGO</h1>
+  <nav>
+    <button onclick="setLang('uz')">UZ</button>
+    <button onclick="setLang('ru')">RU</button>
+    <button onclick="setLang('en')">EN</button>
+    <button id="loginBtn" class="btn-info">Google bilan kirish</button>
   </nav>
+</header>
 
-  <!-- Toast -->
-  <div id="toast" class="toast hide">OK</div>
+<main>
+  <!-- HOME PAGE -->
+  <section id="home" class="page active">
+    <h2>Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</h2>
+    <p>“Halollik — eng katta mukofot.”</p>
+    <button class="btn btn-danger" onclick="openPage('add')">❗ Yo‘qotdim</button>
+    <button class="btn btn-success" onclick="openPage('add')">✅ Topdim</button>
+    <button class="btn btn-info" onclick="openPage('list')">📋 Yo‘qotilganlar</button>
+    <button class="btn btn-primary" onclick="openPage('reward')">🎁 Mukofotli</button>
+  </section>
 
-  <!-- ======= APP SCRIPT ======= -->
-  <script type="module">
-    /* ================= Firebase ================ */
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-    import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, limit, getDocs, doc, getDoc, where, startAfter } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
-    import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js";
+  <!-- ADD AD PAGE -->
+  <section id="add" class="page">
+    <h2>E’lon qo‘shish</h2>
+    <form id="adForm">
+      <select id="adType">
+        <option value="yoqotdim">Yo‘qotdim</option>
+        <option value="topdim">Topdim</option>
+        <option value="mukofotli">Mukofotli</option>
+      </select>
+      <input type="text" id="adTitle" placeholder="Sarlavha" required>
+      <textarea id="adDesc" placeholder="Tavsif" required></textarea>
+      <input type="text" id="adCity" placeholder="Shahar" required>
+      <button type="submit" class="btn btn-primary">E’lon qo‘shish</button>
+    </form>
+  </section>
 
-    /* !!! O'ZINGIZNING CONFIG'INGIZ !!! */
-    const firebaseConfig = {
-      apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
-      authDomain: "topildi.firebaseapp.com",
-      databaseURL: "https://topildi-default-rtdb.firebaseio.com",
-      projectId: "topildi",
-      storageBucket: "topildi.firebasestorage.app",
-      messagingSenderId: "323891530719",
-      appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
-      measurementId: "G-NKCMKCXZQ7"
-    };
+  <!-- ADS LIST -->
+  <section id="list" class="page">
+    <h2>📋 E’lonlar</h2>
+    <div id="adsContainer"></div>
+  </section>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db   = getFirestore(app);
-    const st   = getStorage(app);
-    const provider = new GoogleAuthProvider();
+  <!-- REWARD LIST -->
+  <section id="reward" class="page">
+    <h2>🎁 Mukofotli e’lonlar</h2>
+    <div id="rewardContainer"></div>
+  </section>
 
-    /* ================= I18N ================= */
-    const LOCALES = {
-      uz: {
-        langUZ:"UZ",langRU:"RU",langEN:"EN",
-        profile:"Profil", loginGoogle:"Google bilan kirish", logout:"Chiqish",
-        heroTitle:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",
-        heroLead:"“Halollik — eng katta mukofot.”",
-        fastLogin:"Tez kirish",
-        fastLoginHint:"Hisobga kirish uchun quyidagi tugmani bosing. Agar ruxsat berilmagan domen xatosi chiqsa — Firebase’dagi Authentication → Settings → Authorized domains ga saytingiz domenini qo‘shing.",
-        latest:"Oxirgi e’lonlar", seeAll:"Barchasini ko‘rish",
-        lost:"Yo‘qotdim", found:"Topdim", reward:"Mukofotli",
-        allAds:"E’lonlar", filterType:"Tur bo‘yicha", typeAll:"Barchasi", search:"Qidirish",
-        createTitle:"E’lon qoldirish", title:"Sarlavha", titleHint:"Soddaroq va aniqlik bilan yozing.",
-        city:"Shahar/joy", desc:"Tavsif", lang:"Til", rewardAmt:"Mukofot (ixtiyoriy)", photos:"Rasmlar (4 tagacha)", photosHint:"Birlamchi rasm ro‘yxatda ko‘rsatiladi.",
-        publish:"E’loni yuborish", postedOK:"E’lon joylandi! Rahmat.",
-        comments:"Izohlar", send:"Yuborish",
-        myProfile:"Mening profilim", nickname:"Foydalanuvchi nomi", avatar:"Avatar", save:"Saqlash", myAds:"E’lonlarim", notifications:"Bildirishnomalar",
-        tabHome:"Bosh sahifa", tabList:"E’lonlar", tabAdd:"Qo‘shish", tabProfile:"Profil"
-      },
-      ru: {
-        langUZ:"UZ",langRU:"RU",langEN:"EN",
-        profile:"Профиль", loginGoogle:"Войти через Google", logout:"Выйти",
-        heroTitle:"Потеряли или нашли? Разместите объявление.",
-        heroLead:"«Честность — самая большая награда.»",
-        fastLogin:"Быстрый вход",
-        fastLoginHint:"Если видите ошибку «неавторизованный домен», добавьте домен вашего сайта в Firebase → Authentication → Settings → Authorized domains.",
-        latest:"Последние объявления", seeAll:"Смотреть все",
-        lost:"Потерял", found:"Нашёл", reward:"Вознаграждение",
-        allAds:"Объявления", filterType:"Тип", typeAll:"Все", search:"Поиск",
-        createTitle:"Разместить объявление", title:"Заголовок", titleHint:"Пишите просто и конкретно.",
-        city:"Город/место", desc:"Описание", lang:"Язык", rewardAmt:"Награда (необяз.)", photos:"Фото (до 4)", photosHint:"Первое фото видно в списке.",
-        publish:"Опубликовать", postedOK:"Объявление опубликовано! Спасибо.",
-        comments:"Комментарии", send:"Отправить",
-        myProfile:"Мой профиль", nickname:"Ник", avatar:"Аватар", save:"Сохранить", myAds:"Мои объявления", notifications:"Уведомления",
-        tabHome:"Главная", tabList:"Список", tabAdd:"Добавить", tabProfile:"Профиль"
-      },
-      en: {
-        langUZ:"UZ",langRU:"RU",langEN:"EN",
-        profile:"Profile", loginGoogle:"Sign in with Google", logout:"Sign out",
-        heroTitle:"Lost or found something? Post a notice.",
-        heroLead:"“Honesty is the greatest reward.”",
-        fastLogin:"Quick sign-in",
-        fastLoginHint:"If you see ‘unauthorized domain’, add your site domain in Firebase → Authentication → Settings → Authorized domains.",
-        latest:"Latest posts", seeAll:"See all",
-        lost:"Lost", found:"Found", reward:"Reward",
-        allAds:"Posts", filterType:"Type", typeAll:"All", search:"Search",
-        createTitle:"Post a notice", title:"Title", titleHint:"Keep it short and clear.",
-        city:"City/place", desc:"Description", lang:"Language", rewardAmt:"Reward (optional)", photos:"Photos (up to 4)", photosHint:"First photo appears in list.",
-        publish:"Publish", postedOK:"Posted! Thank you.",
-        comments:"Comments", send:"Send",
-        myProfile:"My profile", nickname:"Nickname", avatar:"Avatar", save:"Save", myAds:"My posts", notifications:"Notifications",
-        tabHome:"Home", tabList:"Posts", tabAdd:"Add", tabProfile:"Profile"
-      }
-    };
-    let CURR_LANG = localStorage.getItem("lang") || "uz";
-    function t(k){ return (LOCALES[CURR_LANG] && LOCALES[CURR_LANG][k]) || (LOCALES.uz[k]||k); }
-    function applyI18N(){
-      document.querySelectorAll("[data-i18n]").forEach(el=>{
-        const key = el.getAttribute("data-i18n");
-        el.textContent = t(key);
-      });
-      // placeholders (form ichidagi matnlar)
-      document.getElementById("adTitle").placeholder = CURR_LANG==="ru" ? "Напр.: «Потерял чёрный кошелёк»" :
-        CURR_LANG==="en" ? 'e.g., "Lost black wallet"' : 'Masalan: “Qora hamyon yo‘qoldi”';
-      document.getElementById("adCity").placeholder = CURR_LANG==="ru" ? "Напр.: Самарканд, Регистан" :
-        CURR_LANG==="en" ? "e.g., Samarkand, Registan" : "Masalan: Samarqand, Registon";
-      document.getElementById("adDesc").placeholder = CURR_LANG==="ru" ? "Когда/где потеряли/нашли? Контакт." :
-        CURR_LANG==="en" ? "When/where lost/found? Contact." :
-        "Qachon, qayerda va qanday yo‘qotdingiz/topdingiz? Aloqa usuli.";
+  <!-- PROFILE -->
+  <section id="profile" class="page">
+    <div class="profile">
+      <img id="profileImg" src="https://via.placeholder.com/90" alt="profile">
+      <h3 id="profileName">Foydalanuvchi</h3>
+      <p id="profileEmail"></p>
+      <input type="file" id="uploadPhoto" accept="image/*">
+    </div>
+  </section>
+</main>
+
+<footer>
+  <button onclick="openPage('home')">🏠 Bosh sahifa</button>
+  <button onclick="openPage('list')">📋 E’lonlar</button>
+  <button onclick="openPage('add')">➕ Qo‘shish</button>
+  <button onclick="openPage('profile')">👤 Profil</button>
+</footer>
+
+<div id="notif" class="notif"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+    authDomain: "topildi.firebaseapp.com",
+    projectId: "topildi",
+    storageBucket: "topildi.appspot.com",
+    messagingSenderId: "323891530719",
+    appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  const db = getFirestore(app);
+
+  const loginBtn = document.getElementById("loginBtn");
+  const profileName = document.getElementById("profileName");
+  const profileEmail = document.getElementById("profileEmail");
+  const profileImg = document.getElementById("profileImg");
+
+  loginBtn.onclick = () => {
+    signInWithPopup(auth, provider).catch(err => alert(err.message));
+  };
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      profileName.textContent = user.displayName;
+      profileEmail.textContent = user.email;
+      profileImg.src = user.photoURL || "https://via.placeholder.com/90";
+      loginBtn.textContent = "Chiqish";
+      loginBtn.onclick = () => signOut(auth);
+    } else {
+      profileName.textContent = "Foydalanuvchi";
+      profileEmail.textContent = "";
+      profileImg.src = "https://via.placeholder.com/90";
+      loginBtn.textContent = "Google bilan kirish";
+      loginBtn.onclick = () => signInWithPopup(auth, provider);
     }
-    document.querySelectorAll('.pill[data-lang]').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        CURR_LANG = btn.dataset.lang;
-        localStorage.setItem('lang', CURR_LANG);
-        applyI18N();
-      });
+  });
+
+  // ADD AD
+  document.getElementById("adForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const adType = document.getElementById("adType").value;
+    const adTitle = document.getElementById("adTitle").value;
+    const adDesc = document.getElementById("adDesc").value;
+    const adCity = document.getElementById("adCity").value;
+    const user = auth.currentUser;
+
+    if (!user) return alert("Avval kirish kerak!");
+
+    await addDoc(collection(db, "ads"), {
+      type: adType,
+      title: adTitle,
+      desc: adDesc,
+      city: adCity,
+      user: user.email,
+      date: new Date().toISOString()
     });
 
-    /* ================= Helpers ================= */
-    const $ = s => document.querySelector(s);
-    const $$ = s => Array.from(document.querySelectorAll(s));
-    function toast(msg,err=false){ const tEl=$("#toast"); tEl.textContent=msg; tEl.classList.toggle('err',!!err); tEl.classList.remove('hide'); setTimeout(()=>tEl.classList.add('hide'),2000); }
-    function formatDate(ts){
-      const d = ts?.toDate ? ts.toDate() : new Date();
-      return d.toLocaleString(CURR_LANG==="ru"?"ru-RU":CURR_LANG==="en"?"en-US":"uz-UZ");
-    }
-    function oauthDomainErrorBox(){
-      const dom = location.host; 
-      const box = $("#oauthAlert");
-      box.innerHTML = `Firebase: Ushbu domen OAuth uchun ruxsat etilmagan (auth/unauthorized-domain).<br>
-      - Firebase Console → Authentication → Settings → Authorized domains ga saytingiz domenini qo‘shing.<br>
-      - Sizning domeningiz: <b>${dom}</b>`;
-    }
+    showNotif("E’lon qo‘shildi ✅");
+    e.target.reset();
+    openPage("list");
+    loadAds();
+  });
 
-    /* ================= Auth ================= */
-    $("#btnLogin").onclick = ()=> signInWithPopup(auth, provider).catch(e=>toast(e.message,true));
-    $("#btnLogin2").onclick = $("#btnLogin").onclick;
-    $("#btnLogout").onclick = ()=> signOut(auth);
+  // LOAD ADS
+  async function loadAds() {
+    const adsContainer = document.getElementById("adsContainer");
+    const rewardContainer = document.getElementById("rewardContainer");
+    adsContainer.innerHTML = "";
+    rewardContainer.innerHTML = "";
 
-    onAuthStateChanged(auth, async user=>{
-      const inUI = !!user;
-      $("#btnLogin").classList.toggle("hide", inUI);
-      $("#btnLogin2").classList.toggle("hide", inUI);
-      $("#btnLogout").classList.toggle("hide", !inUI);
-      $("#btnProfile").classList.toggle("hide", !inUI);
-
-      if(user){
-        $("#pName").textContent = user.displayName || "—";
-        $("#pEmail").textContent = user.email || "—";
-        $("#pUID").textContent = "UID: "+user.uid;
-        $("#avatar").style.backgroundImage = `url("${user.photoURL || ""}")`;
-      }
+    const q = await getDocs(collection(db, "ads"));
+    q.forEach(doc => {
+      const ad = doc.data();
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `<h3>${ad.title}</h3><p>${ad.desc}</p><small>${ad.city}</small><br><b>${ad.type}</b>`;
+      adsContainer.appendChild(card);
+      if (ad.type === "mukofotli") rewardContainer.appendChild(card.cloneNode(true));
     });
+  }
+  loadAds();
 
-    /* ================= Storage uploads ================= */
-    async function uploadImages(files, pathPrefix){
-      const urls=[];
-      for(let i=0;i<Math.min(files.length,4);i++){
-        const f=files[i];
-        const ref=sRef(st, `${pathPrefix}/${Date.now()}_${i}.jpg`);
-        await uploadBytes(ref, f);
-        const url=await getDownloadURL(ref);
-        urls.push(url);
-      }
-      return urls;
-    }
+  // ===== PAGE SWITCHING =====
+  function openPage(id) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+  }
 
-    /* ================= CREATE (post) ================= */
-    const chips = $$("#typeChips .chip");
-    let currentType="lost";
-    function setType(t){
-      currentType=t;
-      chips.forEach(c=>c.classList.toggle("active", c.dataset.type===t));
-    }
-    chips.forEach(c=>c.addEventListener("click",()=>setType(c.dataset.type)));
+  // ===== NOTIFICATION =====
+  function showNotif(msg) {
+    const n = document.getElementById("notif");
+    n.textContent = msg;
+    n.classList.add("show");
+    setTimeout(() => n.classList.remove("show"), 3000);
+  }
 
-    $("#adPhotos").addEventListener("change", e=>{
-      const box=$("#photoPreview"); box.innerHTML="";
-      [...e.target.files].slice(0,4).forEach(f=>{
-        const url=URL.createObjectURL(f);
-        const d=document.createElement("div"); d.className="thumb"; d.style.backgroundImage=`url("${url}")`;
-        box.appendChild(d);
-      });
-    });
+  // ===== LANG (dummy) =====
+  function setLang(l) { showNotif("Til o‘zgartirildi: " + l.toUpperCase()); }
 
-    // dublikatni bloklash (hash) — sarlavha+desc+city+type bo‘yicha 2 min ichida
-    function makePostHash(v){
-      return (v.title+"|"+v.desc+"|"+v.city+"|"+v.type).toLowerCase().replace(/\s+/g," ").slice(0,180);
-    }
-    function checkDuplicate(hash){
-      const last=JSON.parse(localStorage.getItem("lastPost")||"{}");
-      if(last.hash===hash && (Date.now()-last.time)<120000){ return true; }
-      return false;
-    }
-    function rememberPost(hash){
-      localStorage.setItem("lastPost", JSON.stringify({hash,time:Date.now()}));
-    }
+  window.openPage = openPage;
+  window.setLang = setLang;
+</script>
 
-    $("#btnSubmit").addEventListener("click", async ()=>{
-      const user=auth.currentUser;
-      if(!user){ toast(t("loginGoogle"),true); return; }
-
-      const v={
-        type: currentType,
-        title: $("#adTitle").value.trim(),
-        city:  $("#adCity").value.trim(),
-        desc:  $("#adDesc").value.trim(),
-        lang:  $("#adLang").value,
-        reward: Number($("#adReward").value||0),
-      };
-      if(!v.title || !v.city || !v.desc){ toast("Maydonlar to‘ldirilmagan", true); return; }
-
-      const _hash=makePostHash(v);
-      if(checkDuplicate(_hash)){ $("#dupHint").textContent="⚠️ Bir xil e’lonni qayta yubormang (2 daqiqa kuting)."; return; }
-      $("#dupHint").textContent="";
-
-      $("#btnSubmit").disabled=true;
-      try{
-        const photos = await uploadImages($("#adPhotos").files, `ads/${auth.currentUser.uid}`);
-        const docRef = await addDoc(collection(db,"ads"), {
-          ...v, photos, uid:auth.currentUser.uid,
-          author:{
-            name:auth.currentUser.displayName||$("#nick").value||"—",
-            email:auth.currentUser.email||"",
-            photo:auth.currentUser.photoURL||""
-          },
-          createdAt: serverTimestamp(),
-          commentsCount:0
-        });
-        rememberPost(_hash);
-        $("#submitOK").classList.remove("hide");
-        toast(t("postedOK"));
-        setTimeout(()=>{ location.hash = `#/details?id=${docRef.id}`; }, 400);
-        // formani tozalash
-        ["adTitle","adCity","adDesc","adReward"].forEach(id=>$("#"+id).value="");
-        $("#adPhotos").value=""; $("#photoPreview").innerHTML="";
-        setType("lost");
-      }catch(err){
-        toast(err.message,true);
-      }finally{
-        $("#btnSubmit").disabled=false;
-      }
-    });
-
-    /* ================= LATEST (home) ================= */
-    async function loadLatest(){
-      const qy=query(collection(db,"ads"), orderBy("createdAt","desc"), limit(6));
-      const snap=await getDocs(qy);
-      const list=$("#latestList"); list.innerHTML="";
-      if(snap.empty){ list.innerHTML=`<div class="empty">Hozircha e’lon yo‘q.</div>`; return; }
-      snap.forEach(d=>{
-        const v=d.data();
-        const el=document.createElement("a");
-        el.className="item"; el.href=`#/details?id=${d.id}`;
-        el.innerHTML=`<div class="thumb" style="background-image:url('${(v.photos&&v.photos[0])||""}')"></div>
-        <div>
-          <div class="title">${v.title}</div>
-          <div class="meta">${(v.type==="lost"?t("lost"):v.type==="found"?t("found"):t("reward"))} · ${v.city} · ${formatDate(v.createdAt)}</div>
-        </div>`;
-        list.appendChild(el);
-      });
-    }
-
-    /* ================= LIST PAGE ================= */
-    let _listCursor=null, _listReverse=false, _listMine=null;
-    async function loadList(reset=true){
-      if(reset){ _listCursor=null; _listReverse=false; }
-      const wrap=$("#listWrap"); if(reset) wrap.innerHTML="";
-      const type=$("#filterType").value;
-      const term=$("#search").value.trim().toLowerCase();
-      let qy=query(collection(db,"ads"), orderBy("createdAt","desc"), limit(10));
-      if(type!=="all"){ /* client-side filter pastda */ }
-      if(_listCursor && !_listReverse){ qy=query(qy,startAfter(_listCursor)); }
-      const snap=await getDocs(qy);
-      if(snap.empty && reset){ wrap.innerHTML=`<div class="empty">Topilmadi.</div>`; $("#pageInfo").textContent="0/0"; return; }
-      let shown=0;
-      snap.forEach((d,i)=>{
-        _listCursor=d; const v=d.data();
-        if(_listMine && auth.currentUser?.uid !== v.uid) return;
-        if(type!=="all" && v.type!==type) return;
-        if(term && !(v.title.toLowerCase().includes(term)||v.city.toLowerCase().includes(term)||v.desc.toLowerCase().includes(term))) return;
-
-        shown++;
-        const el=document.createElement("a");
-        el.className="item"; el.href=`#/details?id=${d.id}`;
-        el.innerHTML=`<div class="thumb" style="background-image:url('${(v.photos&&v.photos[0])||""}')"></div>
-        <div>
-          <div class="title">${v.title}</div>
-          <div class="meta">${(v.type==="lost"?t("lost"):v.type==="found"?t("found"):t("reward"))} · ${v.city} · ${formatDate(v.createdAt)}</div>
-        </div>`;
-        wrap.appendChild(el);
-      });
-      $("#pageInfo").textContent="…";
-      $("#pageInfo").textContent="…"; // placeholder
-    }
-    $("#filterType").onchange=()=>loadList(true);
-    $("#search").oninput=()=>loadList(true);
-    $("#prevPage").onclick=()=>{ _listReverse=true; loadList(false); }
-    $("#nextPage").onclick=()=>{ _listReverse=false; loadList(false); }
-
-    /* ================= DETAILS ================= */
-    async function loadDetails(id){
-      const d=await getDoc(doc(db,"ads",id));
-      const v=d.data(); const box=$("#detailsBox");
-      if(!v){ box.innerHTML=`<div class="empty">E’lon topilmadi.</div>`; return; }
-      box.innerHTML=`
-        <div class="row" style="gap:12px">
-          ${(v.photos||[]).map(u=>`<div class="thumb" style="width:120px;height:120px;background-image:url('${u}')"></div>`).join("")}
-        </div>
-        <div class="title" style="margin-top:10px">${v.title}</div>
-        <div class="meta">${(v.type==="lost"?t("lost"):v.type==="found"?t("found"):t("reward"))} · ${v.city} · ${formatDate(v.createdAt)}</div>
-        <div style="margin-top:10px;white-space:pre-wrap">${v.desc}</div>
-        ${v.reward?`<div class="notice" style="margin-top:12px">🎁 ${t("reward")}: <b>${v.reward}</b></div>`:""}
-        <div class="card" style="margin-top:12px">
-          <div class="row" style="gap:10px">
-            <div class="thumb" style="width:46px;height:46px;border-radius:50%;background-image:url('${(v.author&&v.author.photo)||""}')"></div>
-            <div class="col">
-              <b>${(v.author&&v.author.name)||"—"}</b>
-              <div class="meta">${(v.author&&v.author.email)||""}</div>
-            </div>
-          </div>
-        </div>
-      `;
-      // izohlarni yuklash (oddiy demo: firestore/ads/{id}/comments)
-      await loadComments(id);
-      $("#cSend").onclick = ()=> sendComment(id);
-    }
-
-    async function loadComments(id){
-      const qy=query(collection(db,`ads/${id}/comments`), orderBy("createdAt","desc"), limit(20));
-      const snap=await getDocs(qy);
-      const list=$("#cList"); list.innerHTML="";
-      if(snap.empty){ list.innerHTML=`<div class="empty">Hali izoh yo‘q.</div>`; return; }
-      snap.forEach(d=>{
-        const v=d.data();
-        const el=document.createElement("div");
-        el.className="card";
-        el.innerHTML=`<div class="meta">${formatDate(v.createdAt)} · ${v.author?.name||"—"}</div>
-        <div style="white-space:pre-wrap">${v.text||""}</div>`;
-        list.appendChild(el);
-      });
-    }
-
-    async function sendComment(id){
-      const user=auth.currentUser; if(!user){ toast(t("loginGoogle"),true); return; }
-      const txt=$("#cInput").value.trim(); if(!txt) return;
-      $("#cInput").value="";
-      const ref=collection(db,`ads/${id}/comments`);
-      await addDoc(ref,{ text:txt, createdAt:serverTimestamp(), author:{ uid:user.uid, name:user.displayName||$("#nick").value||"—" }});
-      // egasiga bildirishnoma yozamiz (in-app)
-      await addDoc(collection(db,"noti"),{ to:id, uid:user.uid, text:`🔔 Yangi izoh: “${txt.slice(0,40)}…”`, createdAt:serverTimestamp()});
-      loadComments(id);
-      toast("Yuborildi");
-    }
-
-    /* ================= PROFILE ================= */
-    $("#saveProfile").onclick = async ()=>{
-      const user=auth.currentUser; if(!user){ toast(t("loginGoogle"),true); return; }
-      const n = $("#nick").value.trim();
-      const file = $("#pickAvatar").files[0];
-      try{
-        if(file){
-          const url=(await uploadImages([file], `avatars/${user.uid}`))[0];
-          $("#avatar").style.backgroundImage=`url('${url}')`;
-        }
-        if(n){ $("#pName").textContent=n; toast(t("save")); }
-      }catch(e){ toast(e.message,true); }
-    };
-
-    /* ================= NOTIFICATIONS ================= */
-    async function loadNotifications(){
-      const snap=await getDocs(query(collection(db,"noti"), orderBy("createdAt","desc"), limit(20)));
-      const list=$("#notiList"); const empty=$("#notiEmpty");
-      list.innerHTML=""; empty.classList.add("hide");
-      if(snap.empty){ empty.classList.remove("hide"); return; }
-      snap.forEach(d=>{
-        const v=d.data();
-        const el=document.createElement("div");
-        el.className="card";
-        el.innerHTML=`<div class="meta">${formatDate(v.createdAt)}</div><div>${v.text}</div>`;
-        list.appendChild(el);
-      });
-    }
-
-    /* ================= Hash Router (barqaror) ================= */
-    const pages=["home","list","create","details","profile","noti"];
-    const parseHash=()=>{const h=location.hash.replace(/^#\/?/,"");const [p,q]=h.split("?");const params=new URLSearchParams(q||"");return{page:p||"home",params}};
-    function showPage(name){
-      pages.forEach(p=>document.getElementById("page-"+p).classList.remove("active"));
-      const el=document.getElementById("page-"+name); if(el) el.classList.add("active");
-      // tablar
-      $$(".bottom .bn").forEach(b=>b.classList.remove("active"));
-      const idx=pages.indexOf(name); const tabs=$$(".bottom .bn"); if(idx>=0 && tabs[idx]) tabs[idx].classList.add("active");
-      // sahifaga xos yuklashlar
-      if(name==="home") loadLatest();
-      if(name==="list"){
-        const {params}=parseHash();
-        $("#filterType").value=params.get("type")||"all";
-        _listMine=params.get("mine")==="1";
-        loadList(true);
-      }
-      if(name==="create"){
-        presetTypeFromHash();
-      }
-      if(name==="details"){
-        const {params}=parseHash(); const id=params.get("id"); if(id) loadDetails(id);
-      }
-      if(name==="profile"){
-        // hech narsa
-      }
-      if(name==="noti"){ loadNotifications(); }
-    }
-
-    // Delegated link handler: #/.. bosilganda ham, bir xil hash bo‘lsa ham chizamiz
-    document.body.addEventListener("click",(e)=>{
-      const a=e.target.closest('a[href^="#/"]');
-      if(!a) return;
-      e.preventDefault();
-      const target=a.getAttribute("href");
-      if(location.hash===target){ showPage(parseHash().page); }
-      else { location.hash=target; }
-    });
-
-    function presetTypeFromHash(){
-      const {params}=parseHash(); const tp=params.get("type");
-      if(tp && ["lost","found","reward"].includes(tp)) setType(tp);
-    }
-
-    function bootRoute(){
-      if(!location.hash || location.hash==="#" || location.hash==="#/"){
-        location.replace("#/home");
-      }
-      showPage(parseHash().page);
-    }
-    window.addEventListener("hashchange",()=>showPage(parseHash().page));
-    bootRoute();
-
-    /* ================= Start ================= */
-    applyI18N();
-    // OAuth domain tekshiruvi: auth/unauthorized-domain xabari ko‘rsatish (passiv)
-    try{
-      // Hech narsa chaqirmaymiz; faqat foydalanuvchi bosganda ko‘rinadi.
-      // Ammo foydali banner tayyorlab qo‘yamiz:
-      oauthDomainErrorBox();
-    }catch{ /* ignore */ }
-  </script>
 </body>
-  </html>
+</html>
