@@ -1,694 +1,729 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#ffb300" />
-  <title>BINGO — Yoʻqoldi/Topildi</title>  <!--
-    BINGO — SINGLE-FILE PWA-LIKE (no SW) WITH LOCALSTORAGE BACKEND
-    ✦ What’s new in this build:
-      • REMOVED the big white nav buttons (Bosh sahifa / E’lonlar / Qoʻshish / Profil)
-      • Robust e’lon (ad) posting: works fully offline with localStorage
-      • Image uploads for both PROFILE avatar and E’LON photos (multiple)
-      • Image compression & previews (fast + smaller base64)
-      • Success toasts + in-app navigation (back works)
-      • Clean Yandex-like amber topbar, fully responsive for Samsung A23
-      • One home feed only (no duplicate sections at top/bottom)
-  -->  <style>
-    :root{
-      /* Color system (serious, warm, Yandex-ish) */
-      --amber-50:#fff8e1; --amber-100:#ffecb3; --amber-200:#ffe082; --amber-300:#ffd54f;
-      --amber-400:#ffca28; --amber-500:#ffc107; --amber-600:#ffb300; --amber-700:#ffa000; --amber-800:#ff8f00; --amber-900:#ff6f00;
-      --bg:#faf7ef;           /* page background */
-      --panel:#ffffff;        /* card/panel */
-      --ink:#111213;          /* main text */
-      --ink-dim:#4a4d52;      /* secondary text */
-      --ink-soft:#676b71;     /* tertiary */
-      --line:#ece6d9;         /* subtle borders */
-      --accent:var(--amber-600);
-      --accent-ink:#1a1200;
-      --green:#16a34a; --red:#dc2626; --blue:#2563eb; --gray:#6b7280;
-      --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
-      --radius-2:12px; --radius-3:22px; --radius-4:28px;
-      --shadow-1:0 2px 10px rgba(17,18,19,.07), 0 8px 24px rgba(17,18,19,.05);
-      --shadow-2:0 8px 24px rgba(17,18,19,.10), 0 18px 40px rgba(17,18,19,.06);
-      --space: clamp(12px, 2.8vw, 18px);
-      --space-lg: clamp(18px, 4.5vw, 28px);
-      --maxw: 980px;
-    }
-    html,body{height:100%;}
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--ink); background:var(--bg); line-height:1.4; -webkit-tap-highlight-color: transparent;
-    }
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>BINGO — Yo‘qoldi/Topildi</title>
+<meta name="theme-color" content="#f8c100"/>
+<link rel="manifest" href='data:application/manifest+json,{"name":"BINGO — Yo‘qoldi/Topildi","short_name":"BINGO","start_url":"./","display":"standalone","background_color":"#fff9db","theme_color":"#f8c100","icons":[]}'/>
+<style>
+  :root{
+    --bg1:#FFF9DB; --bg2:#FFF1B8;
+    --panel:#0f172a; --ring:#e5e7eb33; --text:#0F172A;
+    --muted:#475569; --text-card:#F1F5F9; --muted-card:#94A3B8;
+    --blue:#1e293b; --green:#16A34A; --red:#DC2626; --amber:#f8c100;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
+  body{background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text)}
+  .wrap{max-width:980px;margin:0 auto;padding:16px 14px 28px}
 
-    /* Topbar */
-    .topbar{
-      position:sticky; top:0; inset-inline:0; z-index:1000; backdrop-filter:saturate(1.2) blur(8px);
-      background: linear-gradient(180deg, var(--amber-700), var(--amber-600));
-      color:#111;
-      padding: env(safe-area-inset-top) var(--space) calc(var(--space) - 6px);
-      box-shadow: var(--shadow-1);
-    }
-    .topbar-inner{ display:flex; align-items:center; gap:10px; max-width:var(--maxw); margin-inline:auto; }
-    .back-btn{ appearance:none; border:none; background:#111; color:#fff; width:40px; height:40px; border-radius:999px; display:grid; place-items:center; font-size:18px; box-shadow: inset 0 0 0 2px rgba(255,255,255,.18); }
-    .brand{ font-weight:800; letter-spacing:.4px; font-size: clamp(22px, 4.6vw, 28px); margin-inline:2px 6px; color:#111; }
-    .grow{ flex:1 }
-    .chip{ border:none; background:#111; color:#fff; padding:10px 12px; border-radius:999px; font-weight:700; font-size:13px; }
-    .chip.ghost{ background:rgba(0,0,0,.18); color:#111; border:1px solid rgba(17,17,17,.18); }
-    .user-pill{ display:flex; align-items:center; gap:10px; padding:6px 10px; background:#111; color:#fff; border-radius:999px; border:1px solid rgba(255,255,255,.25); box-shadow: var(--shadow-1); }
-    .user-pill img{ width:28px; height:28px; object-fit:cover; border-radius:999px; background:#fff; }
+  .topbar{position:sticky;top:0;z-index:80;background:linear-gradient(180deg,rgba(255,248,204,.95),rgba(255,240,170,.86));border-bottom:1px solid #f1d28a;backdrop-filter:saturate(1.2) blur(8px)}
+  .hdr{display:flex;gap:12px;align-items:center;padding:8px 10px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:#fff3c4;border:1px solid #f1d28a;font-weight:900;color:#b45309}
+  .title{font-weight:900;letter-spacing:.2px;color:#111827;font-size:18px}
+  .searchbox{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #f1d28a;border-radius:999px;padding:6px 10px;box-shadow:0 2px 0 #f1d28a}
+  .searchbox input{flex:1;border:0;outline:0;font-size:15px}
+  .chip{border:1px dashed #e0c466;background:#fff7cc;color:#5b4300;border-radius:999px;padding:5px 10px;font-weight:700}
+  .controls{display:flex;gap:8px;align-items:center}
+  .iconbtn{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;cursor:pointer;color:#1f2937}
+  .iconbtn:active{transform:translateY(1px)}
+  .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #f1d28a;background:#fff}
+  .userbtn{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:999px;border:1px solid #f1d28a;background:#fff}
+  .userbtn .name{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
 
-    /* Views */
-    .view{ display:none; max-width:var(--maxw); margin-inline:auto; padding: var(--space); }
-    .view.active{ display:block }
+  .net{position:sticky;top:56px;z-index:75;margin:6px 10px;max-width:980px;padding:6px 10px;border-radius:10px;text-align:center;font-weight:800;display:none}
+  .net.off{display:block;background:#991b1b;color:#fff;border:1px solid #fecaca}
+  .net.on{display:block;background:#065f46;color:#d1fae5;border:1px solid #99f6e4}
 
-    /* Hero */
-    .hero{
-      background: linear-gradient(180deg, #fff, var(--amber-50));
-      border-radius: var(--radius-4);
-      padding: var(--space-lg);
-      box-shadow: var(--shadow-1);
-    }
-    .hero h1{ font-size: clamp(28px, 6.7vw, 46px); line-height:1.1; letter-spacing:-.02em; margin:0 0 8px; }
-    .hero p{ color:var(--ink-soft); font-size: clamp(14px, 3.6vw, 18px); margin:0; }
-
-    /* Quick actions */
-    .qa-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:18px; }
-    .qa{ padding:16px; border-radius:20px; font-weight:800; font-size:18px; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow: var(--shadow-1); border:1px solid var(--line); }
-    .qa.lost{ background:#ffe6e6; }
-    .qa.found{ background:#e9ffe9; }
-    .qa.list{ background:#eaf2ff; }
-    .qa.reward{ background:#fff0da; }
-
-    /* Section card */
-    .card{ background:var(--panel); border-radius: var(--radius-3); box-shadow: var(--shadow-1); border:1px solid var(--line); }
-    .card.pad{ padding: var(--space-lg); }
-    .card h3{ margin:0 0 8px; font-size: clamp(18px, 4.5vw, 22px); }
-
-    /* Latest posts grid */
-    .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:16px; }
-    .post{ border:1px solid var(--line); border-radius:22px; overflow:hidden; background:#fff; box-shadow: var(--shadow-1); display:flex; flex-direction:column; }
-    .post .media{ aspect-ratio: 4/3; background:#f2f2f2; position:relative; }
-    .post .media img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-    .tag{ position:absolute; top:10px; left:10px; background:#111; color:#fff; padding:6px 10px; border-radius:999px; font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
-    .tag.lost{ background:var(--bad) }
-    .tag.found{ background:var(--ok) }
-    .post .body{ padding:12px 14px 14px; display:flex; flex-direction:column; gap:6px; }
-    .post .ttl{ font-weight:800; font-size:16px; line-height:1.2; }
-    .post .desc{ color:var(--ink-dim); font-size:13px; }
-    .post .meta{ display:flex; gap:8px; align-items:center; color:#555; font-size:12px; margin-top:4px; }
-
-    .post .actions{ display:flex; gap:8px; margin-top:10px; }
-    .btn{ appearance:none; border:none; background:#111; color:#fff; padding:10px 12px; border-radius:12px; font-weight:700; font-size:13px; }
-    .btn.ghost{ background:#fff; color:#111; border:1px solid var(--line) }
-
-    /* Floating add button (replaces old big nav). */
-    .fab{ position:fixed; right:16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index:1001; width:60px; height:60px; border-radius:999px; background:var(--accent); color:#111; border:none; font-weight:900; font-size:28px; box-shadow: var(--shadow-2); }
-
-    /* Forms */
-    form{ display:grid; gap:14px; }
-    .field{ display:grid; gap:8px; }
-    label{ font-weight:800; font-size:14px; }
-    input[type="text"], input[type="tel"], input[type="number"], textarea{ width:100%; padding:14px 14px; border-radius:14px; border:1px solid var(--line); background:#fff; font: inherit; }
-    textarea{ min-height:120px; resize:vertical }
-    .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .radio-group{ display:flex; gap:12px; }
-    .radio{ padding:10px 12px; border-radius:999px; border:1px solid var(--line); background:#fff; display:flex; align-items:center; gap:8px; }
-    .radio input{ accent-color: var(--accent); width:18px; height:18px }
-
-    .images{ display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; }
-    .images .ph{ aspect-ratio:1/1; border:1px dashed var(--line); border-radius:14px; display:grid; place-items:center; color:var(--ink-soft); font-size:12px; padding:8px; text-align:center; }
-    .thumb{ position:relative; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
-    .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .thumb .x{ position:absolute; top:6px; right:6px; background:#111; color:#fff; width:22px; height:22px; border-radius:999px; border:none; font-size:14px; display:grid; place-items:center; }
-
-    .divider{ height:1px; background:var(--line); margin: 6px 0; }
-
-    /* Profile */
-    .profile-head{ display:flex; align-items:center; gap:14px; }
-    .avatar{ width:76px; height:76px; border-radius:999px; background:#f5f5f5; border:1px solid var(--line); overflow:hidden; }
-    .avatar img{ width:100%; height:100%; object-fit:cover; }
-
-    /* Toast */
-    .toast{ position: fixed; left:50%; transform: translateX(-50%) translateY(20px); bottom: calc(20px + env(safe-area-inset-bottom)); z-index:2000; background:#111; color:#fff; padding:12px 16px; border-radius:999px; box-shadow: var(--shadow-2); opacity:0; pointer-events:none; transition: opacity .25s, transform .25s; }
-    .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
-
-    /* Dialog (image viewer) */
-    .overlay{ position:fixed; inset:0; background: rgba(0,0,0,.6); display:none; place-items:center; z-index:3000; padding:18px; }
-    .overlay.open{ display:grid }
-    .viewer{ background:#000; border-radius:18px; max-width:96vw; max-height:90vh; overflow:hidden; }
-    .viewer img{ display:block; max-width:100%; height:auto; }
-    .viewer .bar{ display:flex; justify-content:space-between; align-items:center; padding:8px 10px; color:#fff; }
-
-    /* Utilities */
-    .muted{ color:var(--ink-soft) }
-    .center{ text-align:center }
-    .hidden{ display:none!important }
-
-    @media (min-width:820px){
-      .topbar-inner{ gap:14px }
-      .fab{ right: 34px; bottom:34px }
-    }
-  </style></head>
+  .hero{margin:20px 0 12px}
+  .headline{font-size:34px;line-height:1.3;font-weight:900;color:#111827}
+  .muted{color:#475569;margin-top:6px}
+  #mainMenu{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+  .btn{border-radius:16px;padding:12px 16px;cursor:pointer;border:1px solid #e2e8f0;background:#111a2b;color:#e5eef7;font-weight:700;font-size:15px;transition:.2s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-blue{background:var(--blue)} .btn-green{background:var(--green);color:#04140a} .btn-red{background:var(--red)}
+  .btn-amber{background:var(--amber);color:#111}
+  .btn-sm{font-size:14px;padding:10px 12px}
+  .btn-disabled{background:#9ca3af!important;color:#f3f4f6!important;cursor:not-allowed}
+  .views{min-height:72vh}
+  .view{display:none}
+  .view.active{display:block}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  @media (max-width:760px){ .grid{grid-template-columns:1fr} }
+  .card{background:var(--panel);border:1px solid var(--ring);border-radius:18px;padding:12px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+  .card-title{font-weight:800;margin-bottom:8px;font-size:15px;letter-spacing:.2px}
+  .card-text,.card-list{font-size:13px;color:var(--muted-card)}
+  label{font-size:13px;color:#8fa1b7;margin:8px 0 4px;display:block}
+  input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px}
+  input[type="file"]{padding:10px;background:#0b1220;border:1px dashed #334155}
+  textarea{min-height:96px;resize:vertical}
+  .sp{height:10px}
+  .post-card{background:#0f172a;border:1px solid #223047;border-radius:14px;padding:12px;margin:10px 0}
+  .post-img{width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:1px solid #223047;background:#0b1220}
+  .post-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+  .post-kind{font-weight:700}
+  .post-date{opacity:.8;font-size:12px}
+  .post-meta{opacity:.9;font-size:13px}
+  .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap}
+  .footer{text-align:center;color:#334155;margin-top:20px;font-size:13px}
+  .center-toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);background:#16a34a;color:#fff;padding:18px 22px;border-radius:14px;font-weight:900;z-index:9999;opacity:0;transition:.18s}
+  .center-toast.err{background:#dc2626}
+  .center-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .progress{height:8px;border-radius:6px;background:#0b1220;border:1px solid #223047;overflow:hidden}
+  .bar{height:100%;width:0%;background:#38bdf8}
+  :is(button,select,input,textarea):focus{outline:2px solid #f8c10033;outline-offset:2px}
+</style>
+</head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <button id="backBtn" class="back-btn" aria-label="Orqaga" title="Orqaga" data-nohist>‹</button>
-      <div class="brand">BINGO</div>
-      <div class="grow"></div>
-      <button class="chip ghost" data-lang="uz" title="Oʻzbekcha">UZ</button>
-      <button class="chip ghost" data-lang="ru" title="Русский">RU</button>
-      <button class="chip ghost" data-lang="en" title="English">EN</button>
-      <button id="userBtn" class="user-pill" aria-haspopup="true">
-        <img id="userAvatarSmall" alt="" />
-        <span id="userNameSmall">Profil</span>
-      </button>
+  <div class="topbar">
+    <div class="hdr">
+      <div class="brand">
+        <div class="logo">BG</div>
+        <div class="title">BINGO</div>
+      </div>
+      <div class="searchbox">
+        <input id="qSearch" placeholder="Qidirish: sarlavha, shahar, aloqa"/>
+        <span class="chip" id="lostCountChip">0 Lost</span>
+        <span class="chip" id="foundCountChip">0 Found</span>
+      </div>
+      <div class="controls">
+        <button id="backBtn" class="iconbtn" title="Orqaga">⟵</button>
+        <button id="homeBtn" class="iconbtn" title="Bosh sahifa">⌂</button>
+        <div class="menu" id="userMenu">
+          <button id="userBtn" class="userbtn" title="Profil">
+            <img id="avatarImg" class="avatar" alt="avatar" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzYiIGhlaWdodD0iMzYiIHZpZXdCb3g9IjAgMCAzNiAzNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIxOCIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjE4IiBjeT0iMTQiIHI9IjgiIGZpbGw9IiNmMWQyOGEiLz48cGF0aCBkPSJNMjkgMjkuNWMwLTQuNC04LjItNS44LTExLTVzLTExIDEuNi0xMSA1djIuNWgyMnoiIGZpbGw9IiNmMWQyOGEiLz48L3N2Zz4="/>
+            <span class="name" id="userNameLabel">Kirish</span>
+          </button>
+          <div class="menu-panel" id="menuPanel" style="display:none;position:absolute;right:0;top:44px;background:#fff;border:1px solid #f1d28a;border-radius:12px;min-width:240px;box-shadow:0 10px 24px rgba(0,0,0,.12)">
+            <div class="menu-item" id="btnLogin" style="padding:10px 12px;cursor:pointer">🔑 Gmail orqali kirish</div>
+            <div class="menu-item" id="btnProfile" style="padding:10px 12px;cursor:pointer">👤 Profil</div>
+            <div class="menu-item" id="btnMyPosts" style="padding:10px 12px;cursor:pointer">⭐ Mening e’lonlarim</div>
+            <div class="menu-sep" style="height:1px;background:#f1d28a;margin:6px 0"></div>
+            <div class="menu-item" id="btnLogout" style="padding:10px 12px;cursor:pointer">🚪 Chiqish</div>
+            <div class="menu-item small" style="padding:10px 12px;color:#6b7280">Google orqali — Firebase Auth</div>
+          </div>
+        </div>
+      </div>
     </div>
-  </header>  <!-- HOME VIEW (single main page) -->  <main id="view-home" class="view active"><!-- Hero -->
-<section class="hero">
-  <h1>Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</h1>
-  <p>“Halollik — eng katta mukofot.”</p>
-
-  <!-- Quick action buttons (kept) -->
-  <div class="qa-grid" aria-label="Tez harakatlar">
-    <button class="qa lost" data-open="view-add" data-type="lost">❗ Yo‘qotdim</button>
-    <button class="qa found" data-open="view-add" data-type="found">✅ Topdim</button>
-    <button class="qa list" data-open="home-list">📄 Yo‘qotilganlar</button>
-    <button class="qa reward" data-open="home-reward">🎁 Mukofotli</button>
   </div>
-</section>
 
-<!-- Why BINGO? -->
-<section class="card pad" style="margin-top:var(--space-lg)">
-  <h3>Nega BINGO?</h3>
-  <div class="muted">Oddiy forma, tez natija. Barcha e’lonlar bir joyda. Xolis sharhlar va bildirishnomalar.</div>
-</section>
+  <div id="netBadge" class="net" style="display:none"></div>
 
-<!-- Quick login (placeholder) -->
-<section class="card pad" style="margin-top:var(--space-lg)">
-  <h3>Tez kirish</h3>
-  <div class="muted">Google bilan kirib, 10 soniyada e’lon qoldiring. (Demo)</div>
-</section>
+  <div class="wrap">
+    <div id="alert" class="alert" role="alert" style="display:none;margin:0 auto 10px;max-width:980px;background:#7c2d12;color:#fff;padding:10px 12px;border-radius:10px;white-space:pre-wrap"></div>
 
-<!-- Feed -->
-<section style="margin-top:var(--space-lg)">
-  <h2 style="margin:0 0 10px; font-size: clamp(20px, 5vw, 28px);">Oxirgi e’lonlar</h2>
-  <div class="grid" id="postsGrid" aria-live="polite"></div>
-  <div id="emptyFeed" class="muted center" style="margin-top:12px">Hozircha e’lon yoʻq. Birinchi boʻlib e’lon qoldiring! ➜ pastdagi “+”</div>
-</section>
+    <div class="views">
+      <!-- HOME -->
+      <section id="view_home" class="view active">
+        <div class="hero">
+          <div class="headline" data-i18n="hero_title">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</div>
+          <div class="muted" data-i18n="hero_sub">“Halollik — eng katta mukofot.”</div>
+        </div>
 
-  </main>  <!-- ADD/EDIT POST VIEW -->  <main id="view-add" class="view">
-    <section class="card pad">
-      <h3 id="addTitle">Yangi e’lon</h3>
-      <form id="postForm" autocomplete="on">
-        <div class="field">
-          <label>Holat</label>
-          <div class="radio-group" role="radiogroup">
-            <label class="radio"><input type="radio" name="ptype" value="lost" checked> Yo‘qotdim</label>
-            <label class="radio"><input type="radio" name="ptype" value="found"> Topdim</label>
+        <div id="mainMenu">
+          <button class="btn btn-red"  data-nav="lostForm"  data-i18n="btn_lost">❗ Yo‘qotdim</button>
+          <button class="btn btn-green" data-nav="foundForm" data-i18n="btn_found">✅ Topdim</button>
+          <button class="btn btn-blue" data-nav="lostList"  data-i18n="btn_lostlist">📋 Yo‘qotilganlar</button>
+          <button class="btn btn-blue" data-nav="rewardList" data-i18n="btn_reward">🎁 Mukofotli</button>
+          <button class="btn btn-blue" data-nav="foundList" data-i18n="btn_foundlist">🔎 Topilganlar</button>
+          <button class="btn btn-blue btn-sm" data-nav="mine" data-i18n="btn_mine">⭐ Mening e’lonlarim</button>
+          <button class="btn btn-amber btn-sm" id="btnCopyLink">🔗 Havolani nusxalash</button>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="card-title" data-i18n="why_title">Nega BINGO?</div>
+            <p class="card-text" data-i18n="why_text">Oddiy forma, tez natija. Barcha e’lonlar bir joyda.</p>
+          </div>
+          <div class="card">
+            <div class="card-title" data-i18n="guide_title">Qisqa yo‘riqnoma</div>
+            <ul class="card-list">
+              <li data-i18n="guide_1">❗ Yo‘qotdim yoki ✅ Topdim formasini to‘ldiring</li>
+              <li data-i18n="guide_2">Shahar va aloqa — majburiy</li>
+              <li data-i18n="guide_3">Mukofot yozilsa, alohida bo‘limda ko‘rinadi</li>
+            </ul>
           </div>
         </div>
-        <div class="field">
-          <label>Sarlavha*</label>
-          <input type="text" name="title" placeholder="Masalan: Qora hamyon yo‘qoldi" required maxlength="120" />
-        </div>
-        <div class="field">
-          <label>Tavsif*</label>
-          <textarea name="desc" placeholder="Qayerda va qachon yo‘qotdingiz/topdingiz? Belgilar, rang, brend va h.k." required></textarea>
-        </div>
-        <div class="row">
-          <div class="field">
-            <label>Manzil</label>
-            <input type="text" name="place" placeholder="Shahar / ko‘cha / joy" />
-          </div>
-          <div class="field">
-            <label>Mukofot (so‘m)</label>
-            <input type="number" min="0" step="1000" name="reward" placeholder="Ixtiyoriy" />
-          </div>
-        </div>
-        <div class="row">
-          <div class="field">
-            <label>Aloqa ismi</label>
-            <input type="text" name="contact" placeholder="Ismingiz" />
-          </div>
-          <div class="field">
-            <label>Telefon</label>
-            <input type="tel" name="phone" inputmode="tel" placeholder="998501234567" />
-          </div>
-        </div>
-        <div class="field">
-          <label>Rasmlar (bir nechta ruxsat) — profil va e’lonlarga qo‘shish ishlaydi</label>
-          <input id="postImages" type="file" accept="image/*" multiple />
-          <div id="postImagesPreview" class="images" aria-live="polite">
-            <div class="ph">Rasm yuklang. Katta rasmlar avtomatik siqiladi.</div>
-          </div>
-        </div>
-        <div class="divider"></div>
-        <div style="display:flex; gap:10px; justify-content:flex-end">
-          <button type="button" class="btn ghost" data-open="view-home">Bekor qilish</button>
-          <button class="btn" id="savePostBtn">Joylash</button>
-        </div>
-      </form>
-    </section>
-  </main>  <!-- PROFILE VIEW -->  <main id="view-profile" class="view">
-    <section class="card pad">
-      <div class="profile-head">
-        <div class="avatar"><img id="avatarBig" alt=""></div>
-        <div>
-          <div style="font-weight:800; font-size:18px" id="profileNameLabel">Foydalanuvchi</div>
-          <div class="muted" id="profileCityLabel">Shahar belgilanmagan</div>
-        </div>
-      </div>
-      <div class="divider" style="margin:14px 0"></div>
-      <form id="profileForm" autocomplete="on">
-        <div class="field">
-          <label>Ism</label>
-          <input type="text" name="name" placeholder="Ismingiz" />
-        </div>
-        <div class="field">
-          <label>Shahar</label>
-          <input type="text" name="city" placeholder="Masalan: Samarqand" />
-        </div>
-        <div class="field">
-          <label>Avatar rasm</label>
-          <input id="avatarInput" type="file" accept="image/*" />
-          <div class="images" id="avatarPreview"></div>
-        </div>
-        <div style="display:flex; gap:10px; justify-content:flex-end">
-          <button class="btn" id="saveProfileBtn" type="button">Saqlash</button>
-        </div>
-      </form>
-    </section><section class="card pad" style="margin-top:var(--space-lg)">
-  <h3>Mening e’lonlarim</h3>
-  <div class="grid" id="myPostsGrid"></div>
-  <div id="emptyMine" class="muted">Hali e’lon joylamagansiz.</div>
-</section>
+      </section>
 
-  </main>  <!-- Floating action button --><button id="fab" class="fab" title="E’lon qo‘shish">+</button>
+      <!-- LOST FORM -->
+      <section id="view_lostForm" class="view">
+        <div class="card">
+          <div class="card-title"><span data-i18n="lost_form_title">Yo‘qotdim — e’lon</span></div>
+          <label data-i18n="lbl_item">Narsa</label>
+          <input id="l_item" placeholder="Masalan: Qora hamyon, telefon" />
+          <div class="small" style="color:#b8c2d0">Aniq nom yozing: rang, firma, model.</div>
 
-  <!-- Toast -->  <div id="toast" class="toast" role="status" aria-live="polite"></div>  <!-- Image Viewer -->  <div id="overlay" class="overlay">
-    <div class="viewer">
-      <div class="bar">
-        <div id="viewerTitle">Rasm</div>
-        <button class="btn" id="viewerClose" style="background:#fff; color:#111">Yopish</button>
-      </div>
-      <img id="viewerImg" alt="Ko‘rinish" />
+          <label data-i18n="lbl_city">Shahar/Hudud</label>
+          <input id="l_city" placeholder="Masalan: Samarqand / Registon" />
+
+          <label data-i18n="lbl_place">Joy</label>
+          <input id="l_place" placeholder="Qayerda yo‘qotdingiz? (bozor, bekat...)" />
+
+          <label data-i18n="lbl_date">Sana/Vaqt</label>
+          <input id="l_date" placeholder="2025-08-30 14:00" />
+
+          <label data-i18n="lbl_contact">Aloqa</label>
+          <input id="l_contact" placeholder="+998 90 123 45 67" inputmode="tel" />
+
+          <label data-i18n="lbl_reward">Mukofot (ixt.)</label>
+          <input id="l_reward" type="number" placeholder="100000 so‘m" />
+
+          <label data-i18n="lbl_notes">Qo‘shimcha</label>
+          <textarea id="l_notes" placeholder="Belgilari: stiker, qopqoq, ichida hujjatlar..."></textarea>
+
+          <label data-i18n="lbl_photo">Rasm</label>
+          <input id="l_photo" type="file" accept="image/*"/>
+          <div class="progress" id="l_prog" style="display:none"><div class="bar" id="l_bar"></div></div>
+
+          <div class="sp"></div>
+          <button id="btnLost" class="btn btn-red" data-submit="lost" data-i18n="btn_submit">E’lon berish</button>
+        </div>
+      </section>
+
+      <!-- FOUND FORM -->
+      <section id="view_foundForm" class="view">
+        <div class="card">
+          <div class="card-title"><span data-i18n="found_form_title">Topdim — e’lon</span></div>
+
+          <label data-i18n="lbl_item">Narsa</label>
+          <input id="f_item" placeholder="Masalan: Pasport, kalitlar, sumka" />
+          <div class="small" style="color:#b8c2d0">Agar pasport bo‘lsa: ism bosh harfi, familiya qismi kabi.</div>
+
+          <label data-i18n="lbl_city">Shahar/Hudud</label>
+          <input id="f_city" placeholder="Masalan: Toshkent / Chilonzor" />
+
+          <label data-i18n="lbl_place">Qayerdan topildi</label>
+          <input id="f_place" placeholder="Masalan: Chorsu bozori yaqinida" />
+
+          <label data-i18n="lbl_date">Sana/Vaqt</label>
+          <input id="f_date" placeholder="2025-08-30 10:00" />
+
+          <label data-i18n="lbl_contact">Aloqa</label>
+          <input id="f_contact" placeholder="+998 90 987 65 43" inputmode="tel" />
+
+          <label data-i18n="lbl_notes">Qo‘shimcha</label>
+          <textarea id="f_notes" placeholder="Topilgan holati, qayerga topshirildi va h.k."></textarea>
+
+          <label data-i18n="lbl_photo">Rasm</label>
+          <input id="f_photo" type="file" accept="image/*"/>
+          <div class="progress" id="f_prog" style="display:none"><div class="bar" id="f_bar"></div></div>
+
+          <div class="sp"></div>
+          <button id="btnFound" class="btn btn-green" data-submit="found" data-i18n="btn_submit">E’lon berish</button>
+        </div>
+      </section>
+
+      <!-- LISTS -->
+      <section id="view_lostList" class="view">
+        <div class="card">
+          <div class="card-title" data-i18n="lost_list_title">📋 Umumiy yo‘qotilganlar</div>
+          <div class="small" style="margin-bottom:8px">Global qidiruv yuqorida (sarlavha / shahar / aloqa)</div>
+          <div id="lost_list">—</div>
+        </div>
+      </section>
+
+      <section id="view_rewardList" class="view">
+        <div class="card">
+          <div class="card-title" data-i18n="reward_list_title">🎁 Mukofotli</div>
+          <div id="reward_list">—</div>
+        </div>
+      </section>
+
+      <section id="view_foundList" class="view">
+        <div class="card">
+          <div class="card-title" data-i18n="found_list_title">🔎 Topilganlar</div>
+          <div id="found_list">—</div>
+        </div>
+      </section>
+
+      <!-- MINE -->
+      <section id="view_mine" class="view">
+        <div class="card">
+          <div class="card-title" data-i18n="mine_title">⭐ Mening e’lonlarim</div>
+          <div id="mine_list">—</div>
+          <div class="sp"></div>
+          <button class="btn btn-amber" id="clearMineBtn" data-i18n="btn_delete_mine">Mening e’lonlarimni o‘chirish</button>
+        </div>
+      </section>
+
+      <!-- CHAT -->
+      <section id="view_postChat" class="view">
+        <div class="card">
+          <div class="card-title"><span data-i18n="chat_title">Xabar</span> — <span id="chatItemName"></span></div>
+          <div class="sp"></div>
+          <div class="post-meta" style="margin-bottom:8px">Shaxsiy ma’lumotni (telefon, karta) chatga yozmang.</div>
+          <div class="post-card" style="padding:0; border:0; background:#0b1220">
+            <div class="chat-log" id="chatLog" style="height:46vh;overflow:auto;border:1px solid #223047;border-radius:12px;padding:10px"></div>
+          </div>
+          <div class="sp"></div>
+          <input id="chatName" placeholder="Ismingiz"/>
+          <input id="chatText" placeholder="Xabar... (telefon raqamni yozmang, postdagi raqamdan foydalaning)"/>
+          <div class="sp"></div>
+          <button class="btn btn-blue" id="sendChatBtn" data-i18n="btn_send">Yuborish</button>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section id="view_profile" class="view">
+        <div class="card">
+          <div class="card-title">👤 Profil</div>
+          <div class="profile-card" style="display:grid;grid-template-columns:100px 1fr;gap:14px">
+            <div>
+              <img id="profileAvatar" style="width:100px;height:100px;border-radius:16px;object-fit:cover;border:1px solid #223047;background:#0b1220" alt="avatar"/>
+              <div class="sp"></div>
+              <button class="btn btn-amber btn-sm" id="btnChangePhoto">📷 Rasmni yangilash</button>
+              <input id="profilePhotoFile" type="file" accept="image/*" style="display:none"/>
+            </div>
+            <div>
+              <label>Ism</label>
+              <input id="profileName" placeholder="Ismingiz"/>
+              <label>Email</label>
+              <input id="profileEmail" placeholder="Email" disabled/>
+              <label>Telefon</label>
+              <input id="profilePhone" placeholder="+998 ** *** ** **"/>
+              <label>Shahar</label>
+              <input id="profileCity" placeholder="Masalan: Samarqand"/>
+              <label>Bio</label>
+              <textarea id="profileBio" placeholder="O‘zingiz haqida qisqacha"></textarea>
+              <div class="sp"></div>
+              <button class="btn btn-green" id="btnSaveProfile">💾 Saqlash</button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
-  </div>  <script>
-    /* ============================================================
-       BINGO APP — STATE, STORAGE, HELPERS
-       ============================================================ */
 
-    // Utilities ---------------------------------------------------
-    const $ = (sel, root=document) => root.querySelector(sel);
-    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    <div class="footer">© <span id="year"></span> BINGO</div>
+  </div>
 
-    const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
-    const nowISO = () => new Date().toISOString();
+  <!-- Firebase compat CDN (skriptlar keyingi qismlarda) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script><script>
+/* ===== Service Worker (offline) ===== */
+(function registerSW(){
+  if(!('serviceWorker' in navigator)) return;
+  const CODE = `
+    const VER='bingo-v6';
+    self.addEventListener('install',e=>{ self.skipWaiting(); e.waitUntil(caches.open(VER).then(c=>c.addAll(['./'])) )});
+    self.addEventListener('activate',e=>{ e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==VER).map(k=>caches.delete(k))))); self.clients.claim(); });
+    self.addEventListener('fetch',e=>{
+      const req=e.request;
+      e.respondWith(
+        caches.match(req).then(res=>res||fetch(req).then(r=>{
+          if(req.method==='GET' && r.ok && new URL(req.url).origin===location.origin){
+            const copy=r.clone(); caches.open(VER).then(c=>c.put(req,copy)).catch(()=>{});
+          }
+          return r;
+        }).catch(()=>res))
+      );
+    });
+  `;
+  const blob=new Blob([CODE],{type:'text/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+})();
 
-    const STORAGE = {
-      get(key, fallback){
-        try{ return JSON.parse(localStorage.getItem(key)) ?? fallback }catch{ return fallback }
-      },
-      set(key, val){ localStorage.setItem(key, JSON.stringify(val)) }
+/* ===== I18N (short) ===== */
+const I18N={
+  uz:{hero_title:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",hero_sub:"“Halollik — eng katta mukofot.”",
+      btn_lost:"❗ Yo‘qotdim",btn_found:"✅ Topdim",btn_lostlist:"📋 Yo‘qotilganlar",btn_reward:"🎁 Mukofotli",btn_foundlist:"🔎 Topilganlar",btn_mine:"⭐ Mening e’lonlarim",
+      why_title:"Nega BINGO?",why_text:"Oddiy forma, tez natija. Barcha e’lonlar bir joyda.",
+      guide_title:"Qisqa yo‘riqnoma",guide_1:"❗ Yo‘qotdim yoki ✅ Topdim formasini to‘ldiring",guide_2:"Shahar va aloqa — majburiy",guide_3:"Mukofot yozilsa, alohida bo‘limda ko‘rinadi",
+      lost_form_title:"Yo‘qotdim — e’lon",found_form_title:"Topdim — e’lon",
+      lost_list_title:"📋 Umumiy yo‘qotilganlar",reward_list_title:"🎁 Mukofotli",found_list_title:"🔎 Topilganlar",
+      mine_title:"⭐ Mening e’lonlarim",btn_delete_mine:"Mening e’lonlarimni o‘chirish",
+      chat_title:"Xabar",btn_send:"Yuborish",btn_submit:"E’lon berish",
+      confirm_del:"Ushbu e’lonni o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi."}
+};
+function detectLang(){const n=(navigator.language||'uz').slice(0,2);return ['uz','ru','en'].includes(n)?n:'uz'}
+function t(k){const L=localStorage.getItem('bingo_lang')||detectLang();return (I18N[L]||I18N.uz)[k]||k}
+document.getElementById('year').textContent=new Date().getFullYear();
+
+/* ===== Firebase init + offline ===== */
+const firebaseConfig={
+  apiKey:"AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+  authDomain:"topildi.firebaseapp.com",
+  databaseURL:"https://topildi-default-rtdb.firebaseio.com",
+  projectId:"topildi",
+  storageBucket:"topildi.appspot.com",
+  messagingSenderId:"323891530719",
+  appId:"1:323891530719:web:d57c2ce38781dc37e4926a",
+  measurementId:"G-NKCMKCXZQ7"
+};
+try{ firebase.initializeApp(firebaseConfig);}catch(e){}
+const db=firebase.firestore();
+firebase.firestore().enablePersistence().catch(()=>{});
+let storage=null; try{ storage=firebase.storage(); }catch(e){ storage=null; }
+const auth=firebase.auth();
+
+/* ===== Net badge ===== */
+const netBadge=document.getElementById('netBadge');
+function setNet(on){
+  netBadge.className='net '+(on?'on':'off');
+  netBadge.textContent=on?'Onlayn':'Offline (kesh rejimi)';
+  netBadge.style.display='block';
+  clearTimeout(setNet._t);
+  setNet._t=setTimeout(()=>{netBadge.style.display='none'}, 2500);
+}
+window.addEventListener('online', ()=>setNet(true));
+window.addEventListener('offline',()=>setNet(false));
+setNet(navigator.onLine);
+
+/* ===== Router ===== */
+let currentView='home', currentChatPostId=null, unsubChat=null;
+function showView(name){
+  ['home','lostForm','foundForm','lostList','rewardList','foundList','mine','postChat','profile']
+    .forEach(id=>{const el=document.getElementById('view_'+id); if(el) el.classList.toggle('active',id===name)});
+  document.getElementById('backBtn').style.display=(name!=='home')?'grid':'none';
+  window.scrollTo(0,0);
+}
+function navigate(name,replace){
+  currentView=name; showView(name);
+  if(name==='lostList') renderLost?.();
+  if(name==='rewardList') renderReward?.();
+  if(name==='foundList') renderFound?.();
+  if(name==='mine') renderMine?.();
+  if(name==='postChat' && currentChatPostId) openChat?.(currentChatPostId,true);
+  if(name==='profile') loadProfileForm?.();
+  const hash='#'+name+(currentChatPostId?('-'+currentChatPostId):'');
+  if(replace) history.replaceState({view:name,id:currentChatPostId},'',hash);
+  else history.pushState({view:name,id:currentChatPostId},'',hash);
+}
+document.getElementById('homeBtn').addEventListener('click',()=>navigate('home'));
+document.getElementById('backBtn').addEventListener('click',()=>history.back());
+(function(){
+  const h=location.hash?location.hash.substring(1):'home';
+  const p=h.split('-'); const v=p[0]||'home'; currentChatPostId=p[1]||null;
+  showView(v); history.replaceState({view:v,id:currentChatPostId||null},'', '#'+v+(currentChatPostId?('-'+currentChatPostId):'')); 
+})();
+
+/* ===== Helpers ===== */
+const MY_UID=(function(){let id=localStorage.getItem('bingo_uid');if(!id){id='u_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('bingo_uid',id)}return id})();
+function banner(msg){const a=document.getElementById('alert');a.textContent=msg||'';a.style.display=msg?'block':'none'}
+function esc(s){return (s||'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;','\\'':'&#039;'}[m]) )}
+function val(id){const el=document.getElementById(id);return el?el.value.trim():''}
+function num(n){const x=parseInt(n,10);return isNaN(x)?0:x}
+function centerToast(msg, err=false){
+  const old=document.getElementById('__toast__'); if(old) old.remove();
+  const el=document.createElement('div'); el.id='__toast__';
+  el.className='center-toast'+(err?' err':''); el.textContent=msg||'';
+  document.body.appendChild(el);
+  requestAnimationFrame(()=> el.classList.add('show'));
+  setTimeout(()=>{el.classList.remove('show'); setTimeout(()=>el.remove(),180)},1800);
+}
+function setProg(prefix, prc){ const bar=document.getElementById(prefix+'_bar'); const box=document.getElementById(prefix+'_prog'); if(!bar||!box) return; if(prc<=0||prc>=100){box.style.display='none'; bar.style.width='0%'} else {box.style.display='block'; bar.style.width=prc+'%'} }
+
+/* ===== Auth menu (Gmail) ===== */
+const userMenu=document.getElementById('userMenu');
+const userBtn=document.getElementById('userBtn');
+const menuPanel=document.getElementById('menuPanel');
+const btnLogin=document.getElementById('btnLogin');
+const btnLogout=document.getElementById('btnLogout');
+const btnProfile=document.getElementById('btnProfile');
+const btnMyPosts=document.getElementById('btnMyPosts');
+const avatarImg=document.getElementById('avatarImg');
+const userNameLabel=document.getElementById('userNameLabel');
+
+userBtn.addEventListener('click',()=> menuPanel.style.display = (menuPanel.style.display==='block'?'none':'block'));
+document.addEventListener('click',(e)=>{ if(!userMenu.contains(e.target)) menuPanel.style.display='none' });
+
+async function signInWithGoogle(){
+  const provider=new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({prompt:'select_account'});
+  try{ await auth.signInWithPopup(provider); }
+  catch(err){ if(String(err?.message||'').includes('popup')) await auth.signInWithRedirect(provider); else throw err; }
+}
+btnLogin.addEventListener('click', async ()=>{ try{ await signInWithGoogle(); centerToast('✅ Kirildi'); menuPanel.style.display='none'; }catch(e){ centerToast('❌ Kirish xatosi: '+e.message,true) } });
+btnLogout.addEventListener('click', async ()=>{ try{ await auth.signOut(); centerToast('👋 Chiqildi'); menuPanel.style.display='none'; }catch(e){ centerToast('❌ Chiqish xatosi: '+e.message,true) } });
+btnProfile.addEventListener('click', ()=>{ menuPanel.style.display='none'; navigate('profile'); });
+btnMyPosts.addEventListener('click', ()=>{ menuPanel.style.display='none'; navigate('mine'); });
+
+auth.onAuthStateChanged(async (u)=>{
+  if(u){
+    userNameLabel.textContent=u.displayName||u.email||'Foydalanuvchi';
+    if(u.photoURL) avatarImg.src=u.photoURL;
+    const ref=db.collection('users').doc(u.uid);
+    const snap=await ref.get();
+    if(!snap.exists){ await ref.set({uid:u.uid,name:u.displayName||'',email:u.email||'',photo:u.photoURL||'',city:'',phone:'',bio:'',created:Date.now(),updated:Date.now()}) }
+    else{ await ref.update({name:snap.data().name||u.displayName||'',email:u.email||'',photo:snap.data().photo||u.photoURL||'',updated:Date.now()}).catch(()=>{}); }
+  }else{
+    userNameLabel.textContent='Kirish';
+  }
+});
+
+/* ===== Global state for posts ===== */
+let ALL_POSTS=[]; let SEARCH_GLOBAL=''; let LAST_POST=null;
+
+/* ===== Search topbar ===== */
+document.getElementById('qSearch').addEventListener('input',e=>{
+  SEARCH_GLOBAL=e.target.value||'';
+  renderLost?.(); renderReward?.(); renderFound?.(); renderMine?.();
+  updateCounters?.();
+});
+document.getElementById('btnCopyLink').addEventListener('click', async ()=>{
+  try{ await navigator.clipboard.writeText(location.href); centerToast('🔗 Havola nusxalandi'); }catch{ centerToast('⚠️ Nusxalab bo‘lmadi',true) }
+});
+  </script><script>
+/* ===== Realtime feed ===== */
+function matchGlobal(p){ const qs=(SEARCH_GLOBAL||'').toLowerCase(); if(!qs) return true; return [p.item,p.city,p.contact,p.notes,p.place].some(x=>(x||'').toLowerCase().includes(qs)); }
+function updateCounters(){
+  const g=(k)=>ALL_POSTS.filter(p=>p.kind===k && matchGlobal(p)).length;
+  const lost=g('lost'); const found=g('found');
+  document.getElementById('lostCountChip').textContent=lost+' Lost';
+  document.getElementById('foundCountChip').textContent=found+' Found';
+}
+db.collection('posts').orderBy('created','desc').onSnapshot(snap=>{
+  ALL_POSTS=snap.docs.map(d=>({id:d.id,...d.data()}));
+  updateCounters();
+  if(currentView==='lostList') renderLost();
+  if(currentView==='rewardList') renderReward();
+  if(currentView==='foundList') renderFound();
+  if(currentView==='mine') renderMine();
+},err=>banner("Firestore o‘qish xatosi: "+err.message));
+
+/* ===== Photo upload ===== */
+async function readFileAsDataURL(file){return new Promise(r=>{if(!file)return r(null);const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(file)})}
+async function getPhotoURL(file, prefix){
+  if(!file) return null;
+  if(storage){
+    try{
+      const path = `uploads/${(auth.currentUser?.uid||MY_UID)}/${Date.now()}_${(file.name||'photo').replace(/[^a-z0-9_.-]/gi,'_')}`;
+      const ref = storage.ref().child(path);
+      await ref.put(file).on('state_changed', snap=>{
+        const prc = Math.round((snap.bytesTransferred/snap.totalBytes)*100);
+        setProg(prefix, prc<100?prc:0);
+      });
+      const url = await ref.getDownloadURL();
+      setProg(prefix,0);
+      return url;
+    }catch(e){ console.warn('Storage upload failed, fallback to dataURL', e); setProg(prefix,0); }
+  }
+  const dataUrl = await readFileAsDataURL(file);
+  return dataUrl;
+}
+
+/* ===== Submit handlers (dedup) ===== */
+document.querySelectorAll('[data-submit]').forEach(btn=>{
+  btn.addEventListener('click', async ()=>{
+    if(btn.disabled) return;
+    const kind=btn.dataset.submit, isLost=kind==='lost';
+    btn.disabled=true; btn.classList.add('btn-disabled');
+
+    const fileEl=document.getElementById(isLost?'l_photo':'f_photo');
+    const file=fileEl?.files?.[0]||null;
+    const photoUrl=await getPhotoURL(file, isLost?'l':'f');
+
+    const p={
+      kind,
+      item: val(isLost?'l_item':'f_item'),
+      city: val(isLost?'l_city':'f_city'),
+      place: isLost?val('l_place'):val('f_place'),
+      date:  isLost?val('l_date') :val('f_date'),
+      contact: val(isLost?'l_contact':'f_contact'),
+      reward: isLost? num(val('l_reward')) : 0,
+      notes:  val(isLost?'l_notes':'f_notes'),
+      photo: photoUrl || null,
+      uid: (auth.currentUser?.uid)||MY_UID,
+      created: Date.now(),
+      authorName: auth.currentUser?.displayName||'',
+      authorEmail: auth.currentUser?.email||''
     };
 
-    const db = {
-      posts: () => STORAGE.get('bingo_posts', []),
-      savePosts: (arr) => STORAGE.set('bingo_posts', arr),
-      profile: () => STORAGE.get('bingo_profile', { id: 'me', name:'Diyor', city:'', avatar:'' }),
-      saveProfile: (p) => STORAGE.set('bingo_profile', p)
-    };
+    if(!p.item||!p.city||!p.contact){ centerToast(t('guide_2')||'Shahar va aloqa — majburiy', true); btn.disabled=false; btn.classList.remove('btn-disabled'); return; }
 
-    // Toast -------------------------------------------------------
-    const toastEl = $('#toast');
-    let toastTimer = 0;
-    function toast(msg){
-      clearTimeout(toastTimer);
-      toastEl.textContent = msg;
-      toastEl.classList.add('show');
-      toastTimer = setTimeout(()=> toastEl.classList.remove('show'), 2200);
+    const sig = JSON.stringify([p.kind,p.item,p.city,p.contact,p.notes,!!p.photo]);
+    const now=Date.now();
+    const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}');
+    if(LAST_POST===sig || (last.sig===sig && (now-last.ts)<30000)){
+      centerToast("⚠️ Bu e’lon allaqachon joylangan (30s ichida).", true);
+      btn.disabled=false; btn.classList.remove('btn-disabled'); return;
     }
+    LAST_POST=sig; localStorage.setItem('bingo_last_post', JSON.stringify({sig,ts:now}));
 
-    // View navigation (single-page) -------------------------------
-    const VIEWS = ['view-home','view-add','view-profile'];
-    const historyStack = [];
-    function openView(id, push=true){
-      VIEWS.forEach(v => $('#'+v).classList.remove('active'));
-      $('#'+id).classList.add('active');
-      $('#backBtn').style.opacity = (id==='view-home' ? .35 : 1);
-      $('#backBtn').style.pointerEvents = (id==='view-home' ? 'none' : 'auto');
-      if(push){ historyStack.push(id) }
-      // Focus top
-      window.scrollTo({ top:0, behavior:'smooth' });
-    }
+    try{
+      await db.collection('posts').add(p);
+      clearForm(isLost);
+      centerToast("✅ E’lon joylandi!");
+      navigate(isLost?'lostList':'foundList');
+    }catch(e){ centerToast("❌ Xato: "+e.message, true); }
+    finally{ setTimeout(()=>{btn.disabled=false; btn.classList.remove('btn-disabled')}, 800); }
+  });
+});
+function clearForm(isLost){
+  const ids=isLost?['l_item','l_city','l_place','l_date','l_contact','l_reward','l_notes','l_photo']
+                  :['f_item','f_city','f_place','f_date','f_contact','f_notes','f_photo'];
+  ids.forEach(id=>{const el=document.getElementById(id); if(!el) return; el.value='';});
+}
 
-    function goBack(){
-      if(historyStack.length<=1){ openView('view-home', true); return }
-      historyStack.pop();
-      const prev = historyStack.pop();
-      openView(prev||'view-home', true);
-    }
+/* ===== Renderers ===== */
+function card(p, allowDelete){
+  const L=localStorage.getItem('bingo_lang')||'uz';
+  const kindLabel = p.kind==='lost' ? (L==='ru'?'❗ Потеряно':(L==='en'?'❗ Lost':'❗ Yo‘qoldi'))
+                                    : (L==='ru'?'✅ Найдено':(L==='en'?'✅ Found':'✅ Topildi'));
+  const msgBtn = L==='en'?'✉️ Message':(L==='ru'?'✉️ Написать':'✉️ Xabar');
+  const shareBtn = navigator.share ? `<button class="btn btn-amber" onclick="sharePost('${esc(p.item)}','${esc(p.city||'')}', '${p.id}')">🔗 Ulashish</button>` : '';
+  const author = (p.authorName||'') + (p.authorEmail?` · ${p.authorEmail}`:'');
 
-    // Initial history
-    historyStack.push('view-home');
+  return `
+  <div class="post-card">
+    ${p.photo?`<img class="post-img" src="${p.photo}" alt="photo">`:''}
+    <div class="post-head">
+      <div class="post-kind">${kindLabel}${p.reward>0?` · 🎁 ${Number(p.reward).toLocaleString()} so‘m`:''}</div>
+      <div class="post-date">${p.created?new Date(p.created).toLocaleString():''}</div>
+    </div>
+    <div style="margin-top:6px;font-weight:800">${esc(p.item)}</div>
+    <div class="post-meta">${esc(p.city||'-')} · ${esc(p.place||'-')} · ${esc(p.date||'-')}</div>
+    <div style="margin-top:6px; white-space:pre-wrap">${esc(p.notes||'')}</div>
+    <div class="post-meta" style="margin-top:6px">📞 ${esc(p.contact||'-')}</div>
+    ${author?`<div class="post-meta" style="margin-top:4px">👤 ${esc(author)}</div>`:''}
+    <div class="actions">
+      ${allowDelete?`<button class="btn" onclick="delPost('${p.id}')">🗑️ ${t('btn_delete_mine')||'Mening e’lonimni o‘chirish'}</button>`:''}
+      <button class="btn btn-blue" onclick="openChat('${p.id}')">${msgBtn}</button>
+      ${shareBtn}
+    </div>
+  </div>`;
+}
+function matchGlobalPost(p){
+  const qs=(SEARCH_GLOBAL||'').toLowerCase();
+  if(!qs) return true;
+  return [p.item,p.city,p.place,p.notes,p.contact].some(x=>(x||'').toLowerCase().includes(qs));
+}
+function applySearch(listEl, arr){ const res=(SEARCH_GLOBAL?arr.filter(matchGlobalPost):arr); listEl.innerHTML=res.length?res.map(p=>card(p,false)).join(''):'—'; }
+function renderLost(){ const el=document.getElementById('lost_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='lost'); applySearch(el, arr); }
+function renderReward(){ const el=document.getElementById('reward_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='lost'&&(p.reward||0)>0); applySearch(el, arr); }
+function renderFound(){ const el=document.getElementById('found_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='found'); applySearch(el, arr); }
+function renderMine(){ const el=document.getElementById('mine_list'); if(!el) return; const u=auth.currentUser?.uid||MY_UID; const arr=ALL_POSTS.filter(p=>p.uid===u); el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—'; }
 
-    // Back button
-    $('#backBtn').addEventListener('click', goBack);
+/* ===== Share ===== */
+window.sharePost = async function(item, city, id){
+  if(!navigator.share) return;
+  const url = location.origin+location.pathname+'#postChat-'+id;
+  try{ await navigator.share({title:'BINGO: '+item, text:`${item} · ${city}`, url}); }catch{}
+}
 
-    // Floating add button
-    $('#fab').addEventListener('click', ()=>{ openView('view-add'); });
+/* ===== Delete mine ===== */
+window.delPost = async function(id){
+  const p=ALL_POSTS.find(x=>x.id===id);
+  if(!p) return;
+  const u=auth.currentUser?.uid||MY_UID;
+  if(p.uid!==u){ centerToast('⛔ Sizning e’loningiz emas', true); return; }
+  if(!confirm(t('confirm_del')||'O‘chirishni tasdiqlang')) return;
+  try{
+    await db.collection('posts').doc(id).delete();
+    const chats=await db.collection('posts').doc(id).collection('chats').get();
+    const batch=db.batch(); chats.forEach(d=>batch.delete(d.ref)); await batch.commit();
+    centerToast('🗑️ O‘chirildi'); renderMine();
+  }catch(e){ banner('O‘chirish xatosi: '+e.message) }
+}
 
-    // Quick actions
-    $$('.qa[data-open="view-add"]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const type = btn.getAttribute('data-type');
-        openView('view-add');
-        // mark radio according to type
-        const radio = $('#postForm input[name="ptype"][value="'+type+'"]');
-        if(radio){ radio.checked = true }
-        $('#addTitle').textContent = type==='found' ? 'Topilgan e’lon' : 'Yo‘qolgan e’lon';
-      });
-    });
+/* ===== Chat ===== */
+function logEmpty(){return 'Xabarlar yo‘q.'}
+window.openChat = function(postId, keep){
+  const post=ALL_POSTS.find(p=>p.id===postId); if(!post) return;
+  currentChatPostId=postId; document.getElementById('chatItemName').textContent=post.item;
+  if(unsubChat) unsubChat();
+  unsubChat = db.collection('posts').doc(postId).collection('chats').orderBy('ts')
+    .onSnapshot(s=>{
+      const log=document.getElementById('chatLog');
+      const arr=s.docs.map(d=>d.data());
+      log.innerHTML = arr.length
+        ? arr.map(m=>`<div class="msg ${m.uid===((auth.currentUser?.uid)||MY_UID)?'me':'other'}"><b>${esc(m.name||'Anon')}</b> <span style="opacity:.8;font-size:12px">· ${new Date(m.ts).toLocaleTimeString()}</span><div>${esc(m.text)}</div></div>`).join('')
+        : `<div class="msg">${logEmpty()}</div>`;
+      log.scrollTop=log.scrollHeight;
+    }, e=> banner('Chat o‘qish xatosi: '+e.message));
+  if(!keep) navigate('postChat');
+}
+document.getElementById('sendChatBtn').addEventListener('click',()=>{
+  if(!currentChatPostId) return;
+  const name=(document.getElementById('chatName').value.trim()||auth.currentUser?.displayName||'Anon');
+  const text=document.getElementById('chatText').value.trim(); if(!text) return;
+  db.collection('posts').doc(currentChatPostId).collection('chats').add({name,uid:(auth.currentUser?.uid)||MY_UID,text,ts:Date.now()})
+    .then(()=>{document.getElementById('chatText').value='';})
+    .catch(e=> banner('Chat yozish xatosi: '+e.message));
+});
 
-    // User/profile open
-    $('#userBtn').addEventListener('click', ()=> openView('view-profile'));
+/* ===== Clear my posts ===== */
+document.getElementById('clearMineBtn').addEventListener('click', async ()=>{
+  const u=auth.currentUser?.uid||MY_UID;
+  if(!confirm('Barcha shaxsiy e’lonlaringiz o‘chirilsinmi?')) return;
+  try{
+    const mine=ALL_POSTS.filter(p=>p.uid===u);
+    const batch=db.batch();
+    for(const p of mine){ batch.delete(db.collection('posts').doc(p.id)); }
+    await batch.commit();
+    centerToast('🧹 Tozalandi'); renderMine();
+  }catch(e){ banner('Xato: '+e.message) }
+});
+  </script><script>
+/* ===== Profile ===== */
+const profileAvatar=document.getElementById('profileAvatar');
+const profileName=document.getElementById('profileName');
+const profileEmail=document.getElementById('profileEmail');
+const profilePhone=document.getElementById('profilePhone');
+const profileCity=document.getElementById('profileCity');
+const profileBio=document.getElementById('profileBio');
+const btnChangePhoto=document.getElementById('btnChangePhoto');
+const profilePhotoFile=document.getElementById('profilePhotoFile');
+const btnSaveProfile=document.getElementById('btnSaveProfile');
 
-    // Image viewer ------------------------------------------------
-    const overlay = $('#overlay');
-    $('#viewerClose').addEventListener('click', ()=> overlay.classList.remove('open'));
+function requireAuth(){ if(!auth.currentUser){ centerToast('Kirish talab qilinadi', true); return false } return true }
 
-    function viewImage(src, title='Rasm'){
-      $('#viewerImg').src = src; $('#viewerTitle').textContent = title; overlay.classList.add('open');
-    }
+function loadProfileForm(){
+  if(!auth.currentUser){
+    profileAvatar.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMwZjE3MmEiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjM4IiByPSIyMCIgZmlsbD0iI2YxZDI4YSIvPjxwYXRoIGQ9Ik04MCA4My4yQzc5LjkgNjkuNSA1OS41IDY1IDUwIDY1czI5LjkgNC41IDMwIDExLjhsLS4xIDYuNnoiIGZpbGw9IiNmMWQyOGEiLz48L3N2Zz4=';
+    profileName.value=''; profileEmail.value=''; profilePhone.value=''; profileCity.value=''; profileBio.value='';
+    return;
+  }
+  const u=auth.currentUser;
+  db.collection('users').doc(u.uid).get().then(s=>{
+    const d=s.data()||{};
+    profileAvatar.src=d.photo||u.photoURL||profileAvatar.src;
+    profileName.value=d.name||u.displayName||'';
+    profileEmail.value=d.email||u.email||'';
+    profilePhone.value=d.phone||'';
+    profileCity.value=d.city||'';
+    profileBio.value=d.bio||'';
+  }).catch(()=>{});
+}
 
-    // Image compression ------------------------------------------
-    async function fileToDataURL(file, {maxW=1400, maxH=1400, quality=.8}={}){
-      return new Promise((res, rej)=>{
-        const reader = new FileReader();
-        reader.onload = () => {
-          const img = new Image();
-          img.onload = () => {
-            const w = img.width, h = img.height;
-            let tw=w, th=h;
-            // scale preserving aspect ratio
-            if(w>maxW || h>maxH){
-              const k = Math.min(maxW/w, maxH/h);
-              tw = Math.round(w*k); th = Math.round(h*k);
-            }
-            const cv = document.createElement('canvas');
-            cv.width = tw; cv.height = th;
-            const ctx = cv.getContext('2d');
-            ctx.drawImage(img, 0,0, tw,th);
-            try{ res(cv.toDataURL('image/jpeg', quality)) }catch(e){ res(reader.result) }
-          };
-          img.onerror = () => res(reader.result);
-          img.src = reader.result;
-        };
-        reader.onerror = rej;
-        reader.readAsDataURL(file);
-      });
-    }
+btnChangePhoto.addEventListener('click',()=> profilePhotoFile.click());
+profilePhotoFile.addEventListener('change', async ()=>{
+  if(!requireAuth()) return;
+  const file=profilePhotoFile.files?.[0]; if(!file) return;
+  try{
+    const url=await getPhotoURL(file,'profile');
+    await db.collection('users').doc(auth.currentUser.uid).update({photo:url, updated:Date.now()});
+    profileAvatar.src=url; avatarImg.src=url; centerToast('📷 Rasm yangilandi');
+  }catch(e){ centerToast('Rasm yuklash xatosi: '+e.message,true) }
+});
 
-    // POST FORM ---------------------------------------------------
-    const postState = { images: [] };
+btnSaveProfile.addEventListener('click', async ()=>{
+  if(!requireAuth()) return;
+  try{
+    await db.collection('users').doc(auth.currentUser.uid).set({
+      uid:auth.currentUser.uid,
+      name:profileName.value.trim(),
+      email:profileEmail.value.trim()||auth.currentUser.email||'',
+      phone:profilePhone.value.trim(),
+      city:profileCity.value.trim(),
+      bio:profileBio.value.trim(),
+      photo:profileAvatar.src||auth.currentUser.photoURL||'',
+      updated:Date.now()
+    },{merge:true});
+    centerToast('💾 Saqlandi');
+  }catch(e){ centerToast('Saqlash xatosi: '+e.message,true) }
+});
 
-    function renderPostImages(){
-      const wrap = $('#postImagesPreview');
-      wrap.innerHTML = '';
-      if(postState.images.length===0){
-        const ph = document.createElement('div'); ph.className='ph'; ph.textContent='Rasm yuklang. Katta rasmlar avtomatik siqiladi.'; wrap.appendChild(ph); return;
-      }
-      postState.images.forEach((src, i)=>{
-        const d = document.createElement('div'); d.className = 'thumb';
-        const im = new Image(); im.src = src; im.alt = 'rasm'; d.appendChild(im);
-        const x = document.createElement('button'); x.className='x'; x.type='button'; x.textContent='×';
-        x.addEventListener('click', ()=>{ postState.images.splice(i,1); renderPostImages(); });
-        d.appendChild(x); wrap.appendChild(d);
-        d.addEventListener('click', (ev)=>{ if(ev.target!==x) viewImage(src, 'E’lon rasmi') });
-      });
-    }
+/* ===== Main menu navigation ===== */
+document.querySelectorAll('#mainMenu .btn').forEach(b=>{ if(b.dataset.nav) b.addEventListener('click',()=>navigate(b.dataset.nav)); });
 
-    $('#postImages').addEventListener('change', async (ev)=>{
-      const files = Array.from(ev.target.files||[]).slice(0,9); // limit 9
-      for(const f of files){
-        if(!/^image\//.test(f.type)) continue;
-        const data = await fileToDataURL(f, {maxW:1280, maxH:1280, quality:.82});
-        postState.images.push(data);
-      }
-      renderPostImages();
-      ev.target.value = '';
-    });
-
-    $('#postForm').addEventListener('submit', ev=>ev.preventDefault());
-    $('#savePostBtn').addEventListener('click', async ()=>{
-      const f = $('#postForm');
-      const type = f.querySelector('input[name="ptype"]:checked').value;
-      const title = f.title.value.trim();
-      const desc = f.desc.value.trim();
-      if(!title || !desc){ toast('Sarlavha va tavsif shart'); return }
-      const place = f.place.value.trim();
-      const reward = parseInt(f.reward.value||'0',10)||0;
-      const contact = f.contact.value.trim();
-      const phone = f.phone.value.replace(/\D+/g,'');
-
-      const prof = db.profile();
-      const post = {
-        id: uid(), type, title, desc, place, reward,
-        contact: contact||prof.name||'—', phone: phone||'',
-        images: [...postState.images],
-        owner: prof.id, ownerName: prof.name, createdAt: nowISO(),
-      };
-
-      const list = db.posts();
-      list.unshift(post);
-      db.savePosts(list);
-
-      // reset form
-      f.reset(); postState.images = []; renderPostImages();
-
-      toast('E’lon joylandi ✅');
-      openView('view-home');
-      renderFeed(); renderMine();
-    });
-
-    // PROFILE -----------------------------------------------------
-    function renderProfileUI(){
-      const p = db.profile();
-      $('#userNameSmall').textContent = p.name || 'Profil';
-      $('#profileNameLabel').textContent = p.name || 'Foydalanuvchi';
-      $('#profileCityLabel').textContent = p.city ? p.city : 'Shahar belgilanmagan';
-      const av = p.avatar || '';
-      $('#userAvatarSmall').src = av || '';
-      $('#avatarBig').src = av || '';
-      // preview tile
-      const pre = $('#avatarPreview'); pre.innerHTML='';
-      if(av){ const d=document.createElement('div'); d.className='thumb'; const im=new Image(); im.src=av; d.appendChild(im); pre.appendChild(d) }
-    }
-
-    // Load profile data into form
-    function hydrateProfileForm(){
-      const p = db.profile();
-      const f = $('#profileForm');
-      f.name.value = p.name||''; f.city.value = p.city||'';
-    }
-
-    $('#avatarInput').addEventListener('change', async (ev)=>{
-      const f = ev.target.files?.[0];
-      if(!f) return;
-      const data = await fileToDataURL(f, {maxW:600, maxH:600, quality:.9});
-      const p = db.profile(); p.avatar = data; db.saveProfile(p);
-      renderProfileUI(); toast('Avatar yangilandi'); ev.target.value='';
-    });
-
-    $('#saveProfileBtn').addEventListener('click', ()=>{
-      const f = $('#profileForm');
-      const p = db.profile();
-      p.name = f.name.value.trim() || 'Foydalanuvchi';
-      p.city = f.city.value.trim();
-      db.saveProfile(p);
-      renderProfileUI(); toast('Profil saqlandi');
-    });
-
-    // FEED RENDER -------------------------------------------------
-    function fmtDate(iso){
-      try{ const d = new Date(iso); return d.toLocaleDateString('uz-UZ', {year:'numeric', month:'short', day:'numeric'}) }catch{ return '' }
-    }
-
-    function makePostCard(p){
-      const card = document.createElement('article'); card.className='post';
-      const media = document.createElement('div'); media.className='media';
-      const img = new Image(); img.alt='rasm'; img.loading='lazy'; img.decoding='async'; img.src = p.images?.[0] || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 3"></svg>';
-      media.appendChild(img);
-      const tg = document.createElement('div'); tg.className='tag ' + (p.type==='lost'?'lost':'found'); tg.textContent = p.type==='lost'?'Yo‘qolgan':'Topilgan'; media.appendChild(tg);
-      media.addEventListener('click', ()=>{ if(p.images?.[0]) viewImage(p.images[0], p.title) });
-      card.appendChild(media);
-
-      const body = document.createElement('div'); body.className='body';
-      const ttl = document.createElement('div'); ttl.className='ttl'; ttl.textContent = p.title; body.appendChild(ttl);
-      const desc = document.createElement('div'); desc.className='desc'; desc.textContent = p.desc.slice(0,160) + (p.desc.length>160?'…':''); body.appendChild(desc);
-
-      const meta = document.createElement('div'); meta.className='meta';
-      meta.innerHTML = `<span>${fmtDate(p.createdAt)}</span>·<span>${p.place||'Manzil yoʼq'}</span>`;
-      body.appendChild(meta);
-
-      if(p.reward>0){
-        const rew = document.createElement('div'); rew.className='meta'; rew.innerHTML = `🎁 <b>${p.reward.toLocaleString('uz-UZ')}</b> soʼm mukofot`;
-        body.appendChild(rew);
-      }
-
-      const actions = document.createElement('div'); actions.className='actions';
-      const call = document.createElement('button'); call.className='btn'; call.textContent='Qo‘ng‘iroq';
-      call.addEventListener('click', ()=>{ if(p.phone) location.href = `tel:${p.phone}`; else toast('Telefon kiritilmagan') });
-
-      const wa = document.createElement('button'); wa.className='btn ghost'; wa.textContent='WhatsApp';
-      wa.addEventListener('click', ()=>{ if(p.phone) location.href = `https://wa.me/${p.phone}?text=${encodeURIComponent('BINGO: '+p.title)}`; else toast('Telefon kiritilmagan') });
-
-      const more = document.createElement('button'); more.className='btn ghost'; more.textContent='Ko‘rish';
-      more.addEventListener('click', ()=> viewPostDetail(p.id));
-
-      actions.append(call, wa, more); body.appendChild(actions);
-
-      card.appendChild(body);
-      return card;
-    }
-
-    function renderFeed(){
-      const grid = $('#postsGrid'); const list = db.posts();
-      grid.innerHTML = '';
-      if(list.length===0){ $('#emptyFeed').style.display='block'; return } else { $('#emptyFeed').style.display='none' }
-      list.forEach(p=> grid.appendChild(makePostCard(p)) );
-    }
-
-    function renderMine(){
-      const grid = $('#myPostsGrid'); const me = db.profile().id; const list = db.posts().filter(p=>p.owner===me);
-      grid.innerHTML='';
-      if(list.length===0){ $('#emptyMine').style.display='block'; return } else { $('#emptyMine').style.display='none' }
-      list.forEach(p=> grid.appendChild(makePostCard(p)) );
-    }
-
-    // Simple post detail (dialog-like) ----------------------------
-    function viewPostDetail(id){
-      const p = db.posts().find(x=>x.id===id); if(!p) return;
-      const html = `
-        <div class="card pad" style="max-width:820px; margin:0 auto">
-          <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px">
-            <span class="tag ${p.type==='lost'?'lost':'found'}">${p.type==='lost'?'Yo‘qolgan':'Topilgan'}</span>
-            <div class="ttl" style="font-size:22px">${p.title}</div>
-            <div class="grow"></div>
-            <button class="btn" id="detailClose">Yopish</button>
-          </div>
-          <div class="images" id="detailImgs"></div>
-          <div class="divider" style="margin:14px 0"></div>
-          <div class="desc">${p.desc.replace(/</g,'&lt;')}</div>
-          <div class="meta" style="margin-top:8px">${fmtDate(p.createdAt)} · ${p.place||'—'}</div>
-          ${p.reward?`<div class="meta">🎁 <b>${p.reward.toLocaleString('uz-UZ')}</b> soʼm</div>`:''}
-          <div class="actions" style="margin-top:14px">
-            <button class="btn" id="dCall">Qo‘ng‘iroq</button>
-            <button class="btn ghost" id="dWa">WhatsApp</button>
-          </div>
-        </div>`;
-
-      const dlg = document.createElement('div');
-      dlg.style.position='fixed'; dlg.style.inset='0'; dlg.style.background='rgba(0,0,0,.6)'; dlg.style.zIndex='4000'; dlg.style.overflow='auto';
-      dlg.innerHTML = `<div style="min-height:100%; display:grid; place-items:center; padding:22px">${html}</div>`;
-      document.body.appendChild(dlg);
-      dlg.addEventListener('click', (e)=>{ if(e.target===dlg) dlg.remove() });
-      dlg.querySelector('#detailClose').addEventListener('click', ()=> dlg.remove());
-      const imwrap = dlg.querySelector('#detailImgs');
-      (p.images||[]).forEach((src,i)=>{
-        const t = document.createElement('div'); t.className='thumb'; const im = new Image(); im.src=src; t.appendChild(im); imwrap.appendChild(t);
-        t.addEventListener('click', ()=> viewImage(src, p.title+' — '+(i+1)) );
-      });
-      dlg.querySelector('#dCall').addEventListener('click', ()=>{ if(p.phone) location.href='tel:'+p.phone; else toast('Telefon kiritilmagan') });
-      dlg.querySelector('#dWa').addEventListener('click', ()=>{ if(p.phone) location.href='https://wa.me/'+p.phone+'?text='+encodeURIComponent('BINGO: '+p.title); else toast('Telefon kiritilmagan') });
-    }
-
-    // FILTER placeholders (for quick actions list/reward) --------
-    function filterAndScroll(pred){
-      const list = db.posts().filter(pred);
-      const grid = $('#postsGrid'); grid.innerHTML='';
-      if(list.length===0){ $('#emptyFeed').style.display='block' } else { $('#emptyFeed').style.display='none' }
-      list.forEach(p=> grid.appendChild(makePostCard(p)) );
-      window.scrollTo({ top: $('#postsGrid').offsetTop - 12, behavior:'smooth' });
-    }
-
-    $('[data-open="home-list"]').addEventListener('click', ()=> filterAndScroll(p=>p.type==='lost'));
-    $('[data-open="home-reward"]').addEventListener('click', ()=> filterAndScroll(p=> (p.reward||0) > 0));
-
-    // View change by [data-open] ---------------------------------
-    document.addEventListener('click', (e)=>{
-      const t = e.target.closest('[data-open]'); if(!t) return;
-      const id = t.getAttribute('data-open');
-      if(VIEWS.includes(id)) openView(id);
-    });
-
-    // INIT --------------------------------------------------------
-    function init(){
-      // defaults if first time
-      if(!localStorage.getItem('bingo_profile')){
-        db.saveProfile({ id:'me', name:'Diyor', city:'', avatar:'' });
-      }
-      renderProfileUI(); hydrateProfileForm(); renderFeed(); renderMine(); renderPostImages();
-    }
-
-    init();
-
-    // Accessibility: close overlay with ESC
-    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ overlay.classList.remove('open'); } });
-
-    /*
-      Notes:
-      - This build intentionally avoids the old large top nav. Use the FAB (+) to add posts,
-        and the small user pill on the topbar to open Profile.
-      - Data is stored locally (no server). To “reset”, clear site data from browser settings.
-      - To migrate to real backend later: replace db.posts()/db.savePosts and db.profile with API calls.
-    */
-  </script>  <!--
-  =====================================================================
-  Below are many extra comment lines kept intentionally to ensure the
-  document length exceeds 600 lines as requested. These comments do not
-  affect performance and can be safely removed later. They also serve as
-  inline documentation for future contributors.
-  ---------------------------------------------------------------------
-  1) Layout strategy: CSS grid + fluid typography via clamp().
-  2) Visual rhythm: consistent spacing using --space and --space-lg.
-  3) Shadows: used sparingly (shadow-1 / shadow-2) for elevation.
-  4) Buttons: .btn (solid) and .btn.ghost (outlined-light) patterns.
-  5) Images: compressed via canvas to avoid huge base64 payloads.
-  6) LocalStorage schema:
-     - bingo_profile: { id, name, city, avatar }
-     - bingo_posts: Array<Post>
-       Post = { id, type, title, desc, place, reward, contact, phone,
-                images: [dataURL...], owner, ownerName, createdAt }
-  7) Navigation: openView(id) + historyStack for back logic.
-  8) Accessibility: aria-live for feed + toast.
-  9) Future: Add service worker (sw.js) and manifest.json when multi-file allowed.
-  10) Testing: Mobile first (A23 width ~1080px logical CSS < 420dp).
-  ---------------------------------------------------------------------
-  Guidelines for contributors:
-  - Keep classes small & semantic; avoid deep nesting.
-  - Prefer utility inline styles only for rare overrides.
-  - Use min-width media queries sparingly; base should be mobile.
-  - Validate forms before submit; keep UX snappy with toast().
-  - To integrate with backend, wire savePostBtn to POST /api/posts.
-  ---------------------------------------------------------------------
-  Changelog (this build):
-  - Removed duplicate/legacy sections that didn’t fit the screen.
-  - Fixed image uploads (profile & posts) with reliable FileReader + canvas.
-  - Added image viewer overlay and detail dialog.
-  - Ensured confirmation message after posting (toast “E’lon joylandi”).
-  - Simplified navigation (no giant white buttons row).
-  - Kept quick actions (Yo‘qotdim/Topdim/etc.) inside hero.
-  - Stabilized fonts and sizes for Uzbek language text.
-  - Hardened phone normalization and number format.
-  - Truncated long desc safely to avoid overflow.
-  ---------------------------------------------------------------------
-  If you need anything else, search for the labels “// INIT”, “// POST FORM”, or
-  “// PROFILE” inside this file to find important sections quickly.
-  =====================================================================
-  --></body>
-  </html>
+/* ===== Apply i18n to texts ===== */
+function applyI18n(){ document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'))}); }
+applyI18n();
+</script>
+</body>
+</html>
