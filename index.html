@@ -5,39 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>BINGO — Yo‘qoldi/Topildi</title>
 <meta name="theme-color" content="#f8c100"/>
-<link rel="manifest" href='data:application/manifest+json,{"name":"BINGO — Yo‘qoldi/Topildi","short_name":"BINGO","start_url":"./","display":"standalone","background_color":"#fff9db","theme_color":"#f8c100","icons":[]}'/>
+<link rel="manifest" href='data:application/manifest+json,{"name":"BINGO — Yo‘qoldi/Topildi","short_name":"BINGO","start_url":"./","display":"standalone","background_color":"#fffdf5","theme_color":"#f8c100","icons":[]}'/>
 <style>
   :root{
-    --bg1:#FFF9DB; --bg2:#FFF1B8;
+    --bg:#FFFDF5;               /* oqishroq fon */
     --panel:#0f172a; --ring:#e5e7eb33; --text:#0F172A;
     --muted:#475569; --text-card:#F1F5F9; --muted-card:#94A3B8;
     --blue:#1e293b; --green:#16A34A; --red:#DC2626; --amber:#f8c100;
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
-  body{background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text)}
-  .wrap{max-width:980px;margin:0 auto;padding:16px 14px 28px}
+  body{background:var(--bg);color:var(--text)}
+  .wrap{max-width:980px;margin:0 auto;padding:18px 14px 28px}
+
   /* Topbar — soddalashtirilgan */
   .topbar{position:sticky;top:0;z-index:80;background:#fff9db;border-bottom:1px solid #f1d28a;backdrop-filter:saturate(1.2) blur(6px)}
-  .hdr{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:8px 10px}
+  .hdr{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 12px}
   .brand{display:flex;align-items:center;gap:10px}
-  .logo{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#fff3c4;border:1px solid #f1d28a;font-weight:900;color:#b45309}
-  .title{font-weight:900;letter-spacing:.2px;color:#111827;font-size:18px}
-  .controls{display:flex;gap:8px;align-items:center}
-  .iconbtn{display:grid;place-items:center;min-width:36px;height:36px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;cursor:pointer;color:#1f2937;padding:0 10px}
-  .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #f1d28a;background:#fff}
-  .userbtn{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:999px;border:1px solid #f1d28a;background:#fff}
-  .userbtn .name{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+  .logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:#fff3c4;border:1px solid #f1d28a;font-weight:900;color:#b45309}
+  .title{font-weight:900;letter-spacing:.2px;color:#111827;font-size:20px}
+  .controls{display:flex;gap:10px;align-items:center}
+  .iconbtn{display:grid;place-items:center;min-width:40px;height:40px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;cursor:pointer;color:#1f2937;padding:0 12px;font-size:15px}
+  select.lang{height:40px;border-radius:10px;background:#fff;border:1px solid #f1d28a;padding:0 10px;font-weight:700}
+  .avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid #f1d28a;background:#fff}
+  .userbtn{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:999px;border:1px solid #f1d28a;background:#fff}
+  .userbtn .name{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800;font-size:14px}
+
   /* Net badge */
-  .net{position:sticky;top:56px;z-index:75;margin:6px 10px;max-width:980px;padding:6px 10px;border-radius:10px;text-align:center;font-weight:800;display:none}
+  .net{position:sticky;top:62px;z-index:75;margin:6px 10px;max-width:980px;padding:6px 10px;border-radius:10px;text-align:center;font-weight:800;display:none}
   .net.off{display:block;background:#991b1b;color:#fff;border:1px solid #fecaca}
   .net.on{display:block;background:#065f46;color:#d1fae5;border:1px solid #99f6e4}
+
   /* Layout + cards */
   .hero{margin:12px 0 10px}
-  .headline{font-size:24px;line-height:1.3;font-weight:900;color:#111827}
-  .muted{color:#475569;margin-top:4px;font-size:14px}
-  #mainMenu{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0}
-  .btn{border-radius:16px;padding:10px 14px;cursor:pointer;border:1px solid #e2e8f0;background:#111a2b;color:#e5eef7;font-weight:700;font-size:14px;transition:.2s}
+  .headline{font-size:28px;line-height:1.3;font-weight:900;color:#111827}
+  .muted{color:#475569;margin-top:6px;font-size:15px}
+  #mainMenu{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:14px 0}
+  .btn{border-radius:16px;padding:12px 18px;cursor:pointer;border:1px solid #e2e8f0;background:#111a2b;color:#e5eef7;font-weight:800;font-size:16px;transition:.2s}
   .btn:hover{transform:translateY(-1px)}
   .btn-blue{background:var(--blue)} .btn-green{background:var(--green);color:#04140a} .btn-red{background:var(--red)}
   .btn-amber{background:var(--amber);color:#111}
@@ -45,22 +49,22 @@
   .view{display:none} .view.active{display:block}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
   @media (max-width:760px){ .grid{grid-template-columns:1fr} }
-  .card{background:var(--panel);border:1px solid var(--ring);border-radius:18px;padding:12px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
-  .card-title{font-weight:800;margin-bottom:8px;font-size:15px;letter-spacing:.2px}
-  .card-text,.card-list{font-size:13px;color:var(--muted-card)}
-  label{font-size:13px;color:#8fa1b7;margin:8px 0 4px;display:block}
-  input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px}
+  .card{background:var(--panel);border:1px solid #22304799;border-radius:18px;padding:14px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+  .card-title{font-weight:900;margin-bottom:10px;font-size:17px;letter-spacing:.2px}
+  .card-text,.card-list{font-size:14px;color:var(--muted-card)}
+  label{font-size:14px;color:#9bb0c9;margin:8px 0 6px;display:block;font-weight:700}
+  input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px;font-size:15px}
   input[type="file"]{padding:10px;background:#0b1220;border:1px dashed #334155}
-  textarea{min-height:96px;resize:vertical}
+  textarea{min-height:110px;resize:vertical}
   .sp{height:10px}
   .post-card{background:#0f172a;border:1px solid #223047;border-radius:14px;padding:12px;margin:10px 0}
-  .post-img{width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:1px solid #223047;background:#0b1220}
+  .post-img{width:100%;max-height:260px;object-fit:cover;border-radius:12px;border:1px solid #223047;background:#0b1220}
   .post-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
-  .post-kind{font-weight:700}
-  .post-date{opacity:.8;font-size:12px}
-  .post-meta{opacity:.9;font-size:13px}
+  .post-kind{font-weight:800}
+  .post-date{opacity:.8;font-size:13px}
+  .post-meta{opacity:.9;font-size:14px}
   .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap}
-  .footer{text-align:center;color:#334155;margin-top:14px;font-size:13px}
+  .footer{text-align:center;color:#334155;margin-top:16px;font-size:14px}
   .center-toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);background:#16a34a;color:#fff;padding:18px 22px;border-radius:14px;font-weight:900;z-index:9999;opacity:0;transition:.18s}
   .center-toast.err{background:#dc2626}
   .center-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
@@ -70,7 +74,7 @@
 </style>
 </head>
 <body>
-  <!-- TOPBAR (Lost/Found chiplar OLIB TASHLANDI) -->
+  <!-- TOPBAR -->
   <div class="topbar">
     <div class="hdr">
       <div class="brand">
@@ -78,13 +82,18 @@
         <div class="title">BINGO</div>
       </div>
       <div class="controls">
+        <select id="langSel" class="lang">
+          <option value="uz">UZ</option>
+          <option value="ru">RU</option>
+          <option value="en">EN</option>
+        </select>
         <button id="homeBtn" class="iconbtn" title="Bosh sahifa">⌂</button>
         <div class="menu" id="userMenu" style="position:relative">
           <button id="userBtn" class="userbtn" title="Profil">
-            <img id="avatarImg" class="avatar" alt="avatar" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzYiIGhlaWdodD0iMzYiIHZpZXdCb3g9IjAgMCAzNiAzNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIxOCIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjE4IiBjeT0iMTQiIHI9IjgiIGZpbGw9IiNmMWQyOGEiLz48cGF0aCBkPSJNMjkgMjkuNWMwLTQuNC04LjItNS44LTExLTVzLTExIDEuNi0xMSA1djIuNWgyMnoiIGZpbGw9IiNmMWQyOGEiLz48L3N2Zz4="/>
+            <img id="avatarImg" class="avatar" alt="avatar" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAzNiAzNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIxOCIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjE4IiBjeT0iMTQiIHI9IjgiIGZpbGw9IiNmMWQyOGEiLz48cGF0aCBkPSJNMjkgMjkuNWMwLTQuNC04LjItNS44LTExLTVzLTExIDEuNi0xMSA1djIuNWgyMnoiIGZpbGw9IiNmMWQyOGEiLz48L3N2Zz4="/>
             <span class="name" id="userNameLabel">Kirish</span>
           </button>
-          <div class="menu-panel" id="menuPanel" style="display:none;position:absolute;right:0;top:44px;background:#fff;border:1px solid #f1d28a;border-radius:12px;min-width:240px;box-shadow:0 10px 24px rgba(0,0,0,.12)">
+          <div class="menu-panel" id="menuPanel" style="display:none;position:absolute;right:0;top:50px;background:#fff;border:1px solid #f1d28a;border-radius:12px;min-width:240px;box-shadow:0 10px 24px rgba(0,0,0,.12)">
             <div class="menu-item" id="btnLogin" style="padding:10px 12px;cursor:pointer">🔑 Gmail orqali kirish</div>
             <div class="menu-item" id="btnProfile" style="padding:10px 12px;cursor:pointer">👤 Profil</div>
             <div class="menu-item" id="btnMyPosts" style="padding:10px 12px;cursor:pointer">⭐ Mening e’lonlarim</div>
@@ -100,71 +109,72 @@
   <div id="netBadge" class="net" style="display:none"></div>
 
   <div class="wrap">
-    <div id="alert" class="alert" role="alert" style="display:none;margin:0 auto 10px;max-width:980px;background:#7c2d12;color:#fff;padding:10px 12px;border-radius:10px;white-space:pre-wrap"></div>
+    <div id="alert" class="alert" role="alert" style="display:none;margin:0 auto 12px;max-width:980px;background:#7c2d12;color:#fff;padding:10px 12px;border-radius:10px;white-space:pre-wrap"></div>
 
     <div class="views">
-      <!-- HOME (soddalashtirilgan, ekranga sig‘adi) -->
+      <!-- HOME -->
       <section id="view_home" class="view active">
         <div class="hero">
-          <div class="headline">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</div>
-          <div class="muted">“Halollik — eng katta mukofot.”</div>
+          <div class="headline" data-i18n="headline">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</div>
+          <div class="muted" data-i18n="quote">“Halollik — eng katta mukofot.”</div>
         </div>
         <div id="mainMenu">
-          <button class="btn btn-red"  data-nav="lostForm">❗ Yo‘qotdim</button>
-          <button class="btn btn-green" data-nav="foundForm">✅ Topdim</button>
-          <button class="btn btn-blue" data-nav="lostList">📋 Yo‘qotilganlar</button>
-          <button class="btn btn-blue" data-nav="foundList">🔎 Topilganlar</button>
-          <button class="btn btn-blue btn-sm" data-nav="mine">⭐ Mening e’lonlarim</button>
-          <button class="btn btn-amber btn-sm" id="btnCopyLink">🔗 Havolani nusxalash</button>
+          <button class="btn btn-red"  data-nav="lostForm"  data-i18n="lost">❗ Yo‘qotdim</button>
+          <button class="btn btn-green" data-nav="foundForm" data-i18n="found">✅ Topdim</button>
+          <button class="btn btn-blue" data-nav="lostList"  data-i18n="lostlist">📋 Yo‘qotilganlar</button>
+          <button class="btn btn-blue" data-nav="foundList" data-i18n="foundlist">🔎 Topilganlar</button>
+          <button class="btn btn-blue" data-nav="profile"   data-i18n="profile">👤 Profil</button>
+          <button class="btn btn-blue btn-sm" data-nav="mine" data-i18n="mine">⭐ Mening e’lonlarim</button>
+          <!-- nusxa olish tugmasi olib tashlandi -->
         </div>
       </section>
 
       <!-- LOST FORM -->
       <section id="view_lostForm" class="view">
         <div class="card">
-          <div class="card-title">Yo‘qotdim — e’lon</div>
-          <label for="l_item">Narsa</label><input id="l_item" placeholder="Masalan: Qora hamyon, telefon"/>
-          <label for="l_city">Shahar/Hudud</label><input id="l_city" placeholder="Masalan: Samarqand / Registon"/>
-          <label for="l_place">Joy</label><input id="l_place" placeholder="Qayerda yo‘qotdingiz? (bozor, bekat...)"/>
-          <label for="l_date">Sana/Vaqt</label><input id="l_date" placeholder="2025-08-30 14:00"/>
-          <label for="l_contact">Aloqa</label><input id="l_contact" placeholder="+998 90 123 45 67" inputmode="tel"/>
-          <label for="l_reward">Mukofot (ixt.)</label><input id="l_reward" placeholder="100000 so‘m"/>
-          <label for="l_notes">Qo‘shimcha</label><textarea id="l_notes" placeholder="Belgilari: stiker, qopqoq, ichida hujjatlar..."></textarea>
-          <label for="l_photo">Rasm</label><input id="l_photo" type="file" accept="image/*"/>
+          <div class="card-title" data-i18n="lost_form">Yo‘qotdim — e’lon</div>
+          <label data-i18n="item">Narsa</label><input id="l_item" placeholder="Masalan: Qora hamyon, telefon"/>
+          <label data-i18n="city">Shahar/Hudud</label><input id="l_city" placeholder="Masalan: Samarqand / Registon"/>
+          <label data-i18n="place">Joy</label><input id="l_place" placeholder="Qayerda yo‘qotdingiz? (bozor, bekat...)"/>
+          <label data-i18n="date">Sana/Vaqt</label><input id="l_date" placeholder="2025-08-30 14:00"/>
+          <label data-i18n="contact">Aloqa</label><input id="l_contact" placeholder="+998 90 123 45 67" inputmode="tel"/>
+          <label data-i18n="reward_lbl">Mukofot (ixt.)</label><input id="l_reward" placeholder="100000"/>
+          <label data-i18n="notes">Qo‘shimcha</label><textarea id="l_notes" placeholder="Belgilari: stiker, qopqoq, ichida hujjatlar..."></textarea>
+          <label data-i18n="photo">Rasm</label><input id="l_photo" type="file" accept="image/*"/>
           <div class="progress" id="l_prog" style="display:none"><div class="bar" id="l_bar"></div></div>
           <div class="sp"></div>
-          <button id="btnLost" class="btn btn-red">E’lon berish</button>
+          <button id="btnLost" class="btn btn-red" data-i18n="submit">E’lon berish</button>
         </div>
       </section>
 
       <!-- FOUND FORM -->
       <section id="view_foundForm" class="view">
         <div class="card">
-          <div class="card-title">Topdim — e’lon</div>
-          <label for="f_item">Narsa</label><input id="f_item" placeholder="Masalan: Pasport, kalitlar, sumka"/>
-          <label for="f_city">Shahar/Hudud</label><input id="f_city" placeholder="Masalan: Toshkent / Chilonzor"/>
-          <label for="f_place">Qayerdan topildi</label><input id="f_place" placeholder="Masalan: Chorsu bozori yaqinida"/>
-          <label for="f_date">Sana/Vaqt</label><input id="f_date" placeholder="2025-08-30 10:00"/>
-          <label for="f_contact">Aloqa</label><input id="f_contact" placeholder="+998 90 987 65 43" inputmode="tel"/>
-          <label for="f_notes">Qo‘shimcha</label><textarea id="f_notes" placeholder="Topilgan holati, qayerga topshirildi va h.k."></textarea>
-          <label for="f_photo">Rasm</label><input id="f_photo" type="file" accept="image/*"/>
+          <div class="card-title" data-i18n="found_form">Topdim — e’lon</div>
+          <label data-i18n="item">Narsa</label><input id="f_item" placeholder="Masalan: Pasport, kalitlar, sumka"/>
+          <label data-i18n="city">Shahar/Hudud</label><input id="f_city" placeholder="Masalan: Toshkent / Chilonzor"/>
+          <label data-i18n="place">Qayerdan topildi</label><input id="f_place" placeholder="Masalan: Chorsu bozori yaqinida"/>
+          <label data-i18n="date">Sana/Vaqt</label><input id="f_date" placeholder="2025-08-30 10:00"/>
+          <label data-i18n="contact">Aloqa</label><input id="f_contact" placeholder="+998 90 987 65 43" inputmode="tel"/>
+          <label data-i18n="notes">Qo‘shimcha</label><textarea id="f_notes" placeholder="Topilgan holati, qayerga topshirildi va h.k."></textarea>
+          <label data-i18n="photo">Rasm</label><input id="f_photo" type="file" accept="image/*"/>
           <div class="progress" id="f_prog" style="display:none"><div class="bar" id="f_bar"></div></div>
           <div class="sp"></div>
-          <button id="btnFound" class="btn btn-green">E’lon berish</button>
+          <button id="btnFound" class="btn btn-green" data-i18n="submit">E’lon berish</button>
         </div>
       </section>
 
-      <!-- LISTS (faqat ikki: lost va found; tepada bo‘limlar yo‘q) -->
+      <!-- LISTS -->
       <section id="view_lostList" class="view">
         <div class="card">
-          <div class="card-title">📋 Umumiy yo‘qotilganlar</div>
+          <div class="card-title" data-i18n="lostlist">📋 Umumiy yo‘qotilganlar</div>
           <div id="lost_list">—</div>
         </div>
       </section>
 
       <section id="view_foundList" class="view">
         <div class="card">
-          <div class="card-title">🔎 Topilganlar</div>
+          <div class="card-title" data-i18n="foundlist">🔎 Topilganlar</div>
           <div id="found_list">—</div>
         </div>
       </section>
@@ -172,17 +182,17 @@
       <!-- MINE -->
       <section id="view_mine" class="view">
         <div class="card">
-          <div class="card-title">⭐ Mening e’lonlarim</div>
+          <div class="card-title" data-i18n="mine">⭐ Mening e’lonlarim</div>
           <div id="mine_list">—</div>
           <div class="sp"></div>
-          <button class="btn btn-amber" id="clearMineBtn">Mening e’lonlarimni o‘chirish</button>
+          <button class="btn btn-amber" id="clearMineBtn" data-i18n="deleteMine">Mening e’lonlarimni o‘chirish</button>
         </div>
       </section>
 
       <!-- CHAT -->
       <section id="view_postChat" class="view">
         <div class="card">
-          <div class="card-title"><span>Xabar</span> — <span id="chatItemName"></span></div>
+          <div class="card-title"><span data-i18n="msg">Xabar</span> — <span id="chatItemName"></span></div>
           <div class="sp"></div>
           <div class="post-meta" style="margin-bottom:8px">Shaxsiy ma’lumotni (telefon, karta) chatga yozmang.</div>
           <div class="post-card" style="padding:0; border:0; background:#0b1220">
@@ -190,31 +200,31 @@
           </div>
           <div class="sp"></div>
           <input id="chatName" placeholder="Ismingiz"/>
-          <input id="chatText" placeholder="Xabar... (telefon raqamni yozmang, postdagi raqamdan foydalaning)"/>
+          <input id="chatText" placeholder="Xabar..."/>
           <div class="sp"></div>
-          <button class="btn btn-blue" id="sendChatBtn">Yuborish</button>
+          <button class="btn btn-blue" id="sendChatBtn" data-i18n="send">Yuborish</button>
         </div>
       </section>
 
       <!-- PROFILE -->
       <section id="view_profile" class="view">
         <div class="card">
-          <div class="card-title">👤 Profil</div>
-          <div class="profile-card" style="display:grid;grid-template-columns:100px 1fr;gap:14px">
+          <div class="card-title" data-i18n="profile">👤 Profil</div>
+          <div class="profile-card" style="display:grid;grid-template-columns:110px 1fr;gap:16px">
             <div>
-              <img id="profileAvatar" style="width:100px;height:100px;border-radius:16px;object-fit:cover;border:1px solid #223047;background:#0b1220" alt="avatar"/>
+              <img id="profileAvatar" style="width:110px;height:110px;border-radius:16px;object-fit:cover;border:1px solid #223047;background:#0b1220" alt="avatar"/>
               <div class="sp"></div>
               <button class="btn btn-amber btn-sm" id="btnChangePhoto">📷 Rasmni yangilash</button>
               <input id="profilePhotoFile" type="file" accept="image/*" style="display:none"/>
             </div>
             <div>
-              <label>Ism</label><input id="profileName" placeholder="Ismingiz"/>
-              <label>Email</label><input id="profileEmail" placeholder="Email" disabled/>
-              <label>Telefon</label><input id="profilePhone" placeholder="+998 ** *** ** **"/>
-              <label>Shahar</label><input id="profileCity" placeholder="Masalan: Samarqand"/>
-              <label>Bio</label><textarea id="profileBio" placeholder="O‘zingiz haqida qisqacha"></textarea>
+              <label data-i18n="name">Ism</label><input id="profileName" placeholder="Ismingiz"/>
+              <label data-i18n="email">Email</label><input id="profileEmail" placeholder="Email" disabled/>
+              <label data-i18n="phone">Telefon</label><input id="profilePhone" placeholder="+998 ** *** ** **"/>
+              <label data-i18n="city">Shahar</label><input id="profileCity" placeholder="Masalan: Samarqand"/>
+              <label data-i18n="bio">Bio</label><textarea id="profileBio" placeholder="O‘zingiz haqida qisqacha"></textarea>
               <div class="sp"></div>
-              <button class="btn btn-green" id="btnSaveProfile">💾 Saqlash</button>
+              <button class="btn btn-green" id="btnSaveProfile" data-i18n="save">💾 Saqlash</button>
             </div>
           </div>
         </div>
@@ -231,11 +241,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
-  /* ===== Service Worker (offline) — optional ===== */
+  /* ===== Service Worker (offline) — ixtiyoriy ===== */
   (function registerSW(){
     if(!('serviceWorker' in navigator)) return;
     const CODE = `
-      const VER='bingo-v7';
+      const VER='bingo-v8';
       self.addEventListener('install',e=>{ self.skipWaiting(); e.waitUntil(caches.open(VER).then(c=>c.addAll(['./'])) )});
       self.addEventListener('activate',e=>{ e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==VER).map(k=>caches.delete(k))))); self.clients.claim(); });
       self.addEventListener('fetch',e=>{
@@ -260,7 +270,7 @@
     authDomain:"topildi.firebaseapp.com",
     databaseURL:"https://topildi-default-rtdb.firebaseio.com",
     projectId:"topildi",
-    storageBucket:"topildi.appspot.com",
+    storageBucket:"topildi.appspot.com",  /* appspot.com ishonchli */
     messagingSenderId:"323891530719",
     appId:"1:323891530719:web:d57c2ce38781dc37e4926a",
     measurementId:"G-NKCMKCXZQ7"
@@ -277,10 +287,7 @@
   const YEAR=document.getElementById('year'); YEAR.textContent=new Date().getFullYear();
 
   function banner(msg){const a=document.getElementById('alert');a.textContent=msg||'';a.style.display=msg?'block':'none'}
-  function esc(s){
-    const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
-    return String(s||'').replace(/[&<>"']/g, ch => map[ch]);
-  }
+  function esc(s){const map={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};return String(s||'').replace(/[&<>"']/g,ch=>map[ch])}
   function val(id){const el=document.getElementById(id);return el?el.value.trim():''}
   function onlyDigits(s){ return (s||'').replace(/[^\d]/g,''); }
   function num(n){const x=parseInt(n,10);return isNaN(x)?0:x}
@@ -294,7 +301,52 @@
   }
   function setProg(prefix, prc){ const bar=document.getElementById(prefix+'_bar'); const box=document.getElementById(prefix+'_prog'); if(!bar||!box) return; if(prc<=0||prc>=100){box.style.display='none'; bar.style.width='0%'} else {box.style.display='block'; bar.style.width=prc+'%'} }
 
-  /* ===== Network badge ===== */
+  /* ===== I18N (UZ/RU/EN) ===== */
+  const I18N = {
+    uz:{headline:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",quote:"“Halollik — eng katta mukofot.”",
+        lost:"❗ Yo‘qotdim",found:"✅ Topdim",lostlist:"📋 Yo‘qotilganlar",foundlist:"🔎 Topilganlar",mine:"⭐ Mening e’lonlarim",
+        profile:"👤 Profil",lost_form:"Yo‘qotdim — e’lon",found_form:"Topdim — e’lon",
+        item:"Narsa",city:"Shahar/Hudud",place:"Joy",date:"Sana/Vaqt",contact:"Aloqa",reward_lbl:"Mukofot (ixt.)",notes:"Qo‘shimcha",photo:"Rasm",
+        submit:"E’lon berish",msg:"Xabar",send:"Yuborish",deleteMine:"Mening e’lonlarimni o‘chirish",
+        login:"🔑 Gmail orqali kirish",logout:"🚪 Chiqish",require:"Shahar va aloqa — majburiy",save:"💾 Saqlash",name:"Ism",email:"Email",phone:"Telefon",bio:"Bio"},
+    ru:{headline:"Потеряли или нашли? Оставьте объявление.",quote:"«Честность — самая большая награда.»",
+        lost:"❗ Потерял(а)",found:"✅ Нашёл(ла)",lostlist:"📋 Потерянные",foundlist:"🔎 Найденные",mine:"⭐ Мои объявления",
+        profile:"👤 Профиль",lost_form:"Потерял(а) — объявление",found_form:"Нашёл(ла) — объявление",
+        item:"Предмет",city:"Город/Регион",place:"Место",date:"Дата/Время",contact:"Контакт",reward_lbl:"Вознаграждение (необ.)",notes:"Дополнительно",photo:"Фото",
+        submit:"Опубликовать",msg:"Сообщение",send:"Отправить",deleteMine:"Удалить мои объявления",
+        login:"🔑 Войти через Gmail",logout:"🚪 Выйти",require:"Город и контакт обязательны",save:"💾 Сохранить",name:"Имя",email:"Email",phone:"Телефон",bio:"Био"},
+    en:{headline:"Lost or found something? Post it.",quote:"“Honesty is the greatest reward.”",
+        lost:"❗ Lost",found:"✅ Found",lostlist:"📋 Lost Items",foundlist:"🔎 Found Items",mine:"⭐ My Posts",
+        profile:"👤 Profile",lost_form:"Lost — post",found_form:"Found — post",
+        item:"Item",city:"City/Region",place:"Place",date:"Date/Time",contact:"Contact",reward_lbl:"Reward (opt.)",notes:"Notes",photo:"Photo",
+        submit:"Post",msg:"Message",send:"Send",deleteMine:"Delete my posts",
+        login:"🔑 Sign in with Gmail",logout:"🚪 Sign out",require:"City & contact are required",save:"💾 Save",name:"Name",email:"Email",phone:"Phone",bio:"Bio"},
+  };
+  function t(k){ const L=localStorage.getItem('bingo_lang')||'uz'; return (I18N[L]||I18N.uz)[k]||k }
+  function applyI18n(){
+    document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'))});
+    // placeholders for forms
+    document.getElementById('l_item').placeholder=t('item');
+    document.getElementById('l_city').placeholder=t('city');
+    document.getElementById('l_place').placeholder=t('place');
+    document.getElementById('l_date').placeholder=t('date');
+    document.getElementById('l_contact').placeholder=t('contact');
+    document.getElementById('l_reward').placeholder=t('reward_lbl');
+    document.getElementById('l_notes').placeholder=t('notes');
+
+    document.getElementById('f_item').placeholder=t('item');
+    document.getElementById('f_city').placeholder=t('city');
+    document.getElementById('f_place').placeholder=t('place');
+    document.getElementById('f_date').placeholder=t('date');
+    document.getElementById('f_contact').placeholder=t('contact');
+    document.getElementById('f_notes').placeholder=t('notes');
+  }
+  const langSel=document.getElementById('langSel');
+  langSel.value = localStorage.getItem('bingo_lang')||'uz';
+  langSel.addEventListener('change', ()=>{ localStorage.setItem('bingo_lang', langSel.value); applyI18n(); });
+  applyI18n();
+
+  /* ===== Net badge ===== */
   const netBadge=document.getElementById('netBadge');
   function setNet(on){
     netBadge.className='net '+(on?'on':'off');
@@ -307,7 +359,7 @@
   window.addEventListener('offline',()=>setNet(false));
   setNet(navigator.onLine);
 
-  /* ===== Router (nav ishlash muammosini tuzatdik) ===== */
+  /* ===== Router ===== */
   let currentView='home', currentChatPostId=null, unsubChat=null;
   function showView(name){
     ['home','lostForm','foundForm','lostList','foundList','mine','postChat','profile']
@@ -325,15 +377,11 @@
     if(replace) history.replaceState({view:name,id:currentChatPostId},'',hash);
     else history.pushState({view:name,id:currentChatPostId},'',hash);
   }
-  // Home button
   document.getElementById('homeBtn').addEventListener('click',()=>navigate('home'));
-  // Menu buttons
-  $$('#mainMenu .btn').forEach(b=>{ if(b.dataset.nav) b.addEventListener('click',()=>navigate(b.dataset.nav)); });
-  // History
+  document.querySelectorAll('#mainMenu .btn').forEach(b=>{ if(b.dataset.nav) b.addEventListener('click',()=>navigate(b.dataset.nav)); });
   window.addEventListener('popstate',e=>{
     const st=e.state||{view:'home'}; currentChatPostId=st.id||null; showView(st.view||'home');
   });
-  // Init route
   (function(){
     const h=location.hash?location.hash.substring(1):'home';
     const p=h.split('-'); const v=p[0]||'home'; currentChatPostId=p[1]||null;
@@ -374,7 +422,7 @@
       if(!snap.exists){ await ref.set({uid:u.uid,name:u.displayName||'',email:u.email||'',photo:u.photoURL||'',city:'',phone:'',bio:'',created:Date.now(),updated:Date.now()}) }
       else{ await ref.update({name:snap.data().name||u.displayName||'',email:u.email||'',photo:snap.data().photo||u.photoURL||'',updated:Date.now()}).catch(()=>{}); }
     }else{
-      userNameLabel.textContent='Kirish';
+      userNameLabel.textContent=t('login').replace('🔑 ','')||'Kirish';
     }
   });
 
@@ -387,7 +435,7 @@
     if(currentView==='mine') renderMine();
   },err=>banner("Firestore o‘qish xatosi: "+err.message));
 
-  /* ===== Photo upload helpers ===== */
+  /* ===== Photo upload helpers (FIXED) ===== */
   async function readFileAsDataURL(file){return new Promise(r=>{if(!file)return r(null);const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(file)})}
   async function getPhotoURL(file, prefix){
     if(!file) return null;
@@ -395,15 +443,18 @@
       try{
         const path = `uploads/${(auth.currentUser?.uid||'anon')}/${Date.now()}_${(file.name||'photo').replace(/[^a-z0-9_.-]/gi,'_')}`;
         const ref = storage.ref().child(path);
-        await ref.put(file).on('state_changed', snap=>{
+        const uploadTask = ref.put(file);                 // <- to‘g‘ri
+        uploadTask.on('state_changed', snap=>{
           const prc = Math.round((snap.bytesTransferred/snap.totalBytes)*100);
           setProg(prefix, prc<100?prc:0);
         });
+        await uploadTask;                                  // <- kutamiz
         const url = await ref.getDownloadURL();
         setProg(prefix,0);
         return url;
       }catch(e){ console.warn('Storage upload failed, fallback to dataURL', e); setProg(prefix,0); }
     }
+    // Fallback — DataURL
     const dataUrl = await readFileAsDataURL(file);
     return dataUrl;
   }
@@ -419,12 +470,12 @@
       photo:photo||null, uid:(auth.currentUser?.uid)||'anon', created:Date.now(),
       authorName:auth.currentUser?.displayName||'', authorEmail:auth.currentUser?.email||''
     };
-    if(!p.item||!p.city||!p.contact){ return centerToast('Shahar va aloqa — majburiy',true) }
+    if(!p.item||!p.city||!p.contact){ return centerToast(t('require'),true) }
     const sig=JSON.stringify([p.kind,p.item,p.city,p.contact,p.notes,!!p.photo]); const now=Date.now();
     const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}');
     if(last.sig===sig && (now-last.ts)<30000) return centerToast('⚠️ Bir xil e’lon (30s ichida).',true);
     localStorage.setItem('bingo_last_post', JSON.stringify({sig,ts:now}));
-    await db.collection('posts').add(p); centerToast('✅ E’lon joylandi'); navigate('lostList');
+    await db.collection('posts').add(p); centerToast('✅ '+t('submit')); navigate('lostList');
     ['l_item','l_city','l_place','l_date','l_contact','l_reward','l_notes','l_photo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   });
 
@@ -438,22 +489,24 @@
       photo:photo||null, uid:(auth.currentUser?.uid)||'anon', created:Date.now(),
       authorName:auth.currentUser?.displayName||'', authorEmail:auth.currentUser?.email||''
     };
-    if(!p.item||!p.city||!p.contact){ return centerToast('Shahar va aloqa — majburiy',true) }
+    if(!p.item||!p.city||!p.contact){ return centerToast(t('require'),true) }
     const sig=JSON.stringify([p.kind,p.item,p.city,p.contact,p.notes,!!p.photo]); const now=Date.now();
     const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}');
     if(last.sig===sig && (now-last.ts)<30000) return centerToast('⚠️ Bir xil e’lon (30s ichida).',true);
     localStorage.setItem('bingo_last_post', JSON.stringify({sig,ts:now}));
-    await db.collection('posts').add(p); centerToast('✅ E’lon joylandi'); navigate('foundList');
+    await db.collection('posts').add(p); centerToast('✅ '+t('submit')); navigate('foundList');
     ['f_item','f_city','f_place','f_date','f_contact','f_notes','f_photo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   });
 
-  // Mukofot inputini chiroyli ko‘rsatish
+  // Mukofot inputini ko‘rkam ko‘rsatish (vizual), bazaga toza son tushadi
   const rewardInput=document.getElementById('l_reward');
   function formatUZS(s){ return String(s).replace(/\B(?=(\d{3})+(?!\d))/g,' '); }
   if(rewardInput){
     rewardInput.addEventListener('input', (e)=>{
+      const pos = e.target.selectionStart;
       const raw=onlyDigits(e.target.value);
       e.target.value = formatUZS(raw);
+      e.target.setSelectionRange(e.target.value.length, e.target.value.length);
     });
   }
 
@@ -469,7 +522,7 @@
         <div class="post-kind">${kindLabel}${p.reward>0?` · 🎁 ${Number(p.reward).toLocaleString()} so‘m`:''}</div>
         <div class="post-date">${p.created?new Date(p.created).toLocaleString():''}</div>
       </div>
-      <div style="margin-top:6px;font-weight:800">${esc(p.item)}</div>
+      <div style="margin-top:6px;font-weight:900;font-size:16px">${esc(p.item)}</div>
       <div class="post-meta">${esc(p.city||'-')} · ${esc(p.place||'-')} · ${esc(p.date||'-')}</div>
       <div style="margin-top:6px; white-space:pre-wrap">${esc(p.notes||'')}</div>
       <div class="post-meta" style="margin-top:6px">📞 ${esc(p.contact||'-')}</div>
@@ -477,7 +530,7 @@
       <div class="actions">
         ${allowDelete?`<button class="btn" onclick="editPost('${p.id}')">✏️ Tahrirlash</button>`:''}
         ${allowDelete?`<button class="btn" onclick="delPost('${p.id}')">🗑️ O‘chirish</button>`:''}
-        <button class="btn btn-blue" onclick="openChat('${p.id}')">✉️ Xabar</button>
+        <button class="btn btn-blue" onclick="openChat('${p.id}')">${t('msg')}</button>
         ${shareBtn}
       </div>
     </div>`;
@@ -501,17 +554,17 @@
       const p = doc.data();
       const my = (auth.currentUser?.uid)||'anon';
       if(p.uid !== my){ return centerToast('⛔ Sizning e’loningiz emas', true); }
-      const item = prompt('Narsa:', p.item||''); if(item===null) return;
-      const city = prompt('Shahar/Hudud:', p.city||''); if(city===null) return;
-      const contact = prompt('Aloqa:', p.contact||''); if(contact===null) return;
-      const notes = prompt('Qo‘shimcha:', p.notes||''); if(notes===null) return;
+      const item = prompt(t('item')+':', p.item||''); if(item===null) return;
+      const city = prompt(t('city')+':', p.city||''); if(city===null) return;
+      const contact = prompt(t('contact')+':', p.contact||''); if(contact===null) return;
+      const notes = prompt(t('notes')+':', p.notes||''); if(notes===null) return;
       let reward = p.reward||0;
       if(p.kind==='lost'){
-        const r = prompt('Mukofot (UZS, raqam):', String(reward||'')); if(r===null) return;
+        const r = prompt(t('reward_lbl')+' (UZS):', String(reward||'')); if(r===null) return;
         reward = parseInt(onlyDigits(r), 10) || 0;
       }
       await db.collection('posts').doc(id).update({item, city, contact, notes, reward, updated:Date.now()});
-      centerToast('✏️ Tahrirlandi');
+      centerToast('✏️ OK');
     }catch(e){ banner('Tahrirlash xatosi: '+e.message); }
   }
   window.editPost=editPost;
@@ -531,13 +584,13 @@
   }
   document.getElementById('clearMineBtn').addEventListener('click', async ()=>{
     const u=auth.currentUser?.uid||'anon';
-    if(!confirm('Barcha shaxsiy e’lonlaringiz o‘chirilsinmi?')) return;
+    if(!confirm(t('deleteMine')+'?')) return;
     try{
       const mine=ALL_POSTS.filter(p=>p.uid===u);
       const batch=db.batch();
       for(const p of mine){ batch.delete(db.collection('posts').doc(p.id)); }
       await batch.commit();
-      centerToast('🧹 Tozalandi'); renderMine();
+      centerToast('🧹 OK'); renderMine();
     }catch(e){ banner('Xato: '+e.message) }
   });
 
@@ -622,11 +675,6 @@
       centerToast('💾 Saqlandi');
     }catch(e){ centerToast('Saqlash xatosi: '+e.message,true) }
   });
-
-  /* ===== Copy link ===== */
-  document.getElementById('btnCopyLink').addEventListener('click', async ()=>{
-    try{ await navigator.clipboard.writeText(location.href); centerToast('🔗 Havola nusxalandi'); }catch{ centerToast('⚠️ Nusxalab bo‘lmadi',true) }
-  });
   </script>
 </body>
-  </html>
+                                                                                            </html>
