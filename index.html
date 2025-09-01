@@ -10,53 +10,160 @@
   :root{
     --bg1:#FFF9DB; --bg2:#FFF1B8;
     --panel:#0f172a; --ring:#e5e7eb33; --text:#0F172A;
+    --muted:#475569; --text-card:#F1F5F9; --muted-card:#94A3B8;
     --blue:#1e293b; --green:#16A34A; --red:#DC2626; --amber:#f8c100;
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
   body{background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text)}
-  .topbar{position:sticky;top:0;z-index:80;background:#fff9db;border-bottom:1px solid #f1d28a;padding:6px 10px;display:flex;justify-content:space-between;align-items:center}
-  .brand{display:flex;align-items:center;gap:8px}
-  .logo{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:#fff3c4;border:1px solid #f1d28a;font-weight:900;color:#b45309}
-  .title{font-weight:800;color:#111827}
-  .iconbtn{padding:6px 10px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;cursor:pointer}
-  .btn{border-radius:12px;padding:10px 14px;cursor:pointer;border:1px solid #e2e8f0;background:#111a2b;color:#fff;font-weight:700}
-  .btn-red{background:var(--red)} .btn-green{background:var(--green)} .btn-blue{background:var(--blue)} .btn-amber{background:var(--amber);color:#111}
-  .view{display:none} .view.active{display:block}
-  .card{background:var(--panel);border:1px solid var(--ring);border-radius:14px;padding:12px;margin:10px 0;color:#fff}
-  input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:10px;padding:10px}
+  .wrap{max-width:980px;margin:0 auto;padding:16px 14px 28px}
+
+  /* Topbar */
+  .topbar{position:sticky;top:0;z-index:80;background:linear-gradient(180deg,rgba(255,248,204,.95),rgba(255,240,170,.86));border-bottom:1px solid #f1d28a;backdrop-filter:saturate(1.2) blur(8px)}
+  .hdr{display:flex;gap:12px;align-items:center;padding:8px 10px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:#fff3c4;border:1px solid #f1d28a;font-weight:900;color:#b45309}
+  .title{font-weight:900;letter-spacing:.2px;color:#111827;font-size:18px}
+  .searchbox{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #f1d28a;border-radius:999px;padding:6px 10px;box-shadow:0 2px 0 #f1d28a}
+  .searchbox input{flex:1;border:0;outline:0;font-size:15px}
+  .chip{border:1px dashed #e0c466;background:#fff7cc;color:#5b4300;border-radius:999px;padding:5px 10px;font-weight:700}
+  .controls{display:flex;gap:8px;align-items:center}
+  .iconbtn{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;cursor:pointer;color:#1f2937}
+  .iconbtn:active{transform:translateY(1px)}
+  .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #f1d28a;background:#fff}
+  .userbtn{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:999px;border:1px solid #f1d28a;background:#fff}
+  .userbtn .name{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+
+  /* Status badge */
+  .net{position:sticky;top:56px;z-index:75;margin:6px 10px;max-width:980px;padding:6px 10px;border-radius:10px;text-align:center;font-weight:800;display:none}
+  .net.off{display:block;background:#991b1b;color:#fff;border:1px solid #fecaca}
+  .net.on{display:block;background:#065f46;color:#d1fae5;border:1px solid #99f6e4}
+
+  /* Layout + cards */
+  .hero{margin:20px 0 12px}
+  .headline{font-size:34px;line-height:1.3;font-weight:900;color:#111827}
+  .muted{color:#475569;margin-top:6px}
+  #mainMenu{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+  .btn{border-radius:16px;padding:12px 16px;cursor:pointer;border:1px solid #e2e8f0;background:#111a2b;color:#e5eef7;font-weight:700;font-size:15px;transition:.2s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-blue{background:var(--blue)} .btn-green{background:var(--green);color:#04140a} .btn-red{background:var(--red)}
+  .btn-amber{background:var(--amber);color:#111}
+  .btn-sm{font-size:14px;padding:10px 12px}
+  .btn-disabled{background:#9ca3af!important;color:#f3f4f6!important;cursor:not-allowed}
+  .views{min-height:72vh}
+  .view{display:none}
+  .view.active{display:block}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  @media (max-width:760px){ .grid{grid-template-columns:1fr} }
+  .card{background:var(--panel);border:1px solid var(--ring);border-radius:18px;padding:12px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+  .card-title{font-weight:800;margin-bottom:8px;font-size:15px;letter-spacing:.2px}
+  .card-text,.card-list{font-size:13px;color:var(--muted-card)}
+  label{font-size:13px;color:#8fa1b7;margin:8px 0 4px;display:block}
+  input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px}
+  input[type="file"]{padding:10px;background:#0b1220;border:1px dashed #334155}
+  textarea{min-height:96px;resize:vertical}
+  .sp{height:10px}
   .post-card{background:#0f172a;border:1px solid #223047;border-radius:14px;padding:12px;margin:10px 0}
-  .footer{text-align:center;margin:20px;font-size:13px}
+  .post-img{width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:1px solid #223047;background:#0b1220}
+  .post-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+  .post-kind{font-weight:700}
+  .post-date{opacity:.8;font-size:12px}
+  .post-meta{opacity:.9;font-size:13px}
+  .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap}
+  .footer{text-align:center;color:#334155;margin-top:20px;font-size:13px}
+  .center-toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);background:#16a34a;color:#fff;padding:18px 22px;border-radius:14px;font-weight:900;z-index:9999;opacity:0;transition:.18s}
+  .center-toast.err{background:#dc2626}
+  .center-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .progress{height:8px;border-radius:6px;background:#0b1220;border:1px solid #223047;overflow:hidden}
+  .bar{height:100%;width:0%;background:#38bdf8}
+  :is(button,select,input,textarea):focus{outline:2px solid #f8c10033;outline-offset:2px}
 </style>
 </head>
 <body>
   <div class="topbar">
-    <div class="brand"><div class="logo">BG</div><div class="title">BINGO</div></div>
-    <div>
-      <button id="homeBtn" class="iconbtn">⌂</button>
-      <button id="userBtn" class="iconbtn">👤</button>
+    <div class="hdr">
+      <div class="brand">
+        <div class="logo">BG</div>
+        <div class="title">BINGO</div>
+      </div>
+      <div class="searchbox">
+        <input id="qSearch" placeholder="Qidirish: sarlavha, shahar, aloqa"/>
+        <span class="chip" id="lostCountChip">0 Lost</span>
+        <span class="chip" id="foundCountChip">0 Found</span>
+      </div>
+      <div class="controls">
+        <button id="homeBtn" class="iconbtn" title="Bosh sahifa">⌂</button>
+        <div class="menu" id="userMenu">
+          <button id="userBtn" class="userbtn" title="Profil">
+            <img id="avatarImg" class="avatar" alt="avatar" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzYiIGhlaWdodD0iMzYiIHZpZXdCb3g9IjAgMCAzNiAzNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIxOCIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjE4IiBjeT0iMTQiIHI9IjgiIGZpbGw9IiNmMWQyOGEiLz48cGF0aCBkPSJNMjkgMjkuNWMwLTQuNC04LjItNS44LTExLTVzLTExIDEuNi0xMSA1djIuNWgyMnoiIGZpbGw9IiNmMWQyOGEiLz48L3N2Zz4="/>
+            <span class="name" id="userNameLabel">Kirish</span>
+          </button>
+          <div class="menu-panel" id="menuPanel" style="display:none;position:absolute;right:10px;top:52px;background:#fff;border:1px solid #f1d28a;border-radius:12px;min-width:240px;box-shadow:0 10px 24px rgba(0,0,0,.12)">
+            <div class="menu-item" id="btnLogin" style="padding:10px 12px;cursor:pointer">🔑 Gmail orqali kirish</div>
+            <div class="menu-item" id="btnProfile" style="padding:10px 12px;cursor:pointer">👤 Profil</div>
+            <div class="menu-item" id="btnMyPosts" style="padding:10px 12px;cursor:pointer">⭐ Mening e’lonlarim</div>
+            <div class="menu-sep" style="height:1px;background:#f1d28a;margin:6px 0"></div>
+            <div class="menu-item" id="btnLogout" style="padding:10px 12px;cursor:pointer">🚪 Chiqish</div>
+            <div class="menu-item small" style="padding:10px 12px;color:#6b7280">Google orqali — Firebase Auth</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
+  <div id="netBadge" class="net" style="display:none"></div>
+
   <div class="wrap">
+    <div id="alert" class="alert" role="alert" style="display:none;margin:0 auto 10px;max-width:980px;background:#7c2d12;color:#fff;padding:10px 12px;border-radius:10px;white-space:pre-wrap"></div>
+
     <div class="views">
       <!-- HOME -->
       <section id="view_home" class="view active">
-        <h2>Yo‘qotdingizmi yoki topdingizmi?</h2>
-        <button class="btn btn-red" data-nav="lostForm">❗ Yo‘qotdim</button>
-        <button class="btn btn-green" data-nav="foundForm">✅ Topdim</button>
-        <button class="btn btn-blue" data-nav="lostList">📋 Yo‘qotilganlar</button>
-        <button class="btn btn-blue" data-nav="foundList">🔎 Topilganlar</button>
-        <button class="btn btn-blue" data-nav="profile">👤 Profil</button>
+        <div class="hero">
+          <div class="headline">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</div>
+          <div class="muted">“Halollik — eng katta mukofot.”</div>
+        </div>
+
+        <div id="mainMenu">
+          <button class="btn btn-red"  data-nav="lostForm">❗ Yo‘qotdim</button>
+          <button class="btn btn-green" data-nav="foundForm">✅ Topdim</button>
+          <button class="btn btn-blue" data-nav="lostList">📋 Yo‘qotilganlar</button>
+          <button class="btn btn-blue" data-nav="rewardList">🎁 Mukofotli</button>
+          <button class="btn btn-blue" data-nav="foundList">🔎 Topilganlar</button>
+          <button class="btn btn-blue btn-sm" data-nav="mine">⭐ Mening e’lonlarim</button>
+          <button class="btn btn-amber btn-sm" id="btnCopyLink">🔗 Havolani nusxalash</button>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="card-title">Nega BINGO?</div>
+            <p class="card-text">Oddiy forma, tez natija. Barcha e’lonlar bir joyda.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Qisqa yo‘riqnoma</div>
+            <ul class="card-list">
+              <li>❗ Yo‘qotdim yoki ✅ Topdim formasini to‘ldiring</li>
+              <li>Shahar va aloqa — majburiy</li>
+              <li>Mukofot yozilsa, alohida bo‘limda ko‘rinadi</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
       <!-- LOST FORM -->
       <section id="view_lostForm" class="view">
         <div class="card">
-          <h3>Yo‘qotdim — e’lon</h3>
-          <input id="l_item" placeholder="Narsa (masalan: Telefon)"/>
-          <input id="l_city" placeholder="Shahar"/>
-          <input id="l_contact" placeholder="Aloqa"/>
+          <div class="card-title">Yo‘qotdim — e’lon</div>
+          <label>Narsa</label><input id="l_item" placeholder="Masalan: Qora hamyon, telefon"/>
+          <label>Shahar/Hudud</label><input id="l_city" placeholder="Masalan: Samarqand / Registon"/>
+          <label>Joy</label><input id="l_place" placeholder="Qayerda yo‘qotdingiz? (bozor, bekat...)"/>
+          <label>Sana/Vaqt</label><input id="l_date" placeholder="2025-08-30 14:00"/>
+          <label>Aloqa</label><input id="l_contact" placeholder="+998 90 123 45 67" inputmode="tel"/>
+          <label>Mukofot (ixt.)</label><input id="l_reward" type="number" placeholder="100000 so‘m"/>
+          <label>Qo‘shimcha</label><textarea id="l_notes" placeholder="Belgilari: stiker, qopqoq, ichida hujjatlar..."></textarea>
+          <label>Rasm</label><input id="l_photo" type="file" accept="image/*"/>
+          <div class="progress" id="l_prog" style="display:none"><div class="bar" id="l_bar"></div></div>
+          <div class="sp"></div>
           <button id="btnLost" class="btn btn-red">E’lon berish</button>
         </div>
       </section>
@@ -64,86 +171,480 @@
       <!-- FOUND FORM -->
       <section id="view_foundForm" class="view">
         <div class="card">
-          <h3>Topdim — e’lon</h3>
-          <input id="f_item" placeholder="Narsa (masalan: Pasport)"/>
-          <input id="f_city" placeholder="Shahar"/>
-          <input id="f_contact" placeholder="Aloqa"/>
+          <div class="card-title">Topdim — e’lon</div>
+          <label>Narsa</label><input id="f_item" placeholder="Masalan: Pasport, kalitlar, sumka"/>
+          <label>Shahar/Hudud</label><input id="f_city" placeholder="Masalan: Toshkent / Chilonzor"/>
+          <label>Qayerdan topildi</label><input id="f_place" placeholder="Masalan: Chorsu bozori yaqinida"/>
+          <label>Sana/Vaqt</label><input id="f_date" placeholder="2025-08-30 10:00"/>
+          <label>Aloqa</label><input id="f_contact" placeholder="+998 90 987 65 43" inputmode="tel"/>
+          <label>Qo‘shimcha</label><textarea id="f_notes" placeholder="Topilgan holati, qayerga topshirildi va h.k."></textarea>
+          <label>Rasm</label><input id="f_photo" type="file" accept="image/*"/>
+          <div class="progress" id="f_prog" style="display:none"><div class="bar" id="f_bar"></div></div>
+          <div class="sp"></div>
           <button id="btnFound" class="btn btn-green">E’lon berish</button>
         </div>
       </section>
 
       <!-- LISTS -->
-      <section id="view_lostList" class="view"><div id="lost_list">—</div></section>
-      <section id="view_foundList" class="view"><div id="found_list">—</div></section>
+      <section id="view_lostList" class="view">
+        <div class="card">
+          <div class="card-title">📋 Umumiy yo‘qotilganlar</div>
+          <div class="small" style="margin-bottom:8px">Global qidiruv yuqorida (sarlavha/shahar/aloqa)</div>
+          <div id="lost_list">—</div>
+        </div>
+      </section>
+
+      <section id="view_rewardList" class="view">
+        <div class="card">
+          <div class="card-title">🎁 Mukofotli</div>
+          <div id="reward_list">—</div>
+        </div>
+      </section>
+
+      <section id="view_foundList" class="view">
+        <div class="card">
+          <div class="card-title">🔎 Topilganlar</div>
+          <div id="found_list">—</div>
+        </div>
+      </section>
+
+      <!-- MINE -->
+      <section id="view_mine" class="view">
+        <div class="card">
+          <div class="card-title">⭐ Mening e’lonlarim</div>
+          <div id="mine_list">—</div>
+          <div class="sp"></div>
+          <button class="btn btn-amber" id="clearMineBtn">Mening e’lonlarimni o‘chirish</button>
+        </div>
+      </section>
+
+      <!-- CHAT -->
+      <section id="view_postChat" class="view">
+        <div class="card">
+          <div class="card-title"><span>Xabar</span> — <span id="chatItemName"></span></div>
+          <div class="sp"></div>
+          <div class="post-meta" style="margin-bottom:8px">Shaxsiy ma’lumotni (telefon, karta) chatga yozmang.</div>
+          <div class="post-card" style="padding:0; border:0; background:#0b1220">
+            <div class="chat-log" id="chatLog" style="height:46vh;overflow:auto;border:1px solid #223047;border-radius:12px;padding:10px"></div>
+          </div>
+          <div class="sp"></div>
+          <input id="chatName" placeholder="Ismingiz"/>
+          <input id="chatText" placeholder="Xabar... (telefon raqamni yozmang, postdagi raqamdan foydalaning)"/>
+          <div class="sp"></div>
+          <button class="btn btn-blue" id="sendChatBtn">Yuborish</button>
+        </div>
+      </section>
 
       <!-- PROFILE -->
       <section id="view_profile" class="view">
         <div class="card">
-          <h3>Profil</h3>
-          <img id="profileAvatar" style="width:80px;height:80px;border-radius:50%"/>
-          <input id="profileName" placeholder="Ism"/>
-          <input id="profileEmail" placeholder="Email" disabled/>
-          <input id="profilePhone" placeholder="Telefon"/>
-          <input id="profileCity" placeholder="Shahar"/>
-          <textarea id="profileBio" placeholder="Bio"></textarea>
-          <button id="btnSaveProfile" class="btn btn-green">💾 Saqlash</button>
+          <div class="card-title">👤 Profil</div>
+          <div class="profile-card" style="display:grid;grid-template-columns:100px 1fr;gap:14px">
+            <div>
+              <img id="profileAvatar" style="width:100px;height:100px;border-radius:16px;object-fit:cover;border:1px solid #223047;background:#0b1220" alt="avatar"/>
+              <div class="sp"></div>
+              <button class="btn btn-amber btn-sm" id="btnChangePhoto">📷 Rasmni yangilash</button>
+              <input id="profilePhotoFile" type="file" accept="image/*" style="display:none"/>
+            </div>
+            <div>
+              <label>Ism</label><input id="profileName" placeholder="Ismingiz"/>
+              <label>Email</label><input id="profileEmail" placeholder="Email" disabled/>
+              <label>Telefon</label><input id="profilePhone" placeholder="+998 ** *** ** **"/>
+              <label>Shahar</label><input id="profileCity" placeholder="Masalan: Samarqand"/>
+              <label>Bio</label><textarea id="profileBio" placeholder="O‘zingiz haqida qisqacha"></textarea>
+              <div class="sp"></div>
+              <button class="btn btn-green" id="btnSaveProfile">💾 Saqlash</button>
+            </div>
+          </div>
         </div>
       </section>
     </div>
+
     <div class="footer">© <span id="year"></span> BINGO</div>
   </div>
 
-  <!-- Firebase -->
+  <!-- Firebase compat -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
-  // Firebase init
-  const firebaseConfig={apiKey:"AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",authDomain:"topildi.firebaseapp.com",projectId:"topildi",storageBucket:"topildi.appspot.com",messagingSenderId:"323891530719",appId:"1:323891530719:web:d57c2ce38781dc37e4926a"};
-  firebase.initializeApp(firebaseConfig);
-  const db=firebase.firestore(); const auth=firebase.auth();
+  /* ===== Service Worker (offline) ===== */
+  (function registerSW(){
+    if(!('serviceWorker' in navigator)) return;
+    const CODE = `
+      const VER='bingo-v6';
+      self.addEventListener('install',e=>{ self.skipWaiting(); e.waitUntil(caches.open(VER).then(c=>c.addAll(['./'])) )});
+      self.addEventListener('activate',e=>{ e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==VER).map(k=>caches.delete(k))))); self.clients.claim(); });
+      self.addEventListener('fetch',e=>{
+        const req=e.request;
+        e.respondWith(
+          caches.match(req).then(res=>res||fetch(req).then(r=>{
+            if(req.method==='GET' && r.ok && new URL(req.url).origin===location.origin){
+              const copy=r.clone(); caches.open(VER).then(c=>c.put(req,copy)).catch(()=>{});
+            }
+            return r;
+          }).catch(()=>res))
+        );
+      });
+    `;
+    const blob=new Blob([CODE],{type:'text/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+  })();
 
-  // Router
-  let currentView="home";
-  function showView(v){document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));document.getElementById("view_"+v).classList.add("active");currentView=v;}
-  document.getElementById("homeBtn").onclick=()=>showView("home");
-  document.querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>showView(b.dataset.nav));
-  document.getElementById("year").textContent=new Date().getFullYear();
-
-  // Gmail login
-  const userBtn=document.getElementById("userBtn");
-  userBtn.onclick=async()=>{
-    if(auth.currentUser){await auth.signOut();alert("Chiqildi")}else{await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());alert("Kirilindi")}
+  /* ===== Firebase ===== */
+  const firebaseConfig={
+    apiKey:"AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+    authDomain:"topildi.firebaseapp.com",
+    databaseURL:"https://topildi-default-rtdb.firebaseio.com",
+    projectId:"topildi",
+    storageBucket:"topildi.appspot.com",
+    messagingSenderId:"323891530719",
+    appId:"1:323891530719:web:d57c2ce38781dc37e4926a",
+    measurementId:"G-NKCMKCXZQ7"
   };
-  auth.onAuthStateChanged(u=>{
-    if(u){document.getElementById("profileName").value=u.displayName||"";document.getElementById("profileEmail").value=u.email||"";if(u.photoURL)document.getElementById("profileAvatar").src=u.photoURL;}
-    else{document.getElementById("profileName").value="";document.getElementById("profileEmail").value="";document.getElementById("profileAvatar").src="";}
+  try{ firebase.initializeApp(firebaseConfig);}catch(e){}
+  const db=firebase.firestore();
+  firebase.firestore().enablePersistence().catch(()=>{});
+  let storage=null; try{ storage=firebase.storage(); }catch(e){ storage=null; }
+  const auth=firebase.auth();
+
+  /* ===== Net badge ===== */
+  const netBadge=document.getElementById('netBadge');
+  function setNet(on){
+    netBadge.className='net '+(on?'on':'off');
+    netBadge.textContent=on?'Onlayn':'Offline (kesh rejimi)';
+    netBadge.style.display='block';
+    clearTimeout(setNet._t);
+    setNet._t=setTimeout(()=>{netBadge.style.display='none'}, 2500);
+  }
+  window.addEventListener('online', ()=>setNet(true));
+  window.addEventListener('offline',()=>setNet(false));
+  setNet(navigator.onLine);
+
+  /* ===== Router ===== */
+  let currentView='home', currentChatPostId=null, unsubChat=null;
+  function showView(name){
+    ['home','lostForm','foundForm','lostList','rewardList','foundList','mine','postChat','profile']
+      .forEach(id=>{const el=document.getElementById('view_'+id); if(el) el.classList.toggle('active',id===name)});
+    window.scrollTo(0,0);
+  }
+  function navigate(name,replace){
+    currentView=name; showView(name);
+    if(name==='lostList') renderLost();
+    if(name==='rewardList') renderReward();
+    if(name==='foundList') renderFound();
+    if(name==='mine') renderMine();
+    if(name==='postChat' && currentChatPostId) openChat(currentChatPostId,true);
+    if(name==='profile') loadProfileForm();
+    const hash='#'+name+(currentChatPostId?('-'+currentChatPostId):'');
+    if(replace) history.replaceState({view:name,id:currentChatPostId},'',hash);
+    else history.pushState({view:name,id:currentChatPostId},'',hash);
+  }
+  document.getElementById('homeBtn').addEventListener('click',()=>navigate('home'));
+  (function(){
+    const h=location.hash?location.hash.substring(1):'home';
+    const p=h.split('-'); const v=p[0]||'home'; currentChatPostId=p[1]||null;
+    showView(v); history.replaceState({view:v,id:currentChatPostId||null},'', '#'+v+(currentChatPostId?('-'+currentChatPostId):'')); 
+  })();
+  document.querySelectorAll('#mainMenu .btn').forEach(b=>{ if(b.dataset.nav) b.addEventListener('click',()=>navigate(b.dataset.nav)); });
+
+  /* ===== Helpers ===== */
+  const MY_UID=(function(){let id=localStorage.getItem('bingo_uid');if(!id){id='u_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('bingo_uid',id)}return id})();
+  document.getElementById('year').textContent=new Date().getFullYear();
+  function banner(msg){const a=document.getElementById('alert');a.textContent=msg||'';a.style.display=msg?'block':'none'}
+  function esc(s){return (s||'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;','\\'':'&#039;'}[m]) )}
+  function val(id){const el=document.getElementById(id);return el?el.value.trim():''}
+  function num(n){const x=parseInt(n,10);return isNaN(x)?0:x}
+  function centerToast(msg, err=false){
+    const old=document.getElementById('__toast__'); if(old) old.remove();
+    const el=document.createElement('div'); el.id='__toast__';
+    el.className='center-toast'+(err?' err':''); el.textContent=msg||'';
+    document.body.appendChild(el);
+    requestAnimationFrame(()=> el.classList.add('show'));
+    setTimeout(()=>{el.classList.remove('show'); setTimeout(()=>el.remove(),180)},1800);
+  }
+  function setProg(prefix, prc){ const bar=document.getElementById(prefix+'_bar'); const box=document.getElementById(prefix+'_prog'); if(!bar||!box) return; if(prc<=0||prc>=100){box.style.display='none'; bar.style.width='0%'} else {box.style.display='block'; bar.style.width=prc+'%'} }
+
+  /* ===== Auth menu (Gmail) ===== */
+  const userMenu=document.getElementById('userMenu');
+  const userBtn=document.getElementById('userBtn');
+  const menuPanel=document.getElementById('menuPanel');
+  const btnLogin=document.getElementById('btnLogin');
+  const btnLogout=document.getElementById('btnLogout');
+  const btnProfile=document.getElementById('btnProfile');
+  const btnMyPosts=document.getElementById('btnMyPosts');
+  const avatarImg=document.getElementById('avatarImg');
+  const userNameLabel=document.getElementById('userNameLabel');
+
+  userBtn.addEventListener('click',()=> menuPanel.style.display = (menuPanel.style.display==='block'?'none':'block'));
+  document.addEventListener('click',(e)=>{ if(!userMenu.contains(e.target)) menuPanel.style.display='none' });
+
+  async function signInWithGoogle(){
+    const provider=new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({prompt:'select_account'});
+    try{ await auth.signInWithPopup(provider); }
+    catch(err){ if(String(err?.message||'').includes('popup')) await auth.signInWithRedirect(provider); else throw err; }
+  }
+  btnLogin.addEventListener('click', async ()=>{ try{ await signInWithGoogle(); centerToast('✅ Kirildi'); menuPanel.style.display='none'; }catch(e){ centerToast('❌ Kirish xatosi: '+e.message,true) } });
+  btnLogout.addEventListener('click', async ()=>{ try{ await auth.signOut(); centerToast('👋 Chiqildi'); menuPanel.style.display='none'; }catch(e){ centerToast('❌ Chiqish xatosi: '+e.message,true) } });
+  btnProfile.addEventListener('click', ()=>{ menuPanel.style.display='none'; navigate('profile'); });
+  btnMyPosts.addEventListener('click', ()=>{ menuPanel.style.display='none'; navigate('mine'); });
+
+  auth.onAuthStateChanged(async (u)=>{
+    if(u){
+      userNameLabel.textContent=u.displayName||u.email||'Foydalanuvchi';
+      if(u.photoURL) avatarImg.src=u.photoURL;
+      const ref=db.collection('users').doc(u.uid);
+      const snap=await ref.get();
+      if(!snap.exists){ await ref.set({uid:u.uid,name:u.displayName||'',email:u.email||'',photo:u.photoURL||'',city:'',phone:'',bio:'',created:Date.now(),updated:Date.now()}) }
+      else{ await ref.update({name:snap.data().name||u.displayName||'',email:u.email||'',photo:snap.data().photo||u.photoURL||'',updated:Date.now()}).catch(()=>{}); }
+    }else{
+      userNameLabel.textContent='Kirish';
+    }
   });
 
-  // Save profile
-  document.getElementById("btnSaveProfile").onclick=async()=>{
-    if(!auth.currentUser)return alert("Kirish shart");
-    await db.collection("users").doc(auth.currentUser.uid).set({
-      name:document.getElementById("profileName").value,
-      email:auth.currentUser.email,
-      phone:document.getElementById("profilePhone").value,
-      city:document.getElementById("profileCity").value,
-      bio:document.getElementById("profileBio").value
-    },{merge:true});
-    alert("Profil saqlandi");
-  };
+  /* ===== Global state + realtime ===== */
+  let ALL_POSTS=[]; let SEARCH_GLOBAL=''; let LAST_POST=null;
 
-  // Post submit
-  document.getElementById("btnLost").onclick=()=>{db.collection("posts").add({kind:"lost",item:l_item.value,city:l_city.value,contact:l_contact.value,uid:auth.currentUser?.uid||null,created:Date.now()})};
-  document.getElementById("btnFound").onclick=()=>{db.collection("posts").add({kind:"found",item:f_item.value,city:f_city.value,contact:f_contact.value,uid:auth.currentUser?.uid||null,created:Date.now()})};
+  function matchGlobal(p){ const qs=(SEARCH_GLOBAL||'').toLowerCase(); if(!qs) return true; return [p.item,p.city,p.contact,p.notes,p.place].some(x=>(x||'').toLowerCase().includes(qs)); }
+  function updateCounters(){
+    const g=(k)=>ALL_POSTS.filter(p=>p.kind===k && matchGlobal(p)).length;
+    const lost=g('lost'); const found=g('found');
+    document.getElementById('lostCountChip').textContent=lost+' Lost';
+    document.getElementById('foundCountChip').textContent=found+' Found';
+  }
+  db.collection('posts').orderBy('created','desc').onSnapshot(snap=>{
+    ALL_POSTS=snap.docs.map(d=>({id:d.id,...d.data()}));
+    updateCounters();
+    if(currentView==='lostList') renderLost();
+    if(currentView==='rewardList') renderReward();
+    if(currentView==='foundList') renderFound();
+    if(currentView==='mine') renderMine();
+  },err=>banner("Firestore o‘qish xatosi: "+err.message));
 
-  // Render
-  db.collection("posts").orderBy("created","desc").onSnapshot(s=>{
-    lost_list.innerHTML=s.docs.filter(d=>d.data().kind==="lost").map(d=>"<div class='post-card'>❗ "+d.data().item+" — "+d.data().city+"</div>").join("");
-    found_list.innerHTML=s.docs.filter(d=>d.data().kind==="found").map(d=>" <div class='post-card'>✅ "+d.data().item+" — "+d.data().city+"</div>").join("");
+  document.getElementById('qSearch').addEventListener('input',e=>{
+    SEARCH_GLOBAL=e.target.value||'';
+    if(currentView==='lostList') renderLost();
+    if(currentView==='rewardList') renderReward();
+    if(currentView==='foundList') renderFound();
+    if(currentView==='mine') renderMine();
+    updateCounters();
+  });
+  document.getElementById('btnCopyLink').addEventListener('click', async ()=>{
+    try{ await navigator.clipboard.writeText(location.href); centerToast('🔗 Havola nusxalandi'); }catch{ centerToast('⚠️ Nusxalab bo‘lmadi',true) }
+  });
+
+  /* ===== Upload helper ===== */
+  async function readFileAsDataURL(file){return new Promise(r=>{if(!file)return r(null);const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(file)})}
+  async function getPhotoURL(file, prefix){
+    if(!file) return null;
+    if(storage){
+      try{
+        const path = `uploads/${(auth.currentUser?.uid||MY_UID)}/${Date.now()}_${(file.name||'photo').replace(/[^a-z0-9_.-]/gi,'_')}`;
+        const ref = storage.ref().child(path);
+        await ref.put(file).on('state_changed', snap=>{
+          const prc = Math.round((snap.bytesTransferred/snap.totalBytes)*100);
+          setProg(prefix, prc<100?prc:0);
+        });
+        const url = await ref.getDownloadURL();
+        setProg(prefix,0);
+        return url;
+      }catch(e){ console.warn('Storage upload failed, fallback to dataURL', e); setProg(prefix,0); }
+    }
+    const dataUrl = await readFileAsDataURL(file);
+    return dataUrl;
+  }
+
+  /* ===== Submit (dedup) ===== */
+  document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.nav)));
+  document.getElementById('btnLost').addEventListener('click', async ()=>{
+    const file=document.getElementById('l_photo').files?.[0]||null;
+    const photo=await getPhotoURL(file,'l');
+    const p={
+      kind:'lost',
+      item:val('l_item'), city:val('l_city'), place:val('l_place'), date:val('l_date'),
+      contact:val('l_contact'), reward:num(val('l_reward')), notes:val('l_notes'),
+      photo:photo||null, uid:(auth.currentUser?.uid)||MY_UID, created:Date.now(),
+      authorName:auth.currentUser?.displayName||'', authorEmail:auth.currentUser?.email||''
+    };
+    if(!p.item||!p.city||!p.contact){ return centerToast('Shahar va aloqa — majburiy',true) }
+    const sig=JSON.stringify([p.kind,p.item,p.city,p.contact,p.notes,!!p.photo]); const now=Date.now();
+    const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}');
+    if(last.sig===sig && (now-last.ts)<30000) return centerToast('⚠️ Bir xil e’lon (30s ichida).',true);
+    localStorage.setItem('bingo_last_post', JSON.stringify({sig,ts:now}));
+    await db.collection('posts').add(p); centerToast('✅ E’lon joylandi'); navigate('lostList');
+    ['l_item','l_city','l_place','l_date','l_contact','l_reward','l_notes','l_photo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  });
+  document.getElementById('btnFound').addEventListener('click', async ()=>{
+    const file=document.getElementById('f_photo').files?.[0]||null;
+    const photo=await getPhotoURL(file,'f');
+    const p={
+      kind:'found',
+      item:val('f_item'), city:val('f_city'), place:val('f_place'), date:val('f_date'),
+      contact:val('f_contact'), reward:0, notes:val('f_notes'),
+      photo:photo||null, uid:(auth.currentUser?.uid)||MY_UID, created:Date.now(),
+      authorName:auth.currentUser?.displayName||'', authorEmail:auth.currentUser?.email||''
+    };
+    if(!p.item||!p.city||!p.contact){ return centerToast('Shahar va aloqa — majburiy',true) }
+    const sig=JSON.stringify([p.kind,p.item,p.city,p.contact,p.notes,!!p.photo]); const now=Date.now();
+    const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}');
+    if(last.sig===sig && (now-last.ts)<30000) return centerToast('⚠️ Bir xil e’lon (30s ichida).',true);
+    localStorage.setItem('bingo_last_post', JSON.stringify({sig,ts:now}));
+    await db.collection('posts').add(p); centerToast('✅ E’lon joylandi'); navigate('foundList');
+    ['f_item','f_city','f_place','f_date','f_contact','f_notes','f_photo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  });
+
+  /* ===== Renderers ===== */
+  function card(p, allowDelete){
+    const kindLabel = p.kind==='lost' ? '❗ Yo‘qoldi' : '✅ Topildi';
+    const shareBtn = navigator.share ? `<button class="btn btn-amber" onclick="sharePost('${esc(p.item)}','${esc(p.city||'')}', '${p.id}')">🔗 Ulashish</button>` : '';
+    const author = (p.authorName||'') + (p.authorEmail?` · ${p.authorEmail}`:'');
+    return `
+    <div class="post-card">
+      ${p.photo?`<img class="post-img" src="${p.photo}" alt="photo">`:''}
+      <div class="post-head">
+        <div class="post-kind">${kindLabel}${p.reward>0?` · 🎁 ${Number(p.reward).toLocaleString()} so‘m`:''}</div>
+        <div class="post-date">${p.created?new Date(p.created).toLocaleString():''}</div>
+      </div>
+      <div style="margin-top:6px;font-weight:800">${esc(p.item)}</div>
+      <div class="post-meta">${esc(p.city||'-')} · ${esc(p.place||'-')} · ${esc(p.date||'-')}</div>
+      <div style="margin-top:6px; white-space:pre-wrap">${esc(p.notes||'')}</div>
+      <div class="post-meta" style="margin-top:6px">📞 ${esc(p.contact||'-')}</div>
+      ${author?`<div class="post-meta" style="margin-top:4px">👤 ${esc(author)}</div>`:''}
+      <div class="actions">
+        ${allowDelete?`<button class="btn" onclick="delPost('${p.id}')">🗑️ O‘chirish</button>`:''}
+        <button class="btn btn-blue" onclick="openChat('${p.id}')">✉️ Xabar</button>
+        ${shareBtn}
+      </div>
+    </div>`;
+  }
+  function matchGlobalPost(p){
+    const qs=(SEARCH_GLOBAL||'').toLowerCase();
+    if(!qs) return true;
+    return [p.item,p.city,p.place,p.notes,p.contact].some(x=>(x||'').toLowerCase().includes(qs));
+  }
+  function applySearch(listEl, arr){ const res=(SEARCH_GLOBAL?arr.filter(matchGlobalPost):arr); listEl.innerHTML=res.length?res.map(p=>card(p,false)).join(''):'—'; }
+  function renderLost(){ const el=document.getElementById('lost_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='lost'); applySearch(el, arr); }
+  function renderReward(){ const el=document.getElementById('reward_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='lost'&&(p.reward||0)>0); applySearch(el, arr); }
+  function renderFound(){ const el=document.getElementById('found_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='found'); applySearch(el, arr); }
+  function renderMine(){ const el=document.getElementById('mine_list'); if(!el) return; const u=auth.currentUser?.uid||MY_UID; const arr=ALL_POSTS.filter(p=>p.uid===u); el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—'; }
+
+  /* ===== Share ===== */
+  window.sharePost = async function(item, city, id){
+    if(!navigator.share) return;
+    const url = location.origin+location.pathname+'#postChat-'+id;
+    try{ await navigator.share({title:'BINGO: '+item, text:`${item} · ${city}`, url}); }catch{}
+  }
+
+  /* ===== Delete + clear ===== */
+  window.delPost = async function(id){
+    const p=ALL_POSTS.find(x=>x.id===id);
+    if(!p) return;
+    const u=auth.currentUser?.uid||MY_UID;
+    if(p.uid!==u){ centerToast('⛔ Sizning e’loningiz emas', true); return; }
+    if(!confirm('Ushbu e’lonni o‘chirilsinmi?')) return;
+    try{
+      await db.collection('posts').doc(id).delete();
+      const chats=await db.collection('posts').doc(id).collection('chats').get();
+      const batch=db.batch(); chats.forEach(d=>batch.delete(d.ref)); await batch.commit();
+      centerToast('🗑️ O‘chirildi'); renderMine();
+    }catch(e){ banner('O‘chirish xatosi: '+e.message) }
+  }
+  document.getElementById('clearMineBtn').addEventListener('click', async ()=>{
+    const u=auth.currentUser?.uid||MY_UID;
+    if(!confirm('Barcha shaxsiy e’lonlaringiz o‘chirilsinmi?')) return;
+    try{
+      const mine=ALL_POSTS.filter(p=>p.uid===u);
+      const batch=db.batch();
+      for(const p of mine){ batch.delete(db.collection('posts').doc(p.id)); }
+      await batch.commit();
+      centerToast('🧹 Tozalandi'); renderMine();
+    }catch(e){ banner('Xato: '+e.message) }
+  });
+
+  /* ===== Chat ===== */
+  function logEmpty(){return 'Xabarlar yo‘q.'}
+  window.openChat = function(postId, keep){
+    const post=ALL_POSTS.find(p=>p.id===postId); if(!post) return;
+    currentChatPostId=postId; document.getElementById('chatItemName').textContent=post.item;
+    if(unsubChat) unsubChat();
+    unsubChat = db.collection('posts').doc(postId).collection('chats').orderBy('ts')
+      .onSnapshot(s=>{
+        const log=document.getElementById('chatLog');
+        const arr=s.docs.map(d=>d.data());
+        log.innerHTML = arr.length
+          ? arr.map(m=>`<div class="msg ${m.uid===((auth.currentUser?.uid)||MY_UID)?'me':'other'}"><b>${esc(m.name||'Anon')}</b> <span style="opacity:.8;font-size:12px">· ${new Date(m.ts).toLocaleTimeString()}</span><div>${esc(m.text)}</div></div>`).join('')
+          : `<div class="msg">${logEmpty()}</div>`;
+        log.scrollTop=log.scrollHeight;
+      }, e=> banner('Chat o‘qish xatosi: '+e.message));
+    if(!keep) navigate('postChat');
+  }
+  document.getElementById('sendChatBtn').addEventListener('click',()=>{
+    if(!currentChatPostId) return;
+    const name=(document.getElementById('chatName').value.trim()||auth.currentUser?.displayName||'Anon');
+    const text=document.getElementById('chatText').value.trim(); if(!text) return;
+    db.collection('posts').doc(currentChatPostId).collection('chats').add({name,uid:(auth.currentUser?.uid)||MY_UID,text,ts:Date.now()})
+      .then(()=>{document.getElementById('chatText').value='';})
+      .catch(e=> banner('Chat yozish xatosi: '+e.message));
+  });
+
+  /* ===== Profile ===== */
+  const profileAvatar=document.getElementById('profileAvatar');
+  const profileName=document.getElementById('profileName');
+  const profileEmail=document.getElementById('profileEmail');
+  const profilePhone=document.getElementById('profilePhone');
+  const profileCity=document.getElementById('profileCity');
+  const profileBio=document.getElementById('profileBio');
+  const btnChangePhoto=document.getElementById('btnChangePhoto');
+  const profilePhotoFile=document.getElementById('profilePhotoFile');
+  const btnSaveProfile=document.getElementById('btnSaveProfile');
+
+  function requireAuth(){ if(!auth.currentUser){ centerToast('Kirish talab qilinadi', true); return false } return true }
+  function loadProfileForm(){
+    if(!auth.currentUser){
+      profileAvatar.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMwZjE3MmEiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjM4IiByPSIyMCIgZmlsbD0iI2YxZDI4YSIvPjxwYXRoIGQ9Ik84MCA4My4yQzc5LjkgNjkuNSA1OS41IDY1IDUwIDY1czI5LjkgNC41IDMwIDExLjhsLS4xIDYuNnoiIGZpbGw9IiNmMWQyOGEiLz48L3N2Zz4=';
+      profileName.value=''; profileEmail.value=''; profilePhone.value=''; profileCity.value=''; profileBio.value='';
+      return;
+    }
+    const u=auth.currentUser;
+    db.collection('users').doc(u.uid).get().then(s=>{
+      const d=s.data()||{};
+      profileAvatar.src=d.photo||u.photoURL||profileAvatar.src;
+      profileName.value=d.name||u.displayName||'';
+      profileEmail.value=d.email||u.email||'';
+      profilePhone.value=d.phone||'';
+      profileCity.value=d.city||'';
+      profileBio.value=d.bio||'';
+    }).catch(()=>{});
+  }
+  btnChangePhoto.addEventListener('click',()=> profilePhotoFile.click());
+  profilePhotoFile.addEventListener('change', async ()=>{
+    if(!requireAuth()) return;
+    const file=profilePhotoFile.files?.[0]; if(!file) return;
+    try{
+      const url=await getPhotoURL(file,'profile');
+      await db.collection('users').doc(auth.currentUser.uid).update({photo:url, updated:Date.now()});
+      profileAvatar.src=url; avatarImg.src=url; centerToast('📷 Rasm yangilandi');
+    }catch(e){ centerToast('Rasm yuklash xatosi: '+e.message,true) }
+  });
+  btnSaveProfile.addEventListener('click', async ()=>{
+    if(!requireAuth()) return;
+    try{
+      await db.collection('users').doc(auth.currentUser.uid).set({
+        uid:auth.currentUser.uid,
+        name:profileName.value.trim(),
+        email:profileEmail.value.trim()||auth.currentUser.email||'',
+        phone:profilePhone.value.trim(),
+        city:profileCity.value.trim(),
+        bio:profileBio.value.trim(),
+        photo:profileAvatar.src||auth.currentUser.photoURL||'',
+        updated:Date.now()
+      },{merge:true});
+      centerToast('💾 Saqlandi');
+    }catch(e){ centerToast('Saqlash xatosi: '+e.message,true) }
   });
   </script>
 </body>
-</html>
+              </html>
