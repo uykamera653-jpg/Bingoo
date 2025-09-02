@@ -1,533 +1,379 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>BINGO • Admin</title>
-  <meta name="theme-color" content="#0f1623" />
-
-  <!-- ====== STYLES: Full-screen Admin Layout ====== -->
-  <style>
-    :root{
-      --bg:#0f1623;          /* panel fon */
-      --ink:#e7edf7;         /* matn */
-      --ink-dim:#a9b5c6;
-      --card:#121a28;
-      --soft:#1a2233;
-      --accent:#ffd34d;
-      --danger:#ff6b6b;
-      --ok:#27c26a;
-      --muted:#6e7a8f;
-      --radius:18px;
-      --rx:14px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0}
-    body{
-      background:#f6e1a9;
-      color:var(--ink);
-      -webkit-font-smoothing:antialiased;
-      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
-    }
-
-    /* Shell */
-    .admin-shell{
-      min-height:100vh;
-      width:100%;
-      padding:16px env(safe-area-inset-right) 24px env(safe-area-inset-left);
-      background:var(--bg);
-      border-radius:24px 24px 0 0;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-
-    /* Top bar */
-    .topbar{
-      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
-      justify-content:space-between;
-      padding:8px 4px 0;
-    }
-    .brand{ display:flex; gap:10px; align-items:center; }
-    .badge{
-      background:linear-gradient(135deg,#3a4b6a,#172033);
-      color:#fff; padding:8px 12px; border-radius:10px; font-weight:700; letter-spacing:.3px;
-      border:1px solid rgba(255,255,255,.08)
-    }
-
-    /* Toolbar */
-    .toolbar{
-      display:grid; gap:10px;
-      grid-template-columns: 1fr;
-      padding: 4px 0 8px;
-    }
-    @media(min-width:850px){
-      .toolbar{ grid-template-columns: 1.2fr .9fr .9fr auto auto; align-items:end; }
-    }
-
-    .pill, .btn{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:10px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.12);
-      background:#0f1623; color:var(--ink); font-weight:600; text-decoration:none; outline:none;
-    }
-    .pill input, .pill select{
-      background:transparent; border:0; color:var(--ink); font-weight:600; outline:none;
-      width:100%;
-    }
-    .pill{ background:#10192a }
-    .btn{ background:var(--soft) }
-    .btn.ok{ background:var(--ok); color:#062212; border-color:transparent }
-    .btn.warn{ background:var(--danger); color:#2a0b0b; border-color:transparent }
-    .btn.accent{ background:var(--accent); color:#241b00; border-color:transparent }
-    .btn:active{ transform:translateY(1px) }
-
-    .muted{ color:var(--ink-dim) }
-    .hr{ height:1px; background:rgba(255,255,255,.06); margin:2px 0 8px }
-
-    /* Grid of cards */
-    .grid{ display:grid; gap:14px; grid-template-columns:repeat(1,minmax(0,1fr)); }
-    @media(min-width:760px){ .grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
-    @media(min-width:1120px){ .grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
-
-    /* Card */
-    .card{
-      background:var(--card); border:1px solid rgba(255,255,255,.07);
-      border-radius:var(--radius); padding:14px; display:flex; flex-direction:column; gap:10px;
-      min-height:140px;
-    }
-    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .grow{ flex:1 1 auto }
-    .tag{ padding:4px 10px; border-radius:999px; font-size:.8rem; font-weight:700; border:1px solid rgba(255,255,255,.15); }
-    .tag.lost{ color:#ffb4b4; border-color:#ffb4b4 }
-    .tag.found{ color:#9ff3c7; border-color:#9ff3c7 }
-    .tag.reward{ color:#ffe38f; border-color:#ffe38f }
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-
-    .title{ font-size:1.02rem; font-weight:800; letter-spacing:.2px }
-    .meta{ color:var(--ink-dim); font-size:.92rem }
-    .small{ font-size:.85rem }
-    .nowrap{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
-
-    .empty{
-      color:var(--ink-dim); text-align:center; padding:32px 12px;
-      border:1px dashed rgba(255,255,255,.15); border-radius:var(--radius);
-      background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);
-    }
-
-    .chip{
-      border:1px solid rgba(255,255,255,.14);
-      border-radius: 8px; padding:4px 8px; font-weight:700; background:rgba(255,255,255,.03);
-    }
-
-    .footerbar{
-      display:flex; justify-content:space-between; align-items:center;
-      padding:8px 4px 2px; color:var(--ink-dim); font-size:.92rem;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BINGO — Admin</title>
+<link rel="icon" href="../icon.png">
+<style>
+  :root{
+    --bg:#0f172a; --card:#111827; --muted:#94a3b8; --text:#e5e7eb; --brand:#f59e0b;
+    --red:#ef4444; --green:#22c55e; --yellow:#facc15; --ring:#1f2937;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:linear-gradient(180deg,#fde68a 0%,#fef3c7 40%,#fde68a 100%);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Ubuntu,"Noto Sans",sans-serif;
+    color:var(--text);
+  }
+  header{
+    position:sticky; top:0; z-index:10; backdrop-filter:blur(8px);
+    background:rgba(15,23,42,.85); border-bottom:1px solid #1f2937;
+  }
+  .wrap{max-width:1200px;margin:0 auto;padding:12px 16px}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .brand{display:flex;gap:10px;align-items:center}
+  .badge{background:#111827;border:1px solid #374151;color:#f59e0b;padding:6px 10px;border-radius:10px;font-weight:700}
+  button,select,input{
+    color:var(--text);background:#0b1220;border:1px solid #263043;border-radius:10px;
+    padding:10px 12px;outline:none;transition:.15s;box-shadow:0 0 0 0 rgba(245,158,11,0);
+  }
+  button:hover,select:hover,input:hover{border-color:#3b4a64}
+  button:active{transform:translateY(1px)}
+  .btn{display:inline-flex;gap:8px;align-items:center;font-weight:600}
+  .btn.primary{background:#1f2937;border-color:#374151}
+  .btn.danger{background:#3b0d0d;border-color:#7f1d1d}
+  .btn.success{background:#0f2e1c;border-color:#166534}
+  .sp{flex:1}
+  main{max-width:1200px;margin:18px auto;padding:16px}
+  .panel{
+    background:var(--bg); border:1px solid #1f2937; border-radius:20px; padding:18px; 
+    box-shadow:0 10px 30px rgba(2,6,23,.35);
+  }
+  .filters{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:720px){.filters{grid-template-columns:1fr}}
+  .list{margin-top:16px;display:grid;gap:12px}
+  .card{
+    background:#0b1220;border:1px solid #1e293b;border-radius:16px;overflow:hidden;
+  }
+  .cardHead{
+    display:flex;gap:10px;align-items:center;justify-content:space-between;
+    padding:12px 14px;background:#0f172a;border-bottom:1px solid #1e293b;
+  }
+  .pill{font-size:12px;font-weight:700;padding:6px 10px;border-radius:999px;display:inline-flex;gap:6px;align-items:center}
+  .pill.lost{background:#3b0d0d;color:#fecaca;border:1px solid #7f1d1d}
+  .pill.found{background:#0f2e1c;color:#bbf7d0;border:1px solid #166534}
+  .pill.reward{background:#3a3006;color:#fef08a;border:1px solid #854d0e}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:13px}
+  .cardBody{padding:14px;display:grid;gap:10px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:800px){.grid2{grid-template-columns:1fr}}
+  .muted{color:var(--muted)}
+  .hr{height:1px;background:#1e293b;margin:6px 0}
+  .empty{
+    border:2px dashed #334155;border-radius:16px;padding:36px;text-align:center;color:#94a3b8;
+    background:#0b1220;
+  }
+  .footerRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+  .dangerTxt{color:#fecaca}
+  .ok{color:#86efac}
+  .warn{color:#fde68a}
+  .tag{background:#111827;border:1px solid #334155;border-radius:8px;padding:4px 8px;font-size:12px}
+  .hide{display:none!important}
+  .userLine{display:flex;gap:8px;align-items:center}
+  .userAvatar{
+    width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid #1f2937;background:#111827
+  }
+  .toast{
+    position:fixed;right:14px;bottom:14px;z-index:50;background:#111827;border:1px solid #334155;
+    color:#e5e7eb;padding:10px 12px;border-radius:10px;box-shadow:0 10px 20px rgba(0,0,0,.35);
+    display:flex;gap:10px;align-items:center;min-width:220px
+  }
+</style>
 </head>
-
 <body>
-  <main class="admin-shell">
 
-    <section class="topbar">
-      <div class="brand">
-        <span class="badge">🛡️ Admin</span>
-        <div id="whoami" class="muted small">Kirish kutilmoqda…</div>
-      </div>
-      <div class="row">
-        <button id="btnSign" class="btn accent">🔐 Google bilan kirish</button>
-        <button id="btnOut" class="btn" style="display:none">🚪 Chiqish</button>
-      </div>
-    </section>
-
-    <div class="hr"></div>
-
-    <!-- ===== Toolbar / filters ===== -->
-    <section class="toolbar">
-      <label class="pill row">
-        <span>🔄</span>
-        <button id="btnRefresh" class="btn">Yangilash</button>
-      </label>
-
-      <label class="pill row">
-        <span>📦 Turi</span>
-        <select id="typeSel">
-          <option value="all">Hammassi</option>
-          <option value="lost">Yo‘qotdim</option>
-          <option value="found">Topdim</option>
-          <option value="reward">Mukofotli</option>
-        </select>
-      </label>
-
-      <label class="pill row">
-        <span>🏙️ Shahar</span>
-        <input id="cityInp" placeholder="masalan: Toshkent" />
-      </label>
-
-      <label class="pill row">
-        <span>🔎 Qidirish</span>
-        <input id="qInp" placeholder="sarlavha, email, uid" />
-      </label>
-
-      <div class="row" style="gap:8px">
-        <button id="btnExport" class="btn">⬇️ CSV</button>
-        <span class="chip">Jami: <b id="count">0</b></span>
-      </div>
-    </section>
-
-    <!-- ===== List ===== -->
-    <section id="list" class="grid" aria-live="polite">
-      <div class="empty">Ma’lumot yo‘q. Filtrlarni o‘zgartiring yoki kuting…</div>
-    </section>
-
-    <div class="footerbar">
-      <span>© BINGO — Admin boshqaruvi</span>
-      <span id="liveInfo" class="muted">Live: ulangan emas</span>
+<header>
+  <div class="wrap row">
+    <div class="brand">
+      <span class="badge">🛡️ ADMIN</span>
+      <div id="meLine" class="userLine muted">Kirmagansiz</div>
     </div>
-  </main>
+    <span class="sp"></span>
+    <button id="btnSign" class="btn primary">🔐 Google bilan kirish</button>
+    <button id="btnOut" class="btn" style="display:none">🚪 Chiqish</button>
+  </div>
+</header>
 
-  <!-- ===== Firebase CDN ===== -->
-  <script type="module">
-    /* --------------- Firebase init --------------- */
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import {
-      getAuth,
-      GoogleAuthProvider,
-      signInWithPopup,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-    import {
-      getFirestore,
-      collection, doc, getDoc, getDocs, onSnapshot,
-      query, where, orderBy, limit, deleteDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+<main>
+  <div class="panel">
+    <div class="row" style="margin-bottom:12px">
+      <button id="btnReload" class="btn">🔄 Yangilash</button>
+      <select id="selType">
+        <option value="all">Hammasi</option>
+        <option value="lost">❗ Yo‘qotdim</option>
+        <option value="found">✅ Topdim</option>
+        <option value="reward">🎁 Mukofotli</option>
+      </select>
+      <input id="q" placeholder="Qidirish: sarlavha, shahar, uid, email" />
+      <span class="sp"></span>
+      <span id="count" class="muted tag">0 ta e’lon</span>
+    </div>
 
-    // TODO: Firebase configingizni shu yerga qo'ying
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_BUCKET",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID",
-    };
+    <div id="alerts" class="row hide"></div>
+    <div id="list" class="list"></div>
+    <div id="empty" class="empty hide">E’lonlar yo‘q yoki filtr bo‘yicha topilmadi.</div>
+  </div>
+</main>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db   = getFirestore(app);
-    const provider = new GoogleAuthProvider();
+<div id="toast" class="toast hide"><span id="toastMsg">OK</span></div>
 
-    /* --------- DOM qismlar --------- */
-    const who = document.getElementById('whoami');
-    const btnSign = document.getElementById('btnSign');
-    const btnOut  = document.getElementById('btnOut');
-    const listEl  = document.getElementById('list');
-    const countEl = document.getElementById('count');
-    const liveInfo= document.getElementById('liveInfo');
+<!-- Firebase (v9 modular) -->
+<script type="module">
+  /* ----------------------------- Firebase init ----------------------------- */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+  import { 
+    getFirestore, collection, doc, getDoc, onSnapshot, query, orderBy, limit, deleteDoc 
+  } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-    const typeSel = document.getElementById('typeSel');
-    const cityInp = document.getElementById('cityInp');
-    const qInp    = document.getElementById('qInp');
-    const btnRefresh = document.getElementById('btnRefresh');
-    const btnExport  = document.getElementById('btnExport');
+  // ✅ Sening configing (storageBucket ni appspot.com ga to‘g‘riladik)
+  const firebaseConfig = {
+    apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+    authDomain: "topildi.firebaseapp.com",
+    databaseURL: "https://topildi-default-rtdb.firebaseio.com",
+    projectId: "topildi",
+    storageBucket: "topildi.appspot.com",
+    messagingSenderId: "323891530719",
+    appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
+    measurementId: "G-NKCMKCXZQ7"
+  };
 
-    /* --------- Kolleksiya nomlari --------- */
-    const POSTS_COL = 'elonlar';    // sizning asosiy e’lonlar kolleksiyangiz
-    const RULES_COL = 'rules';      // adminFlag shu yerda: rules/{uid} => {admin:true}
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  const provider = new GoogleAuthProvider();
 
-    /* --------- Global holat --------- */
-    let currentUser = null;
-    let isAdmin = false;
-    let unsub = null;          // live listener
+  /* ----------------------------- UI helpers ----------------------------- */
+  const $ = s => document.querySelector(s);
+  const $$ = s => document.querySelectorAll(s);
+  const meLine = $("#meLine");
+  const btnSign = $("#btnSign");
+  const btnOut  = $("#btnOut");
+  const btnReload = $("#btnReload");
+  const selType  = $("#selType");
+  const listEl   = $("#list");
+  const emptyEl  = $("#empty");
+  const qInput   = $("#q");
+  const countEl  = $("#count");
+  const toastEl  = $("#toast");
+  const toastMsg = $("#toastMsg");
 
-    /* --------- UI util --------- */
-    const fmtTime = ts => {
-      try{
-        const d = ts?.toDate ? ts.toDate() : new Date(ts);
-        return new Intl.DateTimeFormat('uz-UZ', {dateStyle:'medium', timeStyle:'short'}).format(d);
-      }catch(_){ return '—'; }
+  let unsubscribe = null; // onSnapshot unsub
+  let cache = [];         // barcha e’lonlar (client filter uchun)
+  let me = null;          // current user
+  let isAdmin = false;
+
+  function toast(msg, kind="ok"){
+    toastMsg.textContent = msg;
+    toastEl.classList.remove("hide");
+    toastEl.style.borderColor = (kind==="err") ? "#7f1d1d" : (kind==="warn"?"#854d0e":"#166534");
+    toastEl.style.color = (kind==="err") ? "#fecaca" : (kind==="warn"?"#fde68a":"#e5e7eb");
+    setTimeout(()=> toastEl.classList.add("hide"), 2200);
+  }
+
+  function fmtTime(ts){
+    const d = ts?.toDate?.() ?? new Date(ts);
+    return d.toLocaleString("uz-UZ", {hour12:false});
+  }
+
+  function badge(type){
+    if(type==="lost")  return '<span class="pill lost">❗ Yo‘qotdim</span>';
+    if(type==="found") return '<span class="pill found">✅ Topdim</span>';
+    if(type==="reward")return '<span class="pill reward">🎁 Mukofot</span>';
+    return '<span class="pill">📌</span>';
+  }
+
+  function userLine(u){
+    const img = u?.photoURL || "https://ui-avatars.com/api/?background=111827&color=e5e7eb&name="+encodeURIComponent(u?.displayName||"U");
+    const name = u?.displayName || "Foydalanuvchi";
+    const email = u?.email || "—";
+    const uid = u?.uid || "—";
+    return `
+      <div class="userLine">
+        <img class="userAvatar" src="${img}" alt="">
+        <div>
+          <div>${name} <span class="tag">${email}</span></div>
+          <div class="muted" style="font-size:12px">UID: ${uid}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function buildCard(item){
+    const u = item.user || {};
+    return `
+      <article class="card" data-id="${item.id}" data-type="${item.type}">
+        <div class="cardHead">
+          <div class="row" style="gap:8px">
+            ${badge(item.type)}
+            <strong>${item.title || "Sarlavhasiz"}</strong>
+            <span class="tag">${item.city || "Shahar —"}</span>
+            <span class="tag">#${item.category || "umumiy"}</span>
+          </div>
+          <div class="row">
+            <button class="btn danger btnDel" title="O‘chirish">🗑️ O‘chirish</button>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="grid2">
+            <div>
+              <div class="muted">Tavsif</div>
+              <div>${item.desc || "—"}</div>
+            </div>
+            <div>
+              <div class="muted">Aloqa</div>
+              <div>📞 ${item.phone || "—"} &nbsp;&nbsp; ✉️ ${u.email || "—"}</div>
+              <div class="muted">Joylangan: ${fmtTime(item.createdAt)}</div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          ${userLine(u)}
+        </div>
+      </article>
+    `;
+  }
+
+  function applyFilter(){
+    const t = selType.value;        // all/lost/found/reward
+    const q = qInput.value.trim().toLowerCase();
+    let rows = cache;
+
+    if(t !== "all"){
+      rows = rows.filter(x => (x.type===t));
     }
-    const el = (tag, attrs={}, ...children) => {
-      const n = document.createElement(tag);
-      for(const k in attrs){
-        if(k.startsWith('on') && typeof attrs[k]==='function'){
-          n.addEventListener(k.slice(2), attrs[k]);
-        } else if(attrs[k]===true){ n.setAttribute(k,''); }
-        else if(attrs[k]!==false && attrs[k]!=null){ n.setAttribute(k, attrs[k]); }
-      }
-      for(const c of children){
-        if(c==null) continue;
-        n.appendChild(typeof c==='string' ? document.createTextNode(c) : c);
-      }
-      return n;
-    };
-
-    /* --------- Auth --------- */
-    btnSign.onclick = () => signInWithPopup(auth, provider).catch(e=>alert(e.message));
-    btnOut.onclick  = () => signOut(auth);
-
-    async function checkAdmin(uid){
-      if(!uid) return false;
-      const snap = await getDoc(doc(db, RULES_COL, uid));
-      return !!(snap.exists() && snap.data().admin===true);
+    if(q){
+      rows = rows.filter(x => {
+        const blob = [
+          x.title, x.desc, x.city, x.category,
+          x.user?.email, x.user?.displayName, x.user?.uid, x.phone
+        ].join(" ").toLowerCase();
+        return blob.includes(q);
+      });
     }
 
-    onAuthStateChanged(auth, async (user)=>{
-      currentUser = user;
-      if(!user){
-        who.textContent = 'Kirish kutilmoqda…';
-        btnSign.style.display='inline-flex';
-        btnOut.style.display='none';
-        isAdmin = false;
-        setListEmpty('Admin uchun kirish talab qilinadi.');
-        detachLive();
-        return;
-      }
-      who.innerHTML = `👤 ${user.displayName || 'Foydalanuvchi'} · <span class="mono small">${user.email}</span>`;
-      btnSign.style.display='none';
-      btnOut.style.display='inline-flex';
+    listEl.innerHTML = rows.map(buildCard).join("");
+    emptyEl.classList.toggle("hide", rows.length>0);
+    countEl.textContent = rows.length + " ta e’lon";
 
-      isAdmin = await checkAdmin(user.uid);
-      if(!isAdmin){
-        setListEmpty('❌ Sizda admin huquqi yo‘q.');
-        detachLive();
-        return;
-      }
-      // Admin — live ulanamiz
-      attachLive();
+    // bind delete buttons
+    $$(".btnDel").forEach(btn=>{
+      btn.onclick = async (e)=>{
+        const card = e.currentTarget.closest(".card");
+        const id = card.dataset.id;
+        if(!confirm("Ushbu e’loni o‘chirasizmi?")) return;
+        try{
+          await deleteDoc(doc(db,"Elonlar", id));
+          toast("O‘chirildi");
+        }catch(err){
+          console.error(err);
+          toast("O‘chirishda xatolik", "err");
+        }
+      };
     });
+  }
 
-    /* --------- Live listeners --------- */
-    function detachLive(){
-      if(typeof unsub === 'function'){ unsub(); unsub=null; }
-      liveInfo.textContent = 'Live: ulangan emas';
-    }
-
-    function attachLive(){
-      detachLive();
-      const constraints = [];
-      // type filter
-      const t = typeSel.value;
-      if(t!=='all'){ constraints.push(where('type','==', t)); }
-      // city filter: oddiy equal emas, qidiruv bilan keyin filtrlaymiz (client side) —
-      // illat: Firestore’da LIKE yo‘q. Shuning uchun cityInp Pro qidiruv emas, post-render filtrda.
-      // Eng to‘g‘risi — normalizedCity maydoni va indexlar bilan ishlash. Hozircha client-side.
-
-      const q = query(
-        collection(db, POSTS_COL),
-        ...constraints,
-        orderBy('createdAt','desc'),
-        limit(400) // xavfsiz limit
-      );
-
-      unsub = onSnapshot(q, (snap)=>{
-        const items = [];
-        snap.forEach(d=> items.push({ id:d.id, ...d.data() }));
-        renderList(items);
-        liveInfo.textContent = `Live: ${new Date().toLocaleTimeString('uz-UZ')} da yangilandi`;
-      }, (err)=>{
-        setListEmpty('Xatolik: '+err.message);
-        console.error(err);
-      });
-    }
-
-    /* --------- Render --------- */
-    function setListEmpty(text){
-      listEl.innerHTML='';
-      listEl.appendChild(el('div',{class:'empty'}, text));
-      countEl.textContent = '0';
-    }
-
-    function renderList(all){
-      // Client-side filtrlar: city va qidiruv
-      const city = (cityInp.value||'').trim().toLowerCase();
-      const qtxt = (qInp.value||'').trim().toLowerCase();
-
-      let rows = all.filter(x=>{
-        let ok = true;
-        if(city){
-          ok = (x.city||'').toLowerCase().includes(city);
-          if(!ok) return false;
-        }
-        if(qtxt){
-          const hay = [
-            x.title, x.desc, x.city, x.email, x.uid, x.phone, x.type, x.rewardText
-          ].join(' ').toLowerCase();
-          ok = hay.includes(qtxt);
-        }
-        return ok;
-      });
-
-      countEl.textContent = String(rows.length);
-
-      if(rows.length===0){
-        setListEmpty('Mos keladigan e’lon topilmadi.');
-        return;
-      }
-
-      listEl.innerHTML='';
-      for(const p of rows){
-        const tagClass = p.type==='found'?'found':(p.type==='reward'?'reward':'lost');
-        const tagLabel = p.type==='found'?'Topdim':(p.type==='reward'?'Mukofotli':'Yo‘qotdim');
-
-        const top = el('div',{class:'row'},
-          el('span',{class:`tag ${tagClass}`}, tagLabel),
-          p.pinned ? el('span',{class:'tag', title:'Yopishtirilgan'}, '📌 PIN') : null,
-          el('span',{class:'title grow nowrap', title:p.title||''}, p.title || '—'),
-        );
-
-        const meta1 = el('div',{class:'meta nowrap'},
-          `🏙️ ${p.city || '—'}  ·  📞 ${p.phone || '—'}  ·  🕒 ${fmtTime(p.createdAt)}`
-        );
-
-        const meta2 = el('div',{class:'small muted nowrap'},
-          `👤 ${p.authorName || p.email || '—'}  ·  uid: `,
-          el('span',{class:'mono'}, p.uid || '—')
-        );
-
-        const actions = el('div',{class:'row'},
-          el('button',{class:'btn warn', onClick:()=>confirmDelete(p)}, '🗑️ O‘chirish'),
-          el('button',{class:'btn', onClick:()=>openPost(p)}, '🔗 Ochish')
-        );
-
-        const card = el('div',{class:'card'},
-          top,
-          meta1,
-          meta2,
-          p.reward ? el('div',{class:'chip'}, `🎁 Mukofot: ${p.rewardText || p.reward} `): null,
-          el('div',{class:'row'}, actions)
-        );
-
-        listEl.appendChild(card);
-      }
-    }
-
-    function openPost(p){
-      // agar frontdagi post URLingiz bo‘lsa shu yerga qo‘ying
-      // masalan: /?post={id}
-      const u = new URL(location.origin);
-      u.searchParams.set('post', p.id);
-      window.open(u.toString(), '_blank');
-    }
-
-    async function confirmDelete(p){
-      if(!isAdmin) return alert('Admin emas');
-      const ok = confirm(`🗑️ ROSTAN ham o‘chirasizmi?\n\nSarlavha: ${p.title||'—'}\nMuallif: ${p.email||p.uid||'—'}`);
-      if(!ok) return;
-      try{
-        await deleteDoc(doc(db, POSTS_COL, p.id));
-        // o‘chirilgach, onSnapshot o‘zi yangilanadi
-      }catch(e){
-        alert('O‘chirishda xato: '+e.message);
-      }
-    }
-
-    /* --------- Export CSV --------- */
-    async function exportCSV(){
-      try{
-        // Hozirgi filtrlar bilan emas, balki serverdan cheklangan ko‘plab maydonlarni olib, keyin filtrlaymiz
-        const constraints = [];
-        const t = typeSel.value;
-        if(t!=='all'){ constraints.push(where('type','==', t)); }
-        const qy = query(collection(db, POSTS_COL), ...constraints, orderBy('createdAt','desc'), limit(1000));
-        const snap = await getDocs(qy);
-        const rows = [];
-        snap.forEach(d=> rows.push({ id:d.id, ...d.data() }));
-
-        // Client side filtrlar
-        const city = (cityInp.value||'').trim().toLowerCase();
-        const qtxt = (qInp.value||'').trim().toLowerCase();
-        const filtered = rows.filter(x=>{
-          let ok=true;
-          if(city){ ok=(x.city||'').toLowerCase().includes(city); if(!ok)return false; }
-          if(qtxt){
-            const hay = [
-              x.title, x.desc, x.city, x.email, x.uid, x.phone, x.type
-            ].join(' ').toLowerCase();
-            ok = hay.includes(qtxt);
-          }
-          return ok;
+  function startFeed(){
+    // Real-time stream: Elonlar (eng yangi birinchi)
+    if(unsubscribe) unsubscribe();
+    const qy = query(collection(db,"Elonlar"), orderBy("createdAt","desc"), limit(500));
+    unsubscribe = onSnapshot(qy, (snap)=>{
+      cache = [];
+      snap.forEach(d=>{
+        const x = d.data();
+        cache.push({
+          id: d.id,
+          type: x.type || "lost",
+          title: x.title || x.sarlavha || "",
+          desc: x.desc || x.izoh || "",
+          city: x.city || x.shahar || "",
+          category: x.category || x.tur || "",
+          phone: x.phone || x.aloqa || "",
+          createdAt: x.createdAt || x.ts || Date.now(),
+          user: x.user || {uid:x.uid,email:x.email,displayName:x.name,photoURL:x.photoURL}
         });
-
-        const header = ['id','type','title','city','phone','email','uid','createdAt','reward','pinned'];
-        const lines = [
-          header.join(',')
-        ];
-        for(const p of filtered){
-          const cols = [
-            p.id,
-            p.type||'',
-            (p.title||'').replaceAll(',',' '),
-            (p.city||'').replaceAll(',',' '),
-            (p.phone||'').replaceAll(',',' '),
-            p.email||'',
-            p.uid||'',
-            p.createdAt?.toDate ? p.createdAt.toDate().toISOString() : '',
-            (p.rewardText||p.reward||'').toString().replaceAll(',',' '),
-            p.pinned? '1':'0'
-          ];
-          lines.push(cols.map(v=>`"${String(v).replaceAll('"','""')}"`).join(','));
-        }
-        const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8;'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = `elonlar_export_${Date.now()}.csv`;
-        document.body.appendChild(a); a.click(); a.remove();
-        URL.revokeObjectURL(url);
-      }catch(e){
-        alert('Ekportda xato: '+e.message);
-      }
-    }
-
-    /* --------- Events --------- */
-    btnRefresh.addEventListener('click', attachLive);
-    typeSel.addEventListener('change', attachLive);
-    cityInp.addEventListener('input', debounce(renderCurrent, 300));
-    qInp.addEventListener('input', debounce(renderCurrent, 300));
-    btnExport.addEventListener('click', exportCSV);
-
-    function renderCurrent(){
-      // mavjud snapshot’dan qayta chizish uchun: unsub bilan ma’lumot saqlamayapmiz,
-      // shuning uchun eng yaqin yo‘l — qayta attachLive(); ammo inputda ko‘p so‘rov yubormaslik uchun
-      // qidiruvni client-side ishlatadigan bo‘ldik: snapshot ma’lumotini saqlash kerak bo‘ladi.
-      // Soddaroq yo‘l: attachLive() ni qayta chaqirmaymiz, so‘nggi snapshotni cache qilamiz.
-    }
-
-    // sodda debounce
-    function debounce(fn, t=250){
-      let id; return (...args)=>{ clearTimeout(id); id=setTimeout(()=>fn.apply(null,args), t); }
-    }
-
-    // Qisqa kesh (oxirgi snapshotni saqlash) — attachLive ichida yangilab turishimiz kerak edi.
-    // Yuqoridagi “renderCurrent” ni minimal o'zgartirishsiz ishlatish uchun kichik patch:
-    let lastItems = [];
-    function renderListPatched(items){
-      lastItems = items;
-      renderList(items);
-    }
-    // attachLive ichida renderList o‘rniga patchni qo‘llaymiz — funksiyani qayta aniqlaymiz:
-    const _attachLive = attachLive;
-    attachLive = function(){
-      detachLive();
-      const constraints = [];
-      const t = typeSel.value;
-      if(t!=='all'){ constraints.push(where('type','==', t)); }
-      const qy = query(collection(db, POSTS_COL), ...constraints, orderBy('createdAt','desc'), limit(400));
-      unsub = onSnapshot(qy, (snap)=>{
-        const items = [];
-        snap.forEach(d=> items.push({ id:d.id, ...d.data() }));
-        renderListPatched(items);
-        liveInfo.textContent = `Live: ${new Date().toLocaleTimeString('uz-UZ')} da yangilandi`;
-      }, (err)=>{
-        setListEmpty('Xatolik: '+err.message);
-        console.error(err);
       });
+      applyFilter();
+    }, (err)=>{
+      console.error(err);
+      toast("Stream xatosi: " + err.message, "err");
+    });
+  }
+
+  async function checkAdmin(uid){
+    // rules/{uid}.admin == true
+    try{
+      const ref = doc(db,"rules", uid);
+      const s = await getDoc(ref);
+      return s.exists() && s.data().admin === true;
+    }catch(e){
+      console.error(e);
+      return false;
     }
-    renderCurrent = function(){
-      renderList(lastItems || []);
+  }
+
+  /* ----------------------------- Auth wiring ----------------------------- */
+  btnSign.onclick = async ()=>{
+    try{
+      await signInWithPopup(auth, provider);
+    }catch(e){
+      console.error(e);
+      toast("Kirish bekor qilindi", "warn");
+    }
+  };
+  btnOut.onclick = ()=> signOut(auth);
+
+  btnReload.onclick = ()=> applyFilter();
+  selType.onchange   = ()=> applyFilter();
+  qInput.oninput     = ()=> applyFilter();
+
+  onAuthStateChanged(auth, async (user)=>{
+    me = user || null;
+    if(!me){
+      isAdmin = false;
+      btnSign.style.display="inline-flex";
+      btnOut.style.display="none";
+      meLine.innerHTML = `<span class="muted">Kirmagansiz</span>`;
+      listEl.innerHTML = "";
+      emptyEl.classList.remove("hide");
+      if(unsubscribe) unsubscribe();
+      return;
     }
 
-  </script>
+    // UI top-right
+    const img = me.photoURL || "https://ui-avatars.com/api/?background=111827&color=e5e7eb&name="+encodeURIComponent(me.displayName||"U");
+    meLine.innerHTML = `
+      <img class="userAvatar" src="${img}" alt="">
+      <div>
+        <div>${me.displayName||"Siz"} <span class="tag">${me.email}</span></div>
+        <div class="muted" style="font-size:12px">UID: ${me.uid}</div>
+      </div>
+    `;
+    btnSign.style.display="none";
+    btnOut.style.display="inline-flex";
+
+    // Admin tekshiruv
+    isAdmin = await checkAdmin(me.uid);
+    if(!isAdmin){
+      listEl.innerHTML = "";
+      emptyEl.classList.remove("hide");
+      toast("Sizda admin ruxsati yo‘q", "err");
+      return;
+    }
+
+    // Agar admin bo‘lsa streamni ishga tushiramiz
+    startFeed();
+    toast("Hush kelibsiz, admin!");
+  });
+
+  // Ustozcha kichik UX: Enter bosilsa qidiruvdan fokus chiqmasin
+  qInput.addEventListener("keydown", (e)=>{
+    if(e.key==="Enter") e.preventDefault();
+  });
+
+  // Dastlabki ko‘rinish:
+  emptyEl.classList.remove("hide");
+</script>
 </body>
 </html>
