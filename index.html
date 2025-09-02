@@ -34,9 +34,7 @@
   .ad-caption{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:10px}
   .ad-star{font-size:18px}
   .ad-text{font-weight:900}
-  /* matn “yurishi” */
-  .ticker{white-space:nowrap;overflow:hidden}
-  .ticker span{display:inline-block;padding-left:100%;animation:ticker 10s linear infinite}
+  .ticker{white-space:nowrap;overflow:hidden}.ticker span{display:inline-block;padding-left:100%;animation:ticker 10s linear infinite}
   @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
 
   #mainMenu{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:20px 0}
@@ -45,7 +43,7 @@
 
   .views{min-height:70vh}.view{display:none}.view.active{display:block}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px} @media (max-width:760px){.grid{grid-template-columns:1fr}}
-  .card{background:var(--panel);border:1px solid #e5e7eb33;border-radius:18px;padding:12px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+  .card{background:var(--panel);border:1px solid var(--ring);border-radius:18px;padding:12px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
   .card-title{font-weight:800;margin-bottom:8px;font-size:15px;letter-spacing:.2px}.card-text,.card-list{font-size:13px;color:var(--muted-card)}
   label{font-size:13px;color:#8fa1b7;margin:8px 0 4px;display:block}
   input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px} textarea{min-height:96px;resize:vertical}
@@ -60,6 +58,8 @@
   .me{background:#0b2a1f;border-color:#0a7a46}.other{background:#101e33;border-color:#263b5a}
   .hint{font-size:12px;color:#94a3b8;margin-top:4px}
   .pill{display:inline-block;padding:6px 10px;border-radius:999px;border:1px dashed #334155;background:#0b1220;color:#cbd5e1;font-weight:700}
+  .center-toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);background:#16a34a;color:#fff;padding:18px 22px;border-radius:14px;font-weight:900;z-index:9999;opacity:0;transition:.18s}
+  .center-toast.err{background:#dc2626}.center-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
 </style>
 </head>
 <body>
@@ -90,12 +90,10 @@
           <div class="muted" data-i18n="hero_sub">“Halollik — eng katta mukofot.”</div>
         </div>
 
-        <!-- REKLAMA BANNER (asosiy sahifa) -->
+        <!-- REKLAMA BANNER -->
         <div class="ad-card" aria-label="Reklama">
           <div class="ad-head">Reklama</div>
-          <div class="ad-frame">
-            <img id="adImg" class="ad-img" src="" alt="reklama">
-          </div>
+          <div class="ad-frame"><img id="adImg" class="ad-img" alt="reklama"></div>
           <div class="ad-caption">
             <div class="ad-star">★</div>
             <div class="ad-text ticker"><span>Bu yerda sizning reklamangiz bo‘lishi mumkin · Aloqa: +998 ** *** ** ** · Bu yerda sizning reklamangiz bo‘lishi mumkin · </span></div>
@@ -149,36 +147,21 @@
       <section id="view_foundForm" class="view">
         <div class="card">
           <div class="card-title"><span data-i18n="found_form_title">Topdim — e’lon</span></div>
-        <label data-i18n="lbl_item">Narsa</label><input id="f_item" placeholder="Masalan: Pasport, kalitlar, sumka" />
-        <div class="hint">Agar pasport bo‘lsa: ismning bosh harfi, familiya qismi kabi.</div>
-        <label data-i18n="lbl_city">Shahar/Hudud</label><input id="f_city" placeholder="Masalan: Toshkent / Chilonzor" />
-        <label data-i18n="lbl_place">Qayerdan topildi</label><input id="f_place" placeholder="Masalan: Chorsu bozori yaqinida" />
-        <label data-i18n="lbl_date">Sana/Vaqt</label><input id="f_date" placeholder="2025-08-30 10:00" />
-        <label data-i18n="lbl_contact">Aloqa</label><input id="f_contact" placeholder="+998 90 987 65 43" inputmode="tel" />
-        <label data-i18n="lbl_notes">Qo‘shimcha</label><textarea id="f_notes" placeholder="Topilgan holati, qayerga topshirildi va h.k."></textarea>
-        <div class="sp"></div><button id="btnFound" class="btn btn-green" data-submit="found" data-i18n="btn_submit">E’lon berish</button>
+          <label data-i18n="lbl_item">Narsa</label><input id="f_item" placeholder="Masalan: Pasport, kalitlar, sumka" />
+          <div class="hint">Agar pasport bo‘lsa: ismning bosh harfi, familiya qismi kabi.</div>
+          <label data-i18n="lbl_city">Shahar/Hudud</label><input id="f_city" placeholder="Masalan: Toshkent / Chilonzor" />
+          <label data-i18n="lbl_place">Qayerdan topildi</label><input id="f_place" placeholder="Masalan: Chorsu bozori yaqinida" />
+          <label data-i18n="lbl_date">Sana/Vaqt</label><input id="f_date" placeholder="2025-08-30 10:00" />
+          <label data-i18n="lbl_contact">Aloqa</label><input id="f_contact" placeholder="+998 90 987 65 43" inputmode="tel" />
+          <label data-i18n="lbl_notes">Qo‘shimcha</label><textarea id="f_notes" placeholder="Topilgan holati, qayerga topshirildi va h.k."></textarea>
+          <div class="sp"></div><button id="btnFound" class="btn btn-green" data-submit="found" data-i18n="btn_submit">E’lon berish</button>
         </div>
       </section>
 
       <!-- LISTS -->
-      <section id="view_lostList" class="view">
-        <div class="card">
-          <div class="card-title" data-i18n="lost_list_title">📋 Umumiy yo‘qotilganlar</div>
-          <div id="lost_list">—</div>
-        </div>
-      </section>
-      <section id="view_rewardList" class="view">
-        <div class="card">
-          <div class="card-title" data-i18n="reward_list_title">🎁 Mukofotli</div>
-          <div id="reward_list">—</div>
-        </div>
-      </section>
-      <section id="view_foundList" class="view">
-        <div class="card">
-          <div class="card-title" data-i18n="found_list_title">🔎 Topilganlar</div>
-          <div id="found_list">—</div>
-        </div>
-      </section>
+      <section id="view_lostList" class="view"><div class="card"><div class="card-title" data-i18n="lost_list_title">📋 Umumiy yo‘qotilganlar</div><div id="lost_list">—</div></div></section>
+      <section id="view_rewardList" class="view"><div class="card"><div class="card-title" data-i18n="reward_list_title">🎁 Mukofotli</div><div id="reward_list">—</div></div></section>
+      <section id="view_foundList" class="view"><div class="card"><div class="card-title" data-i18n="found_list_title">🔎 Topilganlar</div><div id="found_list">—</div></div></section>
 
       <!-- MINE -->
       <section id="view_mine" class="view">
@@ -239,22 +222,19 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
-  /* ===== Service Worker ===== */
-  (function registerSW(){ if(!('serviceWorker' in navigator))return;
-    const CODE=`const VER='bingo-v6';self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(VER).then(c=>c.addAll(['./'])))});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==VER).map(k=>caches.delete(k)))));self.clients.claim()});self.addEventListener('fetch',e=>{const r=e.request;e.respondWith(caches.match(r).then(m=>m||fetch(r).then(x=>{if(r.method==='GET'&&x.ok&&new URL(r.url).origin===location.origin){const cp=x.clone();caches.open(VER).then(c=>c.put(r,cp)).catch(()=>{})}return x}).catch(()=>m)))})`;
-    const blob=new Blob([CODE],{type:'text/javascript'}); navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+  /* ===== SW ===== */
+  (function(){ if(!('serviceWorker' in navigator))return;
+    const CODE=`const VER='bingo-v7';self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(VER).then(c=>c.addAll(['./'])))});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==VER).map(k=>caches.delete(k)))));self.clients.claim()});self.addEventListener('fetch',e=>{const r=e.request;e.respondWith(caches.match(r).then(m=>m||fetch(r).then(x=>{if(r.method==='GET'&&x.ok&&new URL(r.url).origin===location.origin){const cp=x.clone();caches.open(VER).then(c=>c.put(r,cp)).catch(()=>{})}return x}).catch(()=>m)))})`;
+    const blob=new Blob([CODE],{type:'text/javascript'}); navigator.serviceWorker.register(URL.createObjectURL(blob));
   })();
 
-  /* ===== I18N (qisqartirilgan) ===== */
-  const I18N={uz:{hero_title:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",hero_sub:"“Halollik — eng katta mukofot.”",btn_lost:"❗ Yo‘qotdim",btn_found:"✅ Topdim",btn_lostlist:"📋 Yo‘qotilganlar",btn_reward:"🎁 Mukofotli",btn_foundlist:"🔎 Topilganlar",btn_mine:"⭐ Mening e’lonlarim",why_title:"Nega BINGO?",why_text:"Oddiy forma, tez natija. Barcha e’lonlar bir joyda.",guide_title:"Qisqa yo‘riqnoma",guide_1:"❗ Yo‘qotdim yoki ✅ Topdim formasini to‘ldiring",guide_2:"Shahar va aloqa — majburiy",guide_3:"Mukofot yozilsa, alohida bo‘limda ko‘rinadi",lost_form_title:"Yo‘qotdim — e’lon",found_form_title:"Topdim — e’lon",lost_list_title:"📋 Umumiy yo‘qotilganlar",reward_list_title:"🎁 Mukofotli",found_list_title:"🔎 Topilganlar",mine_title:"⭐ Mening e’lonlarim",chat_title:"Xabar",btn_send:"Yuborish",btn_submit:"E’lon berish",btn_delete_mine:"Mening e’lonlarimni o‘chirish",confirm_del:"Ushbu e’lonni o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi.",lbl_item:"Narsa",lbl_city:"Shahar/Hudud",lbl_place:"Joy",lbl_date:"Sana/Vaqt",lbl_contact:"Aloqa",lbl_reward:"Mukofot (ixt.)",lbl_notes:"Qo‘shimcha"},
-  ru:{hero_title:"Потеряли или нашли? Оставьте объявление.",hero_sub:"«Честность — самая большая награда.»",btn_lost:"❗ Потерял(а)",btn_found:"✅ Нашёл(ла)",btn_lostlist:"📋 Потерянные",btn_reward:"🎁 С вознаграждением",btn_foundlist:"🔎 Найденные",btn_mine:"⭐ Мои объявления",why_title:"Почему BINGO?",why_text:"Простая форма, быстрый результат. Все объявления в одном месте.",guide_title:"Краткая инструкция",guide_1:"Заполните форму ❗/✅",guide_2:"Город и контакт — обязательны",guide_3:"Вознаграждение показывается отдельно",lost_form_title:"Потерял(а) — объявление",found_form_title:"Нашёл(ла) — объявление",lost_list_title:"📋 Все потерянные",reward_list_title:"🎁 С вознаграждением",found_list_title:"🔎 Найденные",mine_title:"⭐ Мои объявления",chat_title:"Сообщение",btn_send:"Отправить",btn_submit:"Опубликовать",btn_delete_mine:"Удалить мои объявления",confirm_del:"Удалить это объявление? Действие необратимо.",lbl_item:"Предмет",lbl_city:"Город/Регион",lbl_place:"Место",lbl_date:"Дата/Время",lbl_contact:"Контакт",lbl_reward:"Вознаграждение (необ.)",lbl_notes:"Дополнительно"},
-  en:{hero_title:"Lost or found something? Post it.",hero_sub:"“Honesty is the greatest reward.”",btn_lost:"❗ Lost",btn_found:"✅ Found",btn_lostlist:"📋 Lost Items",btn_reward:"🎁 With Reward",btn_foundlist:"🔎 Found Items",btn_mine:"⭐ My Posts",why_title:"Why BINGO?",why_text:"Simple form, fast results. All posts in one place.",guide_title:"Quick guide",guide_1:"Fill the ❗/✅ form",guide_2:"City & contact are required",guide_3:"Rewarded posts show separately",lost_form_title:"Lost — post",found_form_title:"Found — post",lost_list_title:"📋 All Lost",reward_list_title:"🎁 With Reward",found_list_title:"🔎 All Found",mine_title:"⭐ My Posts",chat_title:"Message",btn_send:"Send",btn_submit:"Post",btn_delete_mine:"Delete my posts",confirm_del:"Delete this post? This cannot be undone.",lbl_item:"Item",lbl_city:"City/Region",lbl_place:"Place",lbl_date:"Date/Time",lbl_contact:"Contact",lbl_reward:"Reward (opt.)",lbl_notes:"Notes"}};
+  /* ===== I18N (short) ===== */
+  const I18N={uz:{hero_title:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",hero_sub:"“Halollik — eng katta mukofot.”",btn_lost:"❗ Yo‘qotdim",btn_found:"✅ Topdim",btn_lostlist:"📋 Yo‘qotilganlar",btn_reward:"🎁 Mukofotli",btn_foundlist:"🔎 Topilganlar",btn_mine:"⭐ Mening e’lonlarim",why_title:"Nega BINGO?",why_text:"Oddiy forma, tez natija. Barcha e’lonlar bir joyda.",guide_title:"Qisqa yo‘riqnoma",guide_1:"❗ Yo‘qotdim yoki ✅ Topdim formasini to‘ldiring",guide_2:"Shahar va aloqa — majburiy",guide_3:"Mukofot yozilsa, alohida bo‘limda ko‘rinadi",lost_form_title:"Yo‘qotdim — e’lon",found_form_title:"Topdim — e’lon",lost_list_title:"📋 Umumiy yo‘qotilganlar",reward_list_title:"🎁 Mukofotli",found_list_title:"🔎 Topilganlar",mine_title:"⭐ Mening e’lonlarim",chat_title:"Xabar",btn_send:"Yuborish",btn_submit:"E’lon berish",btn_delete_mine:"Mening e’lonlarimni o‘chirish",confirm_del:"Ushbu e’lonni o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi.",lbl_item:"Narsa",lbl_city:"Shahar/Hudud",lbl_place:"Joy",lbl_date:"Sana/Vaqt",lbl_contact:"Aloqa",lbl_reward:"Mukofot (ixt.)",lbl_notes:"Qo‘shimcha"}};
   function t(k){const L=localStorage.getItem('bingo_lang')||'uz';return (I18N[L]||I18N.uz)[k]||k}
-  function applyI18n(){document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.getAttribute('data-i18n'))); document.getElementById('langSel').value=(localStorage.getItem('bingo_lang')||detectLang());}
-  function detectLang(){const n=(navigator.language||'uz').slice(0,2);return ['uz','ru','en'].includes(n)?n:'uz'}
+  function applyI18n(){document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.getAttribute('data-i18n'))); document.getElementById('langSel').value=(localStorage.getItem('bingo_lang')||'uz');}
   document.getElementById('langSel').addEventListener('change',e=>{localStorage.setItem('bingo_lang',e.target.value);applyI18n()});
 
-  /* ===== Network badge ===== */
+  /* ===== Net badge ===== */
   const netBadge=document.createElement('div'); netBadge.id='netBadge'; netBadge.className='net on'; netBadge.style.display='none'; document.body.appendChild(netBadge);
   function setNet(on){netBadge.className='net '+(on?'on':'off'); netBadge.textContent=on?'Onlayn':'Offline (kesh rejimi)'; netBadge.style.display='block'; clearTimeout(setNet._t); setNet._t=setTimeout(()=>{netBadge.style.display='none'},2500)}
   window.addEventListener('online', ()=>setNet(true)); window.addEventListener('offline',()=>setNet(false));
@@ -275,8 +255,15 @@
   function num(n){const x=parseInt(n,10); return isNaN(x)?0:x}
   function centerToast(msg,err=false){const old=document.getElementById('__toast__'); if(old) old.remove(); const el=document.createElement('div'); el.id='__toast__'; el.className='center-toast'+(err?' err':''); el.textContent=msg||''; document.body.appendChild(el); requestAnimationFrame(()=>el.classList.add('show')); setTimeout(()=>{el.classList.remove('show'); setTimeout(()=>el.remove(),180)},1800)}
 
-  /* ===== Router ===== */
-  let currentView='home', currentChatPostId=null, unsubChat=null, unsubNotifs=null;
+  /* ===== Reklama slayder ===== */
+  const AD_IMAGES=[
+    'images/file_000000002de8624383c746f2d7d3cfd7.png',
+    'images/file_0000000538861fab34b2e1a449b4ce5.png'
+  ];
+  (function runAd(){const img=document.getElementById('adImg'); let i=0; function show(){img.src=AD_IMAGES[i%AD_IMAGES.length]; i++} show(); setInterval(show,6000)})();
+
+  /* ===== Routing ===== */
+  let currentView='home', currentChatPostId=null, unsubChat=null;
   function showView(name){
     ['home','lostForm','foundForm','lostList','rewardList','foundList','mine','profile','notifs','postChat']
       .forEach(id=>{const el=document.getElementById('view_'+id); if(el) el.classList.toggle('active',id===name)});
@@ -293,41 +280,25 @@
     if(name==='postChat' && currentChatPostId) openChat(currentChatPostId,true);
     const hash='#'+name+(currentChatPostId?('-'+currentChatPostId):''); if(replace) history.replaceState({view:name,id:currentChatPostId},'',hash); else history.pushState({view:name,id:currentChatPostId},'',hash);
   }
-  document.getElementById('homeBtn').addEventListener('click',()=>navigate('home')); document.getElementById('backBtn').addEventListener('click',()=>history.back());
+  document.getElementById('homeBtn').addEventListener('click',()=>navigate('home'));
+  document.getElementById('backBtn').addEventListener('click',()=>history.back());
   document.querySelectorAll('#mainMenu .btn').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.nav)));
   document.getElementById('bellBtn').addEventListener('click',()=>navigate('notifs'));
   (function(){const h=location.hash?location.hash.substring(1):'home'; const p=h.split('-'); const v=p[0]||'home'; currentChatPostId=p[1]||null; showView(v); history.replaceState({view:v,id:currentChatPostId||null},'', '#'+v+(currentChatPostId?('-'+currentChatPostId):'')); })();
 
   /* ===== Auth UI ===== */
   const userBox=document.getElementById('userBox'), authBtnTxt=document.getElementById('authBtnTxt'), userAvatar=document.getElementById('userAvatar');
-  userBox.addEventListener('click',()=>{
-    if(auth.currentUser){ navigate('profile') } else { auth.signInWithPopup(googleProvider).catch(e=>centerToast('Auth xatosi: '+e.message,true)) }
-  });
+  userBox.addEventListener('click',()=>{ if(auth.currentUser){ navigate('profile') } else { auth.signInWithPopup(googleProvider).catch(e=>centerToast('Auth xatosi: '+e.message,true)) }});
   document.getElementById('logoutBtn').addEventListener('click',()=>auth.signOut());
-  auth.onAuthStateChanged(u=>{
-    if(u){ authBtnTxt.textContent=u.displayName?.split(' ')[0]||'Profil'; userAvatar.src=u.photoURL||''; userAvatar.style.display=u.photoURL?'block':'none'; listenNotifs(); }
-    else { authBtnTxt.textContent='Kirish'; userAvatar.style.display='none'; stopNotifs(); }
-    renderProfile(); renderMine();
-  });
+  auth.onAuthStateChanged(u=>{ if(u){ authBtnTxt.textContent=u.displayName?.split(' ')[0]||'Profil'; userAvatar.src=u.photoURL||''; userAvatar.style.display=u.photoURL?'block':'none'; startChatNotifications(); } else { authBtnTxt.textContent='Kirish'; userAvatar.style.display='none'; stopChatNotifications(); } renderProfile(); renderMine(); });
+
   function renderProfile(){
     const u=auth.currentUser;
     if(!u){ document.getElementById('pPhoto').src=''; document.getElementById('pName').textContent='Kirmagansiz'; document.getElementById('pEmail').textContent=''; document.getElementById('pUid').textContent=''; return;}
     document.getElementById('pPhoto').src=u.photoURL||''; document.getElementById('pName').textContent=u.displayName||'—'; document.getElementById('pEmail').textContent=u.email||'—'; document.getElementById('pUid').textContent='UID: '+u.uid;
   }
 
-  /* ===== Reklama slayder ===== */
-  const AD_IMAGES=[
-    // Shu yerda rasmlar yo‘llari. Siz yuklagan fayllar:
-    'images/file_000000002de8624383c746f2d7d3cfd7.png',
-    'images/file_0000000538861fab34b2e1a449b4ce5.png'
-  ];
-  (function runAd(){
-    const img=document.getElementById('adImg'); let i=0;
-    function show(){ img.src=AD_IMAGES[i%AD_IMAGES.length]; i++; }
-    show(); setInterval(show, 6000);
-  })();
-
-  /* ===== Data & real-time ===== */
+  /* ===== Posts realtime ===== */
   let ALL_POSTS=[]; let LAST_POST=null;
   db.collection('posts').orderBy('created','desc').onSnapshot(snap=>{
     ALL_POSTS=snap.docs.map(d=>({id:d.id,...d.data()}));
@@ -337,7 +308,7 @@
     if(currentView==='mine') renderMine();
   },err=>banner("Firestore o‘qish xatosi: "+err.message));
 
-  /* ===== Submit (auth required, NO photos) ===== */
+  /* ===== Submit (auth required) ===== */
   document.querySelectorAll('[data-submit]').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       if(!auth.currentUser){ centerToast('Avval Google bilan kiring',true); return;}
@@ -348,18 +319,16 @@
       const sig=JSON.stringify([p.kind,p.item,p.city,p.contact,p.notes]); const now=Date.now(); const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}');
       if(LAST_POST===sig || (last.sig===sig && (now-last.ts)<30000)){ centerToast("⚠️ Bu e’lon allaqachon joylangan (30s ichida).",true); btn.disabled=false; btn.classList.remove('btn-disabled'); return;}
       LAST_POST=sig; localStorage.setItem('bingo_last_post',JSON.stringify({sig,ts:now}));
-      try{ await db.collection('posts').add(p); clearForm(isLost); centerToast("✅ E’lon joylandi!"); navigate(isLost?'lostList':'foundList'); }
+      try{ await db.collection('posts').add(p); clearForm(isLost); clearDraft(isLost); centerToast("✅ E’lon joylandi!"); navigate(isLost?'lostList':'foundList'); }
       catch(e){ centerToast("❌ Xato: "+e.message,true) }
       finally{ setTimeout(()=>{btn.disabled=false; btn.classList.remove('btn-disabled')},600) }
     });
   });
   function clearForm(isLost){ (isLost?['l_item','l_city','l_place','l_date','l_contact','l_reward','l_notes']:['f_item','f_city','f_place','f_date','f_contact','f_notes']).forEach(id=>{const el=document.getElementById(id); if(el) el.value='';}) }
 
-  /* ===== Renderers ===== */
+  /* ===== Lists render ===== */
   function card(p, allowDelete){
-    const L=localStorage.getItem('bingo_lang')||'uz';
-    const kindLabel=p.kind==='lost'?(L==='ru'?'❗ Потеряно':(L==='en'?'❗ Lost':'❗ Yo‘qoldi')):(L==='ru'?'✅ Найдено':(L==='en'?'✅ Found':'✅ Topildi'));
-    const msgBtn=L==='en'?'✉️ Message':(L==='ru'?'✉️ Написать':'✉️ Xabar');
+    const kindLabel=p.kind==='lost'?'❗ Yo‘qoldi':'✅ Topildi';
     return `<div class="post-card">
       <div class="post-head"><div class="post-kind">${kindLabel}${p.reward>0?` · 🎁 ${Number(p.reward).toLocaleString()} so‘m`:''}</div><div class="post-date">${p.created?new Date(p.created).toLocaleString():''}</div></div>
       <div style="margin-top:6px;font-weight:800">${esc(p.item)}</div>
@@ -368,28 +337,24 @@
       <div class="post-meta" style="margin-top:6px">📞 ${esc(p.contact||'-')}</div>
       <div class="actions">
         ${allowDelete?`<button class="btn" onclick="delPost('${p.id}')">🗑️ O‘chirish</button>`:''}
-        <button class="btn btn-blue" onclick="openChat('${p.id}')">${msgBtn}</button>
+        <button class="btn btn-blue" onclick="openChat('${p.id}')">✉️ Xabar</button>
       </div>
     </div>`;
   }
-  function renderLost(){const el=document.getElementById('lost_list'); if(!el) return; el.innerHTML=ALL_POSTS.filter(p=>p.kind==='lost').map(p=>card(p,false)).join('')||'—'}
-  function renderReward(){const el=document.getElementById('reward_list'); if(!el) return; el.innerHTML=ALL_POSTS.filter(p=>p.kind==='lost'&&(p.reward||0)>0).map(p=>card(p,false)).join('')||'—'}
-  function renderFound(){const el=document.getElementById('found_list'); if(!el) return; el.innerHTML=ALL_POSTS.filter(p=>p.kind==='found').map(p=>card(p,false)).join('')||'—'}
-  function renderMine(){const el=document.getElementById('mine_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.uid===UID()); el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—'}
+  function renderLost(){document.getElementById('lost_list').innerHTML=ALL_POSTS.filter(p=>p.kind==='lost').map(p=>card(p,false)).join('')||'—'}
+  function renderReward(){document.getElementById('reward_list').innerHTML=ALL_POSTS.filter(p=>p.kind==='lost'&&(p.reward||0)>0).map(p=>card(p,false)).join('')||'—'}
+  function renderFound(){document.getElementById('found_list').innerHTML=ALL_POSTS.filter(p=>p.kind==='found').map(p=>card(p,false)).join('')||'—'}
+  function renderMine(){const arr=ALL_POSTS.filter(p=>p.uid===UID()); document.getElementById('mine_list').innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—'}
 
-  /* ===== Delete (only mine) ===== */
   window.delPost=async function(id){
     const post=ALL_POSTS.find(p=>p.id===id); if(!post || post.uid!==UID()) return;
     if(!confirm(t('confirm_del'))) return;
-    try{ await db.collection('posts').doc(id).delete();
-      const chats=await db.collection('posts').doc(id).collection('chats').get(); const batch=db.batch(); chats.forEach(d=>batch.delete(d.ref)); await batch.commit();
-      const alerts=await db.collection('alerts').where('postId','==',id).get(); const b2=db.batch(); alerts.forEach(d=>b2.delete(d.ref)); await b2.commit();
-      centerToast('🗑️ O‘chirildi');
-    }catch(e){ banner("O‘chirish xatosi: "+e.message) }
+    try{ await db.collection('posts').doc(id).delete(); centerToast('🗑️ O‘chirildi'); }
+    catch(e){ banner("O‘chirish xatosi: "+e.message) }
   }
 
-  /* ===== Chat + Alerts ===== */
-  function logEmpty(){const L=localStorage.getItem('bingo_lang')||'uz';return L==='en'?'No messages yet.':(L==='ru'?'Нет сообщений.':'Xabarlar yo‘q.')}
+  /* ===== Chat ===== */
+  function logEmpty(){return 'Xabarlar yo‘q.'}
   window.openChat=function(postId,keep){
     const post=ALL_POSTS.find(p=>p.id===postId); if(!post) return;
     currentChatPostId=postId; document.getElementById('chatItemName').textContent=post.item;
@@ -398,43 +363,97 @@
       const log=document.getElementById('chatLog'); const arr=s.docs.map(d=>d.data());
       log.innerHTML=arr.length?arr.map(m=>`<div class="msg ${m.uid===UID()?'me':'other'}"><b>${esc(m.name||'Anon')}</b> <span style="opacity:.8;font-size:12px">· ${new Date(m.ts).toLocaleTimeString()}</span><div>${esc(m.text)}</div></div>`).join(''):`<div class="msg">${logEmpty()}</div>`;
       log.scrollTop=log.scrollHeight;
-    },e=>banner("Chat o‘qish xatosi: "+e.message));
+      // ko'rildi sifatida oxirgi vaqtni yangilash
+      localStorage.setItem('bingo_seen_'+postId, String(Date.now()));
+      flushNotifsForPost(postId);
+      updateBell();
+    }, e=> banner("Chat o‘qish xatosi: "+e.message));
     if(!keep) navigate('postChat');
   }
   document.getElementById('sendChatBtn').addEventListener('click', async ()=>{
     if(!currentChatPostId) return;
     const name=(document.getElementById('chatName').value.trim()||(auth.currentUser?.displayName)||'Anon');
     const text=document.getElementById('chatText').value.trim(); if(!text) return;
-    const msg={name,uid:UID(),text,ts:Date.now()};
-    const post=ALL_POSTS.find(p=>p.id===currentChatPostId);
-    try{
-      await db.collection('posts').doc(currentChatPostId).collection('chats').add(msg);
-      document.getElementById('chatText').value='';
-      if(post && post.uid!==UID()){
-        await db.collection('alerts').add({to:post.uid,postId:post.id,postItem:post.item,fromName:name,text:text.slice(0,140),created:Date.now(),read:false});
-      }
-    }catch(e){ banner("Chat yozish xatosi: "+e.message) }
+    db.collection('posts').doc(currentChatPostId).collection('chats').add({name,uid:UID(),text,ts:Date.now()})
+      .then(()=>{document.getElementById('chatText').value=''})
+      .catch(e=> banner("Chat yozish xatosi: "+e.message));
   });
 
-  /* ===== Notifs ===== */
-  const bellCount=document.getElementById('bellCount'); let _stopAlerts=null;
-  function listenNotifs(){
-    stopNotifs();
-    _stopAlerts=db.collection('alerts').where('to','==',UID()).where('read','==',false).orderBy('created','desc').onSnapshot(s=>{
-      const n=s.size; bellCount.textContent=String(n); bellCount.style.display=n>0?'inline-grid':'none';
-      if(currentView==='notifs') renderNotifs();
+  /* ====== LOCAL NOTIFICATION ENGINE (chats uchun) ====== */
+  let postWatchUnsubs={}, postsUnsub=null;
+  function startChatNotifications(){
+    stopChatNotifications();
+    // Brauzer notification ruxsati
+    if('Notification' in window && Notification.permission==='default'){
+      Notification.requestPermission().catch(()=>{});
+    }
+    // Menga tegishli postlarni tinglaymiz
+    postsUnsub=db.collection('posts').where('uid','==',UID()).onSnapshot(s=>{
+      // eski tinglovchilarni tozalash
+      const currentIds=new Set();
+      s.forEach(doc=>{
+        const post={id:doc.id,...doc.data()}; currentIds.add(post.id);
+        if(postWatchUnsubs[post.id]) return; // bor
+        // har bir post chatini tinglash
+        const lastSeen=Number(localStorage.getItem('bingo_seen_'+post.id)||0);
+        postWatchUnsubs[post.id]=db.collection('posts').doc(post.id).collection('chats')
+          .orderBy('ts').startAfter(lastSeen||0).onSnapshot(cs=>{
+            cs.docChanges().forEach(ch=>{
+              if(ch.type!=='added') return;
+              const m=ch.doc.data(); if(m.uid===UID()) return; // o'zimniki emas
+              pushNotif({postId:post.id,postItem:post.item,fromName:m.name||'Anon',text:m.text||'',ts:m.ts||Date.now()});
+              // brauzer notification (agar ruxsat bor bo'lsa)
+              if('Notification' in window && Notification.permission==='granted'){
+                try{ new Notification('Yangi xabar: '+post.item,{body:(m.name||'Anon')+': '+(m.text||''),tag:'bingo-'+post.id}); }catch{}
+              }
+            });
+          });
+      });
+      // keraksiz tinglovchilarni yopish
+      Object.keys(postWatchUnsubs).forEach(id=>{
+        if(!currentIds.has(id)){ postWatchUnsubs[id](); delete postWatchUnsubs[id]; }
+      });
     });
   }
-  function stopNotifs(){ if(_stopAlerts){_stopAlerts(); _stopAlerts=null} bellCount.style.display='none' }
+  function stopChatNotifications(){
+    if(postsUnsub){postsUnsub(); postsUnsub=null}
+    Object.values(postWatchUnsubs).forEach(fn=>fn&&fn()); postWatchUnsubs={}
+  }
+
+  // Local storage’dagi notifs
+  function getNotifs(){ try{return JSON.parse(localStorage.getItem('bingo_notifs')||'[]')}catch{return []}}
+  function setNotifs(arr){ localStorage.setItem('bingo_notifs', JSON.stringify(arr)) }
+  function pushNotif(n){ const arr=getNotifs(); arr.unshift({id:'n'+Date.now()+Math.random().toString(36).slice(2),read:false,...n}); setNotifs(arr); updateBell(); if(currentView==='notifs') renderNotifs(); }
+  function flushNotifsForPost(postId){ const arr=getNotifs().map(x=>x.postId===postId?({...x,read:true}):x); setNotifs(arr) }
+  function updateBell(){ const n=getNotifs().filter(x=>!x.read).length; const el=document.getElementById('bellCount'); el.textContent=String(n); el.style.display=n>0?'inline-grid':'none' }
+
   function renderNotifs(){
-    const el=document.getElementById('notif_list'); const q=db.collection('alerts').where('to','==',UID()).orderBy('created','desc');
-    if(unsubNotifs) unsubNotifs();
-    unsubNotifs=q.onSnapshot(async snap=>{
-      if(snap.empty){ el.innerHTML='—'; return;}
-      el.innerHTML=snap.docs.map(d=>{const a=d.data(); return `<div class="notif-item"><div><b>${esc(a.fromName||'Anon')}</b>: ${esc(a.text||'')}</div><div style="opacity:.8;font-size:12px">${new Date(a.created).toLocaleString()} · <button class="btn btn-sm btn-amber" onclick="openChat('${a.postId}')">Chatni ochish</button> <button class="btn btn-sm" onclick="markRead('${d.id}')">Ko‘rildi</button></div></div>`}).join('');
-    });
+    const el=document.getElementById('notif_list'); const arr=getNotifs();
+    if(arr.length===0){ el.innerHTML='—'; updateBell(); return;}
+    el.innerHTML=arr.map(a=>`<div class="notif-item" style="margin:10px 0;padding:10px;border:1px solid #223047;border-radius:12px;background:#0e1728;color:#eaf1ff">
+      <div><b>${esc(a.fromName||'Anon')}</b> → <i>${esc(a.postItem||'Post')}</i></div>
+      <div style="margin:6px 0">${esc(a.text||'')}</div>
+      <div style="opacity:.8;font-size:12px">${new Date(a.ts||Date.now()).toLocaleString()}</div>
+      <div class="actions" style="justify-content:flex-start;margin-top:8px">
+        <button class="btn btn-sm btn-amber" onclick="openChat('${a.postId}')">Chatni ochish</button>
+        <button class="btn btn-sm" onclick="markLocalRead('${a.id}')">${a.read?'Qayta ochiq':'Ko‘rildi'}</button>
+        <button class="btn btn-sm" onclick="removeLocalNotif('${a.id}')">O‘chirish</button>
+      </div>
+    </div>`).join('');
+    updateBell();
   }
-  window.markRead=async function(id){ try{ await db.collection('alerts').doc(id).update({read:true}); }catch(e){ centerToast('Xato: '+e.message,true) } }
+  window.markLocalRead=function(id){ const arr=getNotifs().map(x=>x.id===id?({...x,read:true}):x); setNotifs(arr); renderNotifs(); }
+  window.removeLocalNotif=function(id){ const arr=getNotifs().filter(x=>x.id!==id); setNotifs(arr); renderNotifs(); }
+
+  /* ===== Avto-draft (formalar) ===== */
+  const DRAFT_KEYS={lost:['l_item','l_city','l_place','l_date','l_contact','l_reward','l_notes'],found:['f_item','f_city','f_place','f_date','f_contact','f_notes']};
+  function saveDraft(which){ const ids=DRAFT_KEYS[which]; const data={}; ids.forEach(id=>data[id]=val(id)); localStorage.setItem('bingo_draft_'+which, JSON.stringify(data)) }
+  function loadDraft(which){ try{const data=JSON.parse(localStorage.getItem('bingo_draft_'+which)||'{}'); Object.entries(data).forEach(([k,v])=>{const el=document.getElementById(k); if(el) el.value=v||''})}catch{} }
+  function clearDraft(isLost){ localStorage.removeItem('bingo_draft_'+(isLost?'lost':'found')) }
+  // input tinglovchilar
+  DRAFT_KEYS.lost.concat(DRAFT_KEYS.found).forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input',()=>{saveDraft(id.startsWith('l_')?'lost':'found')}) });
+  // sahifaga kirganda draftni yuklash
+  loadDraft('lost'); loadDraft('found');
 
   /* ===== Mine clear ===== */
   document.getElementById('clearMineBtn').addEventListener('click', async ()=>{
@@ -444,7 +463,6 @@
 
   /* ===== Back nav ===== */
   window.addEventListener('popstate', e=>{const st=e.state||{view:'home'}; currentChatPostId=st.id||null; showView(st.view||'home')});
-
   </script>
 </body>
-                                  </html>
+          </html>
