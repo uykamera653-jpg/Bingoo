@@ -8,27 +8,28 @@
 <link rel="manifest" href='data:application/manifest+json,{"name":"BINGO","short_name":"BINGO","start_url":"./","display":"standalone","background_color":"#ffffff","theme_color":"#0b57d0","icons":[]}'/>
 <style>
   :root{
-    --bg:#ffffff; --text:#0f172a;
-    --muted:#64748b; --line:#e2e8f0;
+    --bg:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
     --brand:#0b57d0; --brand-weak:#e8f0fe; --ok:#16a34a; --bad:#dc2626; --amber:#f59e0b;
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
   body{background:var(--bg);color:var(--text)}
   a{color:var(--brand);text-decoration:none}
-  /* HEADER (Gmail/Yandex uslubida: oq fon, ko‘k aksent) */
+
+  /* HEADER */
   .topbar{position:sticky;top:0;z-index:60;background:#fff;border-bottom:1px solid var(--line)}
   .hdr{max-width:1000px;margin:0 auto;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 16px}
   .brand{display:flex;align-items:center;gap:10px}
   .logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--brand-weak);color:var(--brand);font-weight:900}
   .title{font-weight:900;letter-spacing:.2px;color:#111827;font-size:20px}
   .controls{display:flex;gap:10px;align-items:center}
-  .iconbtn, .pillbtn{display:grid;place-items:center;height:40px;border-radius:10px;background:#fff;border:1px solid var(--line);cursor:pointer;color:#1f2937;padding:0 12px;font-weight:700}
+  .iconbtn,.pillbtn{display:grid;place-items:center;height:40px;border-radius:10px;background:#fff;border:1px solid var(--line);cursor:pointer;color:#1f2937;padding:0 12px;font-weight:700}
   select.lang{height:40px;border-radius:10px;background:#fff;border:1px solid var(--line);padding:0 10px;font-weight:700}
   .userbtn{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:999px;border:1px solid var(--line);background:#fff}
   .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid var(--line);background:#fff}
   .userbtn .name{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800;font-size:14px}
 
+  /* LAYOUT */
   .wrap{max-width:1000px;margin:0 auto;padding:18px 16px 28px}
   .views{min-height:70vh}
   .view{display:none} .view.active{display:block}
@@ -49,6 +50,7 @@
   .grid{display:grid;gap:12px}
   @media (min-width:760px){ .grid.cols-2{grid-template-columns:1fr 1fr} .grid.cols-3{grid-template-columns:1fr 1fr 1fr} }
 
+  /* POSTS */
   .post{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;background:#fff}
   .post-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
   .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-weight:800;border:1px solid var(--line);background:#fafafa}
@@ -100,6 +102,7 @@
   <div class="wrap">
     <div id="alert" style="display:none" class="card"></div>
 
+    <!-- HOME -->
     <section id="view_home" class="view active">
       <div class="headline">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</div>
       <div class="muted">“Halollik — eng katta mukofot.”</div>
@@ -112,16 +115,6 @@
         <button class="btn"           data-nav="profile">👤 Profil</button>
         <button class="btn"           data-nav="mine">⭐ Mening e’lonlarim</button>
       </div>
-
-      <!-- Tez filtrlash -->
-      <div class="card">
-        <div class="card-title">Qidiruv</div>
-        <div class="grid cols-3">
-          <input id="qSearch" placeholder="Kalit so‘z: hamyon, telefon..."/>
-          <select id="qKind"><option value="">Tur — hammasi</option><option value="lost">Yo‘qolgan</option><option value="found">Topilgan</option></select>
-          <input id="qCity" placeholder="Shahar: Toshkent, Samarqand..."/>
-        </div>
-      </div>
     </section>
 
     <!-- LOST FORM -->
@@ -129,27 +122,13 @@
       <div class="card">
         <div class="card-title">Yo‘qotdim — e’lon</div>
         <div class="grid cols-2">
-          <div>
-            <label>Narsa</label><input id="l_item" placeholder="Qora hamyon, telefon"/>
-          </div>
-          <div>
-            <label>Shahar</label><input id="l_city" placeholder="Samarqand / Registon"/>
-          </div>
-          <div>
-            <label>Joy</label><input id="l_place" placeholder="Qayerda yo‘qotdingiz? (bozor, bekat...)"/>
-          </div>
-          <div>
-            <label>Sana/Vaqt</label><input id="l_date" placeholder="2025-08-30 14:00"/>
-          </div>
-          <div>
-            <label>Aloqa (telefon majburiy)</label><input id="l_contact" placeholder="+998 9* *** ** **" inputmode="tel"/>
-          </div>
-          <div>
-            <label>Mukofot (ixtiyoriy, so‘m)</label><input id="l_reward" placeholder="100000"/>
-          </div>
-          <div style="grid-column:1/-1">
-            <label>Qo‘shimcha</label><textarea id="l_notes" placeholder="Belgilari: stiker, ichida hujjatlar..."></textarea>
-          </div>
+          <div><label>Narsa</label><input id="l_item" placeholder="Qora hamyon, telefon"/></div>
+          <div><label>Shahar</label><input id="l_city" placeholder="Samarqand / Registon"/></div>
+          <div><label>Joy</label><input id="l_place" placeholder="Qayerda yo‘qotdingiz?"/></div>
+          <div><label>Sana/Vaqt</label><input id="l_date" placeholder="2025-08-30 14:00"/></div>
+          <div><label>Aloqa (telefon majburiy)</label><input id="l_contact" placeholder="+998 9* *** ** **" inputmode="tel"/></div>
+          <div><label>Mukofot (ixtiyoriy, so‘m)</label><input id="l_reward" placeholder="100000"/></div>
+          <div style="grid-column:1/-1"><label>Qo‘shimcha</label><textarea id="l_notes" placeholder="Belgilari: stiker, ichida hujjatlar..."></textarea></div>
           <div>
             <label>Rasm</label><input id="l_photo" type="file" accept="image/*"/>
             <div class="progress" id="l_prog" style="display:none;margin-top:6px"><div class="bar" id="l_bar"></div></div>
@@ -167,24 +146,12 @@
       <div class="card">
         <div class="card-title">Topdim — e’lon</div>
         <div class="grid cols-2">
-          <div>
-            <label>Narsa</label><input id="f_item" placeholder="Pasport, kalitlar, sumka"/>
-          </div>
-          <div>
-            <label>Shahar</label><input id="f_city" placeholder="Toshkent / Chilonzor"/>
-          </div>
-          <div>
-            <label>Qayerdan topildi</label><input id="f_place" placeholder="Masalan: Chorsu bozori yaqinida"/>
-          </div>
-          <div>
-            <label>Sana/Vaqt</label><input id="f_date" placeholder="2025-08-30 10:00"/>
-          </div>
-          <div>
-            <label>Aloqa (telefon majburiy)</label><input id="f_contact" placeholder="+998 9* *** ** **" inputmode="tel"/>
-          </div>
-          <div style="grid-column:1/-1">
-            <label>Qo‘shimcha</label><textarea id="f_notes" placeholder="Topilgan holati, qayerga topshirildi va h.k."></textarea>
-          </div>
+          <div><label>Narsa</label><input id="f_item" placeholder="Pasport, kalitlar, sumka"/></div>
+          <div><label>Shahar</label><input id="f_city" placeholder="Toshkent / Chilonzor"/></div>
+          <div><label>Qayerdan topildi</label><input id="f_place" placeholder="Masalan: Chorsu bozori yaqinida"/></div>
+          <div><label>Sana/Vaqt</label><input id="f_date" placeholder="2025-08-30 10:00"/></div>
+          <div><label>Aloqa (telefon majburiy)</label><input id="f_contact" placeholder="+998 9* *** ** **" inputmode="tel"/></div>
+          <div style="grid-column:1/-1"><label>Qo‘shimcha</label><textarea id="f_notes" placeholder="Topilgan holati, qayerga topshirildi va h.k."></textarea></div>
           <div>
             <label>Rasm</label><input id="f_photo" type="file" accept="image/*"/>
             <div class="progress" id="f_prog" style="display:none;margin-top:6px"><div class="bar" id="f_bar"></div></div>
@@ -243,6 +210,7 @@
             <img id="profileAvatar" style="width:120px;height:120px;border-radius:16px;object-fit:cover;border:1px solid var(--line);background:#f8fafc" alt="avatar"/>
             <div style="margin-top:8px"><button class="btn" id="btnChangePhoto">📷 Rasmni yangilash</button></div>
             <input id="profilePhotoFile" type="file" accept="image/*" style="display:none"/>
+            <div class="progress" id="profile_prog" style="display:none;margin-top:6px"><div class="bar" id="profile_bar"></div></div>
           </div>
           <div>
             <label>Ism</label><input id="profileName"/>
@@ -267,6 +235,29 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
+  /* ===== Service Worker (offline) ===== */
+  (function registerSW(){
+    if(!('serviceWorker' in navigator)) return;
+    const CODE = `
+      const VER='bingo-v10';
+      self.addEventListener('install',e=>{ self.skipWaiting(); e.waitUntil(caches.open(VER).then(c=>c.addAll(['./'])) )});
+      self.addEventListener('activate',e=>{ e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==VER).map(k=>caches.delete(k))))); self.clients.claim(); });
+      self.addEventListener('fetch',e=>{
+        const req=e.request;
+        e.respondWith(
+          caches.match(req).then(res=>res||fetch(req).then(r=>{
+            if(req.method==='GET' && r.ok && new URL(req.url).origin===location.origin){
+              const copy=r.clone(); caches.open(VER).then(c=>c.put(req,copy)).catch(()=>{});
+            }
+            return r;
+          }).catch(()=>res))
+        );
+      });
+    `;
+    const blob=new Blob([CODE],{type:'text/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+  })();
+
   /* ===== Firebase init ===== */
   const firebaseConfig={
     apiKey:"AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
@@ -293,6 +284,7 @@
   function onlyDigits(s){return (s||'').replace(/[^\d]/g,'')}
   function phoneOk(s){return /^\+?\d[\d\s\-()]{6,}$/.test((s||'').trim())}
   function setProg(prefix,prc){ const bar=$('#'+prefix+'_bar'), box=$('#'+prefix+'_prog'); if(!bar||!box)return; if(prc<=0||prc>=100){box.style.display='none';bar.style.width='0%'} else {box.style.display='block';bar.style.width=prc+'%'} }
+  function now(){ return Date.now() }
 
   /* ===== Router ===== */
   let currentView='home', currentChatPostId=null, unsubChat=null;
@@ -303,7 +295,7 @@
   window.addEventListener('popstate',e=>{const st=e.state||{view:'home'}; currentChatPostId=st.id||null; showView(st.view||'home')});
   (function(){const h=location.hash?location.hash.substring(1):'home'; const p=h.split('-'); const v=p[0]||'home'; currentChatPostId=p[1]||null; showView(v); history.replaceState({view:v,id:currentChatPostId||null},'', '#'+v+(currentChatPostId?('-'+currentChatPostId):'')); })();
 
-  /* ===== Auth (Gmail + anon fallback) ===== */
+  /* ===== Auth (Google + anon) ===== */
   const userBtn=$('#userBtn'), menuPanel=$('#menuPanel'), btnLogin=$('#btnLogin'), btnLogout=$('#btnLogout'), btnProfile=$('#btnProfile'), btnMyPosts=$('#btnMyPosts'), avatarImg=$('#avatarImg'), userNameLabel=$('#userNameLabel');
   userBtn.addEventListener('click',()=> menuPanel.style.display = (menuPanel.style.display==='block'?'none':'block'));
   document.addEventListener('click',(e)=>{ if(!$('#userMenu').contains(e.target)) menuPanel.style.display='none' });
@@ -312,11 +304,21 @@
   async function signInWithGoogle(){ const provider=new firebase.auth.GoogleAuthProvider(); provider.setCustomParameters({prompt:'select_account'}); try{ await auth.signInWithPopup(provider) }catch(err){ if(String(err?.message||'').includes('popup')) await auth.signInWithRedirect(provider); else throw err } }
   btnLogin.addEventListener('click', async ()=>{ try{ await signInWithGoogle(); toast('✅ Kirildi'); menuPanel.style.display='none' }catch(e){ toast('❌ Kirish xatosi: '+e.message) } });
   btnLogout.addEventListener('click', async ()=>{ try{ await auth.signOut(); await ensureAuth(); toast('👋 Chiqildi'); menuPanel.style.display='none' }catch(e){ toast('❌ Chiqish xatosi: '+e.message) } });
-  btnProfile.addEventListener('click', ()=>{ menuPanel.style.display='none'; navigate('profile') });
-  btnMyPosts.addEventListener('click', ()=>{ menuPanel.style.display='none'; navigate('mine') });
+
   auth.onAuthStateChanged(async (u)=>{
-    if(u?.isAnonymous){ userNameLabel.textContent='Anon'; avatarImg.src=avatarImg.src }
-    if(u && !u.isAnonymous){ userNameLabel.textContent=u.displayName||u.email||'Foydalanuvchi'; if(u.photoURL) avatarImg.src=u.photoURL; const ref=db.collection('users').doc(u.uid); const snap=await ref.get(); if(!snap.exists){ await ref.set({uid:u.uid,name:u.displayName||'',email:u.email||'',photo:u.photoURL||'',city:'',phone:'',bio:'',created:Date.now(),updated:Date.now()}) } else { await ref.set({email:u.email||'',photo:u.photoURL||'',updated:Date.now()},{merge:true}) } }
+    if(u?.isAnonymous){ userNameLabel.textContent='Anon'; }
+    if(u && !u.isAnonymous){
+      userNameLabel.textContent=u.displayName||u.email||'Foydalanuvchi';
+      if(u.photoURL) avatarImg.src=u.photoURL;
+      const ref=db.collection('users').doc(u.uid);
+      const snap=await ref.get();
+      if(!snap.exists){ await ref.set({uid:u.uid,name:u.displayName||'',email:u.email||'',photo:u.photoURL||'',city:'',phone:'',bio:'',created:now(),updated:now()}) }
+      else{ await ref.set({email:u.email||'',photo:u.photoURL||'',updated:now()},{merge:true}) }
+      // Bildirishnoma ruxsati (post-chat uchun)
+      if(Notification && Notification.permission==='default'){ try{ await Notification.requestPermission(); }catch{} }
+      // O'z e'lonlaridagi chatlarga kuzatuvni yoqish
+      subscribeMyPostChats();
+    }
   });
 
   /* ===== Realtime posts ===== */
@@ -328,7 +330,8 @@
     if(currentView==='mine') renderMine();
   },err=>toast("Firestore xato: "+err.message));
 
-  /* ===== Image compress + upload (FIXED) ===== */
+  /* ===== Image compress + upload (robust) ===== */
+  function blobToFile(blob, filename){ return new File([blob], filename, {type: blob.type||'image/jpeg', lastModified: Date.now()}); }
   async function compressImage(file, maxW=1600, quality=0.85){
     return new Promise((resolve)=>{
       if(!file || !file.type.startsWith('image/')) return resolve(null);
@@ -339,7 +342,7 @@
         const scale=Math.min(1, maxW/img.width); 
         canvas.width=Math.round(img.width*scale); canvas.height=Math.round(img.height*scale);
         const ctx=canvas.getContext('2d'); ctx.drawImage(img,0,0,canvas.width,canvas.height);
-        canvas.toBlob(b=>resolve(b||file),'image/jpeg',quality);
+        canvas.toBlob(b=>resolve(b),'image/jpeg',quality);
       }; img.src=fr.result; };
       fr.readAsDataURL(file);
     });
@@ -351,7 +354,6 @@
       const prc=Math.round((snap.bytesTransferred/snap.totalBytes)*100);
       setProg(prefix, prc<100?prc:0);
     });
-    // UploadTask v9-compat thenable — await ishlaydi; agar ishlamasa, catch’da fallback bor
     await task;
     const url=await ref.getDownloadURL();
     setProg(prefix,0);
@@ -360,29 +362,28 @@
   async function getPhotoURL(file, prefix){
     if(!file) return null;
     try{
-      await ensureAuth(); // anon yozishga ruxsat uchun
-      const small=await compressImage(file);
-      const useFile = small || file;
-      const safeName=(file.name||'photo').replace(/[^a-z0-9_.-]/gi,'_');
+      await ensureAuth();
+      const smallBlob = await compressImage(file);
+      const useFile = smallBlob ? blobToFile(smallBlob, (file.name||'photo').replace(/[^a-z0-9_.-]/gi,'_')) : file;
+      const safeName=(useFile.name||'photo.jpg').replace(/[^a-z0-9_.-]/gi,'_');
       const path=`uploads/${(auth.currentUser?.uid||'anon')}/${Date.now()}_${safeName}`;
       return await uploadToStorage(useFile, path, prefix);
     }catch(e){
       console.warn('Storage upload failed, fallback to dataURL', e);
-      // Fallback — Storage ishlamasa ham rasm bo‘lsin
       setProg(prefix,0);
-      const fr=new FileReader();
-      return new Promise((res)=>{ fr.onload=()=>res(fr.result); fr.readAsDataURL(file) });
+      return new Promise((res)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.readAsDataURL(file) });
     }
   }
 
   /* ===== Submit LOST/FOUND ===== */
   function rewardNum(){ return parseInt(onlyDigits(val('l_reward')||'0'),10)||0 }
+
   $('#btnLost').addEventListener('click', async ()=>{
     const p={
       kind:'lost',
       item:val('l_item'), city:val('l_city'), place:val('l_place'), date:val('l_date'),
       contact:val('l_contact'), reward:rewardNum(), notes:val('l_notes'),
-      uid:(auth.currentUser?.uid)||'anon', created:Date.now(), authorName:auth.currentUser?.displayName||'', authorEmail:auth.currentUser?.email||''
+      uid:(auth.currentUser?.uid)||'anon', created:now(), authorName:auth.currentUser?.displayName||'', authorEmail:auth.currentUser?.email||''
     };
     if(!p.item||!p.city||!p.contact) return toast('Shahar va aloqa majburiy');
     if(!phoneOk(p.contact)) return toast('Telefon formati noto‘g‘ri');
@@ -398,7 +399,7 @@
       kind:'found',
       item:val('f_item'), city:val('f_city'), place:val('f_place'), date:val('f_date'),
       contact:val('f_contact'), reward:0, notes:val('f_notes'),
-      uid:(auth.currentUser?.uid)||'anon', created:Date.now(), authorName:auth.currentUser?.displayName||'', authorEmail:auth.currentUser?.email||''
+      uid:(auth.currentUser?.uid)||'anon', created:now(), authorName:auth.currentUser?.displayName||'', authorEmail:auth.currentUser?.email||''
     };
     if(!p.item||!p.city||!p.contact) return toast('Shahar va aloqa majburiy');
     if(!phoneOk(p.contact)) return toast('Telefon formati noto‘g‘ri');
@@ -435,49 +436,79 @@
       </div>
     `;
   }
-  function applyHomeFilters(arr){
-    const q=($('#qSearch').value||'').toLowerCase();
-    const kind=$('#qKind').value||'';
-    const city=($('#qCity').value||'').toLowerCase();
-    return arr.filter(p=>{
-      const txt=[p.item,p.notes,p.city,p.place,p.contact].join(' ').toLowerCase();
-      const okQ=!q || txt.includes(q);
-      const okK=!kind || p.kind===kind;
-      const okC=!city || String(p.city||'').toLowerCase().includes(city);
-      return okQ && okK && okC;
-    });
-  }
-  function renderLost(){ const el=$('#lost_list'); const arr=applyHomeFilters(ALL_POSTS.filter(p=>p.kind==='lost')); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—' }
-  function renderFound(){ const el=$('#found_list'); const arr=applyHomeFilters(ALL_POSTS.filter(p=>p.kind==='found')); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—' }
+  function renderLost(){ const el=$('#lost_list'); const arr=ALL_POSTS.filter(p=>p.kind==='lost'); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—' }
+  function renderFound(){ const el=$('#found_list'); const arr=ALL_POSTS.filter(p=>p.kind==='found'); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—' }
   function renderMine(){ const el=$('#mine_list'); const uid=auth.currentUser?.uid||'anon'; const arr=ALL_POSTS.filter(p=>p.uid===uid); el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—' }
-  $('#qSearch').addEventListener('input', ()=>{ if(currentView==='lostList') renderLost(); if(currentView==='foundList') renderFound(); });
-  $('#qKind').addEventListener('change', ()=>{ if(currentView==='lostList') renderLost(); if(currentView==='foundList') renderFound(); });
-  $('#qCity').addEventListener('input', ()=>{ if(currentView==='lostList') renderLost(); if(currentView==='foundList') renderFound(); });
 
-  /* ===== Actions ===== */
+  /* ===== Share / Edit / Delete / Report ===== */
   window.sharePost=async function(item, city, id){ if(!navigator.share) return; const url=location.origin+location.pathname+'#postChat-'+id; try{ await navigator.share({title:'BINGO: '+item, text:`${item} · ${city}`, url}) }catch{} }
-  window.reportPost=async function(id){ const reason=prompt('Shikoyat sababi (ixtiyoriy):',''); await db.collection('posts').doc(id).collection('reports').add({by:auth.currentUser?.uid||'anon',reason:reason||'',ts:Date.now()}); toast('🚩 Shikoyat yuborildi') }
+  window.reportPost=async function(id){ const reason=prompt('Shikoyat sababi (ixtiyoriy):',''); await db.collection('posts').doc(id).collection('reports').add({by:auth.currentUser?.uid||'anon',reason:reason||'',ts:now()}); toast('🚩 Shikoyat yuborildi') }
   window.delPost=async function(id){ const p=ALL_POSTS.find(x=>x.id===id); if(!p) return; const u=auth.currentUser?.uid||'anon'; if(p.uid!==u) return toast('⛔ Sizning e’loningiz emas'); if(!confirm('Ushbu e’lon o‘chirilsinmi?')) return; await db.collection('posts').doc(id).delete(); const chats=await db.collection('posts').doc(id).collection('chats').get(); const batch=db.batch(); chats.forEach(d=>batch.delete(d.ref)); await batch.commit(); toast('🗑️ O‘chirildi'); renderMine() }
-  async function editPost(id){ const doc=await db.collection('posts').doc(id).get(); if(!doc.exists) return; const p=doc.data(); if(p.uid!==(auth.currentUser?.uid||'anon')) return toast('⛔ Sizning e’loningiz emas'); const item=prompt('Narsa:',p.item||''); if(item===null) return; const city=prompt('Shahar:',p.city||''); if(city===null) return; const contact=prompt('Aloqa:',p.contact||''); if(contact===null) return; const notes=prompt('Qo‘shimcha:',p.notes||''); if(notes===null) return; let reward=p.reward||0; if(p.kind==='lost'){ const r=prompt('Mukofot (so‘m):', String(reward||'')); if(r===null) return; reward=parseInt(onlyDigits(r),10)||0 } await db.collection('posts').doc(id).update({item,city,contact,notes,reward,updated:Date.now()}); toast('✏️ Yangilandi') }
+  async function editPost(id){ const doc=await db.collection('posts').doc(id).get(); if(!doc.exists) return; const p=doc.data(); if(p.uid!==(auth.currentUser?.uid||'anon')) return toast('⛔ Sizning e’loningiz emas'); const item=prompt('Narsa:',p.item||''); if(item===null) return; const city=prompt('Shahar:',p.city||''); if(city===null) return; const contact=prompt('Aloqa:',p.contact||''); if(contact===null) return; const notes=prompt('Qo‘shimcha:',p.notes||''); if(notes===null) return; let reward=p.reward||0; if(p.kind==='lost'){ const r=prompt('Mukofot (so‘m):', String(reward||'')); if(r===null) return; reward=parseInt(onlyDigits(r),10)||0 } await db.collection('posts').doc(id).update({item,city,contact,notes,reward,updated:now()}); toast('✏️ Yangilandi') }
   window.editPost=editPost;
   $('#clearMineBtn').addEventListener('click', async ()=>{ const u=auth.currentUser?.uid||'anon'; if(!confirm('Barcha shaxsiy e’lonlarni o‘chirish?')) return; const mine=ALL_POSTS.filter(p=>p.uid===u); const batch=db.batch(); mine.forEach(p=>batch.delete(db.collection('posts').doc(p.id))); await batch.commit(); toast('🧹 Tozalandi'); renderMine() });
 
   /* ===== Chat ===== */
   function logEmpty(){return '<div class="tiny">Xabarlar yo‘q.</div>'}
   window.openChat=function(postId, keep){ const post=ALL_POSTS.find(p=>p.id===postId); if(!post) return; currentChatPostId=postId; $('#chatItemName').textContent=post.item; if(unsubChat) unsubChat(); unsubChat=db.collection('posts').doc(postId).collection('chats').orderBy('ts').onSnapshot(s=>{ const log=$('#chatLog'); const arr=s.docs.map(d=>d.data()); log.innerHTML = arr.length?arr.map(m=>`<div style="padding:8px;border-radius:10px;margin:6px 0;background:${m.uid===(auth.currentUser?.uid||'anon')?'#e8f0fe':'#f1f5f9'}"><b>${esc(m.name||'Anon')}</b> <span class="tiny">· ${new Date(m.ts).toLocaleTimeString()}</span><div>${esc(m.text)}</div></div>`).join(''):logEmpty(); log.scrollTop=log.scrollHeight }, e=>toast('Chat xato: '+e.message)); if(!keep) navigate('postChat') }
-  $('#sendChatBtn').addEventListener('click',()=>{ if(!currentChatPostId) return; const name=($('#chatName').value.trim()||auth.currentUser?.displayName||'Anon'); const text=$('#chatText').value.trim(); if(!text) return; if(/\+?\d[\d\s\-()]{6,}/.test(text)) toast('⚠️ Telefonni chatga yozmang. Postdagi aloqa orqali bog‘laning.'); db.collection('posts').doc(currentChatPostId).collection('chats').add({name,uid:(auth.currentUser?.uid)||'anon',text,ts:Date.now()}).then(()=>{$('#chatText').value=''}).catch(e=>toast('Chat yozish xato: '+e.message)) });
+  $('#sendChatBtn').addEventListener('click',()=>{ if(!currentChatPostId) return; const name=($('#chatName').value.trim()||auth.currentUser?.displayName||'Anon'); const text=$('#chatText').value.trim(); if(!text) return; if(/\+?\d[\d\s\-()]{6,}/.test(text)) toast('⚠️ Telefonni chatga yozmang. Postdagi aloqa orqali bog‘laning.'); db.collection('posts').doc(currentChatPostId).collection('chats').add({name,uid:(auth.currentUser?.uid)||'anon',text,ts:now()}).then(()=>{$('#chatText').value=''}).catch(e=>toast('Chat yozish xato: '+e.message)) });
+
+  /* ===== Owner notifications (LOCAL, sahifa ochiq bo‘lsa) ===== */
+  let myChatUnsubs=[];
+  async function subscribeMyPostChats(){
+    // Avvalgi kuzatuvlarni tozalash
+    myChatUnsubs.forEach(fn=>{try{fn()}catch{}}); myChatUnsubs=[];
+    const u=auth.currentUser; if(!u || u.isAnonymous) return;
+    // Mening e'lonlarimni olamiz
+    const myPostsSnap = await db.collection('posts').where('uid','==',u.uid).get();
+    myPostsSnap.forEach(doc=>{
+      // Har bir post uchun chatlarni real vaqt kuzatamiz
+      const postId = doc.id;
+      const unsub = db.collection('posts').doc(postId).collection('chats')
+        .orderBy('ts','desc').limit(1)
+        .onSnapshot(s=>{
+          s.docChanges().forEach(ch=>{
+            if(ch.type!=='added') return;
+            const m = ch.doc.data();
+            if(!m || m.uid===u.uid) return; // o'zi yozganiga signal bermaymiz
+            try{
+              if(Notification && Notification.permission==='granted'){
+                const n = new Notification('✉️ Yangi xabar', {
+                  body: `${m.name||'Anon'}: ${m.text||''}`,
+                  icon: doc.data().photo||undefined
+                });
+                n.onclick = ()=>{ openChat(postId); window.focus(); };
+              }
+            }catch{}
+          });
+        }, ()=>{});
+      myChatUnsubs.push(unsub);
+    });
+  }
 
   /* ===== Profile ===== */
   const profileAvatar=$('#profileAvatar'), profileName=$('#profileName'), profileEmail=$('#profileEmail'), profilePhone=$('#profilePhone'), profileCity=$('#profileCity'), profileBio=$('#profileBio'), btnChangePhoto=$('#btnChangePhoto'), profilePhotoFile=$('#profilePhotoFile'), btnSaveProfile=$('#btnSaveProfile');
   function loadProfileForm(){ if(!auth.currentUser){ profileAvatar.src='https://via.placeholder.com/120x120?text=Anon'; profileName.value=''; profileEmail.value=''; profilePhone.value=''; profileCity.value=''; profileBio.value=''; return } const u=auth.currentUser; db.collection('users').doc(u.uid).get().then(s=>{ const d=s.data()||{}; profileAvatar.src=d.photo||u.photoURL||'https://via.placeholder.com/120x120?text=Me'; profileName.value=d.name||u.displayName||''; profileEmail.value=d.email||u.email||''; profilePhone.value=d.phone||''; profileCity.value=d.city||''; profileBio.value=d.bio||''; }).catch(()=>{}) }
   btnChangePhoto.addEventListener('click', ()=>profilePhotoFile.click());
-  profilePhotoFile.addEventListener('change', async ()=>{ const file=profilePhotoFile.files?.[0]; if(!file) return; try{ const url=await getPhotoURL(file,'profile'); if(auth.currentUser) await db.collection('users').doc(auth.currentUser.uid).set({photo:url,updated:Date.now()},{merge:true}); profileAvatar.src=url; avatarImg.src=url; toast('📷 Rasm yangilandi') }catch(e){ toast('Rasm xato: '+e.message) } });
-  btnSaveProfile.addEventListener('click', async ()=>{ if(!auth.currentUser) return toast('Kirish talab qilinadi'); try{ await db.collection('users').doc(auth.currentUser.uid).set({ uid:auth.currentUser.uid, name:profileName.value.trim(), email:profileEmail.value.trim()||auth.currentUser.email||'', phone:profilePhone.value.trim(), city:profileCity.value.trim(), bio:profileBio.value.trim(), photo:profileAvatar.src||auth.currentUser.photoURL||'', updated:Date.now() },{merge:true}); toast('💾 Saqlandi') }catch(e){ toast('Saqlash xato: '+e.message) } });
+  profilePhotoFile.addEventListener('change', async ()=>{ const file=profilePhotoFile.files?.[0]; if(!file) return; try{ const url=await getPhotoURL(file,'profile'); if(auth.currentUser) await db.collection('users').doc(auth.currentUser.uid).set({photo:url,updated:now()},{merge:true}); profileAvatar.src=url; avatarImg.src=url; toast('📷 Rasm yangilandi') }catch(e){ toast('Rasm xato: '+e.message) } });
+  btnSaveProfile.addEventListener('click', async ()=>{ if(!auth.currentUser) return toast('Kirish talab qilinadi'); try{ await db.collection('users').doc(auth.currentUser.uid).set({ uid:auth.currentUser.uid, name:profileName.value.trim(), email:profileEmail.value.trim()||auth.currentUser.email||'', phone:profilePhone.value.trim(), city:profileCity.value.trim(), bio:profileBio.value.trim(), photo:profileAvatar.src||auth.currentUser.photoURL||'', updated:now() },{merge:true}); toast('💾 Saqlandi') }catch(e){ toast('Saqlash xato: '+e.message) } });
 
   /* ===== Net badge ===== */
   const netBadge=$('#netBadge');
   function setNet(on){ netBadge.style.display='block'; netBadge.textContent=on?'Onlayn':'Offline (kesh)'; clearTimeout(setNet._t); setNet._t=setTimeout(()=>netBadge.style.display='none',1500) }
   window.addEventListener('online', ()=>setNet(true)); window.addEventListener('offline',()=>setNet(false)); setNet(navigator.onLine);
   </script>
+
+  <!-- Storage rules (Firebase Console > Storage > Rules) uchun eskiz:
+  rules_version = '2';
+  service firebase.storage {
+    match /b/{bucket}/o {
+      match /uploads/{userId}/{allPaths=**} {
+        allow read: if true;
+        allow write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+  -->
 </body>
-  </html>
+      </html>
