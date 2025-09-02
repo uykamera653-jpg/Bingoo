@@ -4,73 +4,150 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>BINGO — Admin Panel</title>
+<meta name="theme-color" content="#0b1220"/>
+
 <style>
-  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto;background:#0b1220;color:#e5eef7}
-  .wrap{max-width:1100px;margin:0 auto;padding:16px}
-  .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-  .btn{background:#1e293b;border:1px solid #334155;color:#e5eef7;padding:8px 12px;border-radius:10px;cursor:pointer;font-size:14px}
-  .btn:hover{opacity:.9}
-  .btn-red{background:#b91c1c;border-color:#fecaca}
-  .btn-green{background:#065f46;border-color:#34d399}
-  .btn-blue{background:#1e40af;border-color:#60a5fa}
-  .card{background:#0f172a;border:1px solid #223047;border-radius:14px;padding:12px;margin:16px 0}
-  .row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:10px;align-items:center}
-  .head{font-weight:800;opacity:.8}
-  .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #334155;margin-right:6px}
-  h2,h3{margin:8px 0}
+  :root{
+    --bg:#0b1220; --panel:#0f172a; --ring:#223047; --ink:#e5eef7;
+    --muted:#94a3b8; --accent:#1e293b; --ok:#065f46; --danger:#b91c1c; --warn:#a16207; --line:#334155;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
+  body{background:var(--bg);color:var(--ink)}
+  a{color:#93c5fd;text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto;padding:16px}
+  .top{display:flex;gap:10px;justify-content:space-between;align-items:center}
+  .left{display:flex;gap:10px;align-items:center}
+  .brand{display:flex;gap:10px;align-items:center}
+  .logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:#122037;border:1px solid var(--line);font-weight:900}
+  .title{font-weight:900;letter-spacing:.3px}
+  .btn{background:var(--accent);border:1px solid var(--line);color:var(--ink);padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+  .btn:hover{opacity:.95}
+  .btn-red{background:var(--danger);border-color:#fecaca}
+  .btn-green{background:var(--ok);border-color:#34d399}
+  .btn-warn{background:#1f2937;border-color:#facc15}
+  .btn-ghost{background:transparent;border:1px dashed var(--line);color:#cbd5e1}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:#cbd5e1}
+  .grid{display:grid;gap:12px}
+  .two{grid-template-columns:1fr 1fr}
+  .card{background:var(--panel);border:1px solid var(--ring);border-radius:14px;padding:12px}
+  .h3{margin:0 0 8px;font-size:18px;font-weight:800}
+  .muted{color:var(--muted);font-size:13px}
+  .row{display:grid;grid-template-columns:2fr 1fr 1.2fr 0.7fr 1.2fr;gap:10px;align-items:center}
+  .head{font-weight:800;opacity:.9}
+  .item{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}
+  .tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  input,select{background:#0b1220;border:1px solid var(--line);color:#e5eef7;border-radius:10px;padding:10px 12px}
+  input::placeholder{color:#8aa0b8}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+  .toolbar .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .stat{display:flex;gap:10px;flex-wrap:wrap}
+  .stat .chip{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+  code{background:#0b1220;border:1px solid var(--line);padding:1px 6px;border-radius:6px}
+  .danger{color:#fecaca}
+  .ok{color:#86efac}
+  .warn{color:#fde68a}
+  .small{font-size:12px;opacity:.85}
+  .center-toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);
+    background:#065f46;color:#fff;padding:14px 18px;border-radius:14px;font-weight:900;z-index:9999;opacity:0;transition:.18s}
+  .center-toast.err{background:#b91c1c}
+  .center-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .hint{font-size:12px;color:#94a3b8}
+  .list-empty{opacity:.8;padding:8px 0}
+  .footnote{margin-top:6px;color:#9fb0c5;font-size:12px}
+  .hr{height:1px;background:var(--line);margin:12px 0;border-radius:1px}
+  .select-all{display:flex;align-items:center;gap:6px}
+  .checkbox{width:18px;height:18px}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <!-- HEADER -->
   <div class="top">
-    <h2>🛡️ BINGO Admin Panel</h2>
-    <div>
-      <button id="goSite" class="btn btn-blue">↩️ Saytga qaytish</button>
+    <div class="left">
+      <div class="brand">
+        <div class="logo">BG</div>
+        <div>
+          <div class="title">BINGO — Admin Panel</div>
+          <div id="who" class="muted small">Tekshirilmoqda…</div>
+        </div>
+      </div>
+    </div>
+    <div class="tools">
+      <button id="goSite" class="btn">↩️ Saytga qaytish</button>
       <button id="signOut" class="btn btn-red">Chiqish</button>
     </div>
   </div>
 
-  <div id="who" class="pill">—</div>
-
-  <!-- Statistika -->
-  <div class="card">
-    <h3>📊 Statistika</h3>
-    <div id="stats">Yuklanmoqda…</div>
-  </div>
-
-  <!-- E’lonlar -->
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h3>📋 E’lonlar</h3>
-      <div>
+  <!-- STAT & FILTER BAR -->
+  <div class="card" style="margin-top:12px">
+    <div class="toolbar">
+      <div class="filters">
         <button id="refresh" class="btn">🔄 Yangilash</button>
-        <select id="filter" class="btn">
+        <select id="filter" title="Filtr">
           <option value="all">Hammasi</option>
-          <option value="lost">Yo‘qotilgan</option>
-          <option value="found">Topilgan</option>
-          <option value="reward">Mukofotli</option>
+          <option value="lost">❗ Yo‘qotilgan</option>
+          <option value="found">✅ Topilgan</option>
+          <option value="reward">🎁 Mukofotli</option>
+          <option value="closed">🛑 Yopiq</option>
         </select>
+        <input id="search" placeholder="Qidirish: narsa, shahar, joy, izoh, aloqa, UID/ism/email" style="min-width:340px"/>
+      </div>
+      <div class="tools">
+        <label class="select-all"><input type="checkbox" id="checkAll" class="checkbox"> Hammasini belgilash</label>
+        <button id="bulkDelete" class="btn btn-red">🗑️ Belgilanganlarni o‘chirish</button>
       </div>
     </div>
+    <div class="stat" style="margin-top:10px">
+      <div id="statAll"   class="chip">Umumiy: —</div>
+      <div id="statLost"  class="chip">❗ Yo‘qotilgan: —</div>
+      <div id="statFound" class="chip">✅ Topilgan: —</div>
+      <div id="statReward"class="chip">🎁 Mukofotli: —</div>
+      <div id="statClosed"class="chip">🛑 Yopiq: —</div>
+      <div id="statTime"  class="chip">⏱️ Yangilandi: —</div>
+    </div>
+  </div>
 
-    <div class="row head" style="margin-top:10px">
-      <div>Narsa / Joy</div><div>Tur</div><div>Foydalanuvchi</div><div>Mukofot</div><div>Amallar</div>
+  <!-- POSTS LIST -->
+  <div class="card">
+    <div class="row head">
+      <div>Narsa / joy / vaqt</div>
+      <div>Tur</div>
+      <div>Foydalanuvchi</div>
+      <div>Mukofot</div>
+      <div>Amallar</div>
     </div>
     <div id="list">Yuklanmoqda…</div>
+    <div class="footnote">Eslatma: “O‘chirish” tugmasi e’lonni va unga tegishli barcha chat xabarlarini o‘chiradi.</div>
   </div>
 
-  <!-- Bildirishnomalar -->
-  <div class="card">
-    <h3>🔔 Bildirishnomalar (so‘nggi 30)</h3>
-    <div id="alerts">—</div>
+  <div class="grid two">
+    <!-- USERS -->
+    <div class="card">
+      <div class="h3">👥 Foydalanuvchilar</div>
+      <div id="users">—</div>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="card">
+      <div class="h3">🔔 Bildirishnomalar (so‘nggi 50)</div>
+      <div id="alerts">—</div>
+    </div>
   </div>
 </div>
+
+<!-- TOAST -->
+<div id="toast" class="center-toast"></div>
 
 <!-- Firebase (compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
 <script>
+/* ===========================
+   CONFIG — sizning mavjud config’ingiz
+   =========================== */
 const firebaseConfig={
   apiKey:"AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
   authDomain:"topildi.firebaseapp.com",
@@ -85,60 +162,139 @@ firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 const auth=firebase.auth();
 
+/* ===========================
+   HELPERS
+   =========================== */
 const $=s=>document.querySelector(s);
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function toast(msg,err=false){
+  const t=$('#toast'); t.textContent=msg; t.className='center-toast'+(err?' err':''); 
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1600);
+}
+function fmt(n){return Number(n).toLocaleString('uz-UZ')}
+function nowStr(){return new Date().toLocaleString()}
 
-// Guard: faqat admin
+/* ===========================
+   AUTH GUARD — faqat admin
+   =========================== */
+let ME=null, IS_ADMIN=false;
 auth.onAuthStateChanged(async u=>{
   if(!u){ location.href='./'; return; }
-  $('#who').textContent=(u.displayName||u.email||u.uid)+' (admin tekshirilmoqda…)';
+  $('#who').innerHTML = `<b>${esc(u.displayName||u.email||u.uid)}</b> · tekshirilmoqda…`;
   try{
     const r=await db.collection('rules').doc(u.uid).get();
     if(!(r.exists && r.data().admin===true)){ location.href='./'; return; }
-    $('#who').textContent=(u.displayName||u.email||u.uid)+' · 🛡️ admin';
-    loadStats(); loadPosts(); loadAlerts();
-  }catch{ location.href='./'; }
+    IS_ADMIN=true; ME=u;
+    $('#who').innerHTML = `<b>${esc(u.displayName||u.email||u.uid)}</b> · 🛡️ admin`;
+    loadAll();
+  }catch(e){ location.href='./'; }
 });
-
 $('#signOut').onclick=()=>auth.signOut().then(()=>location.href='./');
 $('#goSite').onclick=()=>location.href='./';
-$('#refresh').onclick=()=>loadPosts();
-$('#filter').onchange=()=>loadPosts();
 
-// Statistika
-async function loadStats(){
-  const all=await db.collection('posts').get();
-  const lost=all.docs.filter(d=>d.data().kind==='lost').length;
-  const found=all.docs.filter(d=>d.data().kind==='found').length;
-  const reward=all.docs.filter(d=>(d.data().reward||0)>0).length;
-  $('#stats').innerHTML=`
-    Umumiy e’lonlar: <b>${all.size}</b><br>
-    ❗ Yo‘qotilgan: <b>${lost}</b> · ✅ Topilgan: <b>${found}</b> · 🎁 Mukofotli: <b>${reward}</b>
+/* ===========================
+   LOADERS
+   =========================== */
+let CACHE={posts:[], users:[], alerts:[]};
+async function loadAll(){
+  try{
+    const [p,u,a]=await Promise.all([
+      db.collection('posts').orderBy('created','desc').limit(800).get(),
+      db.collection('users').orderBy('lastLogin','desc').limit(400).get(),
+      db.collection('alerts').orderBy('ts','desc').limit(50).get()
+    ]);
+    CACHE.posts=p.docs.map(d=>({id:d.id,...d.data()}));
+    CACHE.users=u.docs.map(d=>({id:d.id,...d.data()}));
+    CACHE.alerts=a.docs.map(d=>({id:d.id,...d.data()}));
+    renderStats(); renderPosts(); renderUsers(); renderAlerts();
+    $('#statTime').textContent='⏱️ Yangilandi: '+nowStr();
+  }catch(e){ toast('Yuklash xatosi: '+e.message,true); }
+}
+$('#refresh').onclick=loadAll;
+
+/* ===========================
+   STATS
+   =========================== */
+function renderStats(){
+  const arr=CACHE.posts;
+  const lost=arr.filter(p=>p.kind==='lost').length;
+  const found=arr.filter(p=>p.kind==='found').length;
+  const reward=arr.filter(p=>(p.reward||0)>0).length;
+  const closed=arr.filter(p=>p.closed===true).length;
+  $('#statAll').textContent='Umumiy: '+fmt(arr.length);
+  $('#statLost').textContent='❗ Yo‘qotilgan: '+fmt(lost);
+  $('#statFound').textContent='✅ Topilgan: '+fmt(found);
+  $('#statReward').textContent='🎁 Mukofotli: '+fmt(reward);
+  $('#statClosed').textContent='🛑 Yopiq: '+fmt(closed);
+}
+
+/* ===========================
+   POSTS RENDER + SEARCH/FILTER
+   =========================== */
+$('#filter').onchange=renderPosts;
+$('#search').oninput=()=>{ renderPosts(); };
+$('#checkAll').onchange=()=>{ 
+  const on=$('#checkAll').checked; document.querySelectorAll('.chk').forEach(c=>c.checked=on);
+};
+
+function matchesQuery(p,q){
+  const f=[p.item,p.city,p.place,p.notes,p.contact,p.uid,p.authorName,p.authorEmail].join(' ').toLowerCase();
+  return f.includes(q);
+}
+
+function renderPosts(){
+  let arr=CACHE.posts.slice();
+  const f=$('#filter').value;
+  const q=$('#search').value.trim().toLowerCase();
+  if(f==='lost')   arr=arr.filter(p=>p.kind==='lost');
+  if(f==='found')  arr=arr.filter(p=>p.kind==='found');
+  if(f==='reward') arr=arr.filter(p=>(p.reward||0)>0);
+  if(f==='closed') arr=arr.filter(p=>p.closed===true);
+  if(q) arr=arr.filter(p=>matchesQuery(p,q));
+  const html = arr.length? arr.map(p=>rowPost(p)).join('') : `<div class="list-empty">— Topilmadi —</div>`;
+  $('#list').innerHTML=html;
+}
+
+function rowPost(p){
+  const kind = p.kind==='lost' ? '❗Yo‘qotilgan' : '✅Topilgan';
+  const badge = [
+    p.closed?'<span class="pill">🛑 yopiq</span>':'',
+    (p.reward||0)>0?'<span class="pill">🎁+</span>':''
+  ].join(' ');
+  return `
+    <div class="row item">
+      <div>
+        <label style="display:flex;align-items:start;gap:8px">
+          <input type="checkbox" class="chk" value="${p.id}"/>
+          <div>
+            <b>${esc(p.item)}</b> ${badge}<br/>
+            <span class="muted">${esc(p.city||'-')} · ${esc(p.place||'-')}</span><br/>
+            <span class="small" style="opacity:.8">${new Date(p.created||0).toLocaleString()}</span>
+          </div>
+        </label>
+      </div>
+      <div>${kind}</div>
+      <div>
+        ${esc(p.authorName||'—')}<br/>
+        <span class="small" style="opacity:.8">${esc(p.authorEmail||'')}</span><br/>
+        <code class="small">${esc(p.uid||'')}</code>
+      </div>
+      <div>${(p.reward||0)>0? (fmt(p.reward)+' so‘m'):'—'}</div>
+      <div class="tools">
+        <button class="btn" onclick="openChat('${p.id}')">💬 Chat</button>
+        <button class="btn btn-warn" onclick="toggleClose('${p.id}', ${!!p.closed})">${p.closed?'🟢 Ochish':'🛑 Yopish'}</button>
+        <button class="btn btn-red" onclick="delPost('${p.id}')">🗑️ O‘chirish</button>
+      </div>
+    </div>
   `;
 }
 
-// E’lonlar
-async function loadPosts(){
-  $('#list').innerHTML='Yuklanmoqda…';
-  let q=db.collection('posts').orderBy('created','desc').limit(200);
-  const f=$('#filter').value;
-  if(f==='lost') q=db.collection('posts').where('kind','==','lost').orderBy('created','desc');
-  if(f==='found') q=db.collection('posts').where('kind','==','found').orderBy('created','desc');
-  if(f==='reward') q=db.collection('posts').where('reward','>',0).orderBy('reward','desc');
-  const s=await q.get();
-  $('#list').innerHTML=s.docs.map(d=>{
-    const p=d.data();
-    return `<div class="row" style="border-top:1px solid #223047;padding-top:6px;margin-top:6px">
-      <div><b>${esc(p.item)}</b><br><span style="opacity:.8">${esc(p.city||'-')} · ${esc(p.place||'-')}</span></div>
-      <div>${p.kind==='lost'?'❗Yo‘qotilgan':'✅Topilgan'}</div>
-      <div>${esc(p.uid||'-')}</div>
-      <div>${p.reward?Number(p.reward).toLocaleString()+' so‘m':'—'}</div>
-      <div>
-        <button class="btn btn-green" onclick="openChat('${d.id}')">💬 Chat</button>
-        <button class="btn btn-red" onclick="delPost('${d.id}')">🗑️ O‘chirish</button>
-      </div>
-    </div>`;
-  }).join('') || '—';
+/* ===========================
+   POST ACTIONS
+   =========================== */
+async function toggleClose(id,closed){
+  try{ await db.collection('posts').doc(id).set({closed:!closed},{merge:true}); toast('Holat yangilandi'); loadAll(); }
+  catch(e){ toast('Xato: '+e.message,true); }
 }
 
 async function delPost(id){
@@ -147,23 +303,61 @@ async function delPost(id){
     await db.collection('posts').doc(id).delete();
     const sub=await db.collection('posts').doc(id).collection('chats').get();
     const batch=db.batch(); sub.forEach(doc=>batch.delete(doc.ref)); await batch.commit();
-    loadPosts(); loadStats();
-  }catch(e){ alert('Xato: '+e.message); }
+    toast('🗑️ O‘chirildi'); loadAll();
+  }catch(e){ toast('Xato: '+e.message,true); }
 }
 
-function openChat(id){ location.href='./#postChat-'+id; }
+window.delPost=delPost;
+window.toggleClose=toggleClose;
+window.openChat=function(id){ location.href='./#postChat-'+id; };
 
-// Bildirishnomalar logi
-async function loadAlerts(){
-  const s=await db.collection('alerts').orderBy('ts','desc').limit(30).get();
-  $('#alerts').innerHTML=s.docs.map(d=>{
-    const a=d.data();
-    return `<div style="border-top:1px solid #223047;padding:6px 0">
-      ${new Date(a.ts||Date.now()).toLocaleString()} · <b>${esc(a.item||'Post')}</b><br>
-      to=<code>${esc(a.to||'')}</code>, from=<code>${esc(a.from||'')}</code><br>
-      <i>${esc(a.text||'')}</i>
-    </div>`;
-  }).join('') || '—';
+/* ===========================
+   BULK DELETE
+   =========================== */
+$('#bulkDelete').onclick=async ()=>{
+  const ids=[...document.querySelectorAll('.chk:checked')].map(c=>c.value);
+  if(!ids.length){ toast('Hech narsa tanlanmadi',true); return; }
+  if(!confirm('Belgilangan '+ids.length+' ta e’lonni o‘chirilsinmi?')) return;
+  try{
+    // postlarni o‘chirish
+    for(const id of ids){
+      await db.collection('posts').doc(id).delete();
+      const sub=await db.collection('posts').doc(id).collection('chats').get();
+      const batch=db.batch(); sub.forEach(doc=>batch.delete(doc.ref)); await batch.commit();
+    }
+    toast('🗑️ '+ids.length+' ta e’lon o‘chirildi');
+    loadAll();
+  }catch(e){ toast('Xato: '+e.message,true); }
+};
+
+/* ===========================
+   USERS
+   =========================== */
+function renderUsers(){
+  const arr=CACHE.users;
+  $('#users').innerHTML = arr.length? arr.map(u=>`
+    <div class="item" style="display:flex;gap:10px;align-items:center">
+      ${u.photoURL?`<img src="${esc(u.photoURL)}" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--line)">`:''}
+      <div style="flex:1">
+        <b>${esc(u.displayName||'Foydalanuvchi')}</b> · <span class="muted">${esc(u.email||'')}</span><br/>
+        <code class="small">${esc(u.uid||u.id||'')}</code> · <span class="small">${new Date(u.lastLogin||0).toLocaleString()}</span>
+      </div>
+    </div>
+  `).join('') : '—';
+}
+
+/* ===========================
+   ALERTS
+   =========================== */
+function renderAlerts(){
+  const arr=CACHE.alerts;
+  $('#alerts').innerHTML = arr.length? arr.map(a=>`
+    <div class="item">
+      ${new Date(a.ts||0).toLocaleString()} · 
+      <b>${esc(a.item||'Post')}</b> · to=<code>${esc(a.to||'')}</code> from=<code>${esc(a.from||'')}</code><br/>
+      <span class="muted">${esc(a.text||'')}</span>
+    </div>
+  `).join('') : '—';
 }
 </script>
 </body>
