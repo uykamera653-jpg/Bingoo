@@ -8,8 +8,7 @@
 <link rel="manifest" href='data:application/manifest+json,{"name":"BINGO — Yo‘qoldi/Topildi","short_name":"BINGO","start_url":"./","display":"standalone","background_color":"#fffdf5","theme_color":"#f8c100","icons":[]}'/>
 <style>
   :root{
-    --bg:#FFFDF5;               /* oqishroq fon */
-    --panel:#0f172a; --ring:#e5e7eb33; --text:#0F172A;
+    --bg:#FFFDF5; --panel:#0f172a; --ring:#e5e7eb33; --text:#0F172A;
     --muted:#475569; --text-card:#F1F5F9; --muted-card:#94A3B8;
     --blue:#1e293b; --green:#16A34A; --red:#DC2626; --amber:#f8c100;
   }
@@ -18,7 +17,7 @@
   body{background:var(--bg);color:var(--text)}
   .wrap{max-width:980px;margin:0 auto;padding:18px 14px 28px}
 
-  /* Topbar — soddalashtirilgan */
+  /* Topbar */
   .topbar{position:sticky;top:0;z-index:80;background:#fff9db;border-bottom:1px solid #f1d28a;backdrop-filter:saturate(1.2) blur(6px)}
   .hdr{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 12px}
   .brand{display:flex;align-items:center;gap:10px}
@@ -53,7 +52,7 @@
   .card-title{font-weight:900;margin-bottom:10px;font-size:17px;letter-spacing:.2px}
   .card-text,.card-list{font-size:14px;color:var(--muted-card)}
   label{font-size:14px;color:#9bb0c9;margin:8px 0 6px;display:block;font-weight:700}
-  input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px;font-size:15px}
+  input,textarea,select{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px;font-size:15px}
   input[type="file"]{padding:10px;background:#0b1220;border:1px dashed #334155}
   textarea{min-height:110px;resize:vertical}
   .sp{height:10px}
@@ -83,9 +82,7 @@
       </div>
       <div class="controls">
         <select id="langSel" class="lang">
-          <option value="uz">UZ</option>
-          <option value="ru">RU</option>
-          <option value="en">EN</option>
+          <option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option>
         </select>
         <button id="homeBtn" class="iconbtn" title="Bosh sahifa">⌂</button>
         <div class="menu" id="userMenu" style="position:relative">
@@ -125,7 +122,24 @@
           <button class="btn btn-blue" data-nav="foundList" data-i18n="foundlist">🔎 Topilganlar</button>
           <button class="btn btn-blue" data-nav="profile"   data-i18n="profile">👤 Profil</button>
           <button class="btn btn-blue btn-sm" data-nav="mine" data-i18n="mine">⭐ Mening e’lonlarim</button>
-          <!-- nusxa olish tugmasi olib tashlandi -->
+        </div>
+
+        <!-- Ogohlantirish sozlamalari (local Notification API) -->
+        <div class="card">
+          <div class="card-title">🔔 <span data-i18n="alerts">Ogohlantirishlar</span></div>
+          <div class="grid" style="grid-template-columns:1fr 1fr">
+            <div>
+              <label>Kalit so‘zlar (vergul bilan)</label>
+              <input id="alertKeywords" placeholder="pasport, hamyon, telefon"/>
+            </div>
+            <div>
+              <label>Shahar</label>
+              <input id="alertCity" placeholder="Toshkent"/>
+            </div>
+          </div>
+          <div class="sp"></div>
+          <button id="btnEnableAlerts" class="btn btn-amber">🔔 Yoqish</button>
+          <span id="alertStatus" style="margin-left:10px;opacity:.85"></span>
         </div>
       </section>
 
@@ -164,18 +178,27 @@
         </div>
       </section>
 
-      <!-- LISTS -->
+      <!-- LISTS (qidiruv + filtrlash) -->
       <section id="view_lostList" class="view">
         <div class="card">
           <div class="card-title" data-i18n="lostlist">📋 Umumiy yo‘qotilganlar</div>
-          <div id="lost_list">—</div>
+          <div class="grid" style="grid-template-columns:1fr 150px 150px">
+            <input id="lostSearch" placeholder="Qidiruv: sarlavha, izoh, aloqa"/>
+            <select id="lostCity"><option value="">— Shahar —</option></select>
+            <select id="lostReward"><option value="">Mukofot</option><option value="rewarded">Mukofotli</option></select>
+          </div>
+          <div id="lost_list" style="margin-top:8px">—</div>
         </div>
       </section>
 
       <section id="view_foundList" class="view">
         <div class="card">
           <div class="card-title" data-i18n="foundlist">🔎 Topilganlar</div>
-          <div id="found_list">—</div>
+          <div class="grid" style="grid-template-columns:1fr 150px">
+            <input id="foundSearch" placeholder="Qidiruv: sarlavha, izoh, aloqa"/>
+            <select id="foundCity"><option value="">— Shahar —</option></select>
+          </div>
+          <div id="found_list" style="margin-top:8px">—</div>
         </div>
       </section>
 
@@ -241,11 +264,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
-  /* ===== Service Worker (offline) — ixtiyoriy ===== */
+  /* ===== Service Worker (offline) ===== */
   (function registerSW(){
     if(!('serviceWorker' in navigator)) return;
     const CODE = `
-      const VER='bingo-v8';
+      const VER='bingo-v9';
       self.addEventListener('install',e=>{ self.skipWaiting(); e.waitUntil(caches.open(VER).then(c=>c.addAll(['./'])) )});
       self.addEventListener('activate',e=>{ e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==VER).map(k=>caches.delete(k))))); self.clients.claim(); });
       self.addEventListener('fetch',e=>{
@@ -270,7 +293,7 @@
     authDomain:"topildi.firebaseapp.com",
     databaseURL:"https://topildi-default-rtdb.firebaseio.com",
     projectId:"topildi",
-    storageBucket:"topildi.appspot.com",  /* appspot.com ishonchli */
+    storageBucket:"topildi.appspot.com",
     messagingSenderId:"323891530719",
     appId:"1:323891530719:web:d57c2ce38781dc37e4926a",
     measurementId:"G-NKCMKCXZQ7"
@@ -281,73 +304,65 @@
   let storage=null; try{ storage=firebase.storage(); }catch(e){ storage=null; }
   const auth=firebase.auth();
 
-  /* ===== Utilities ===== */
+  /* ===== Utils ===== */
   const $=sel=>document.querySelector(sel);
   const $$=sel=>document.querySelectorAll(sel);
   const YEAR=document.getElementById('year'); YEAR.textContent=new Date().getFullYear();
-
-  function banner(msg){const a=document.getElementById('alert');a.textContent=msg||'';a.style.display=msg?'block':'none'}
   function esc(s){const map={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};return String(s||'').replace(/[&<>"']/g,ch=>map[ch])}
   function val(id){const el=document.getElementById(id);return el?el.value.trim():''}
   function onlyDigits(s){ return (s||'').replace(/[^\d]/g,''); }
   function num(n){const x=parseInt(n,10);return isNaN(x)?0:x}
+  function banner(msg){const a=$('#alert');a.textContent=msg||'';a.style.display=msg?'block':'none'}
   function centerToast(msg, err=false){
-    const old=document.getElementById('__toast__'); if(old) old.remove();
+    const old=$('#__toast__'); if(old) old.remove();
     const el=document.createElement('div'); el.id='__toast__';
     el.className='center-toast'+(err?' err':''); el.textContent=msg||'';
     document.body.appendChild(el);
     requestAnimationFrame(()=> el.classList.add('show'));
     setTimeout(()=>{el.classList.remove('show'); setTimeout(()=>el.remove(),180)},1800);
   }
-  function setProg(prefix, prc){ const bar=document.getElementById(prefix+'_bar'); const box=document.getElementById(prefix+'_prog'); if(!bar||!box) return; if(prc<=0||prc>=100){box.style.display='none'; bar.style.width='0%'} else {box.style.display='block'; bar.style.width=prc+'%'} }
+  function setProg(prefix, prc){ const bar=$('#'+prefix+'_bar'); const box=$('#'+prefix+'_prog'); if(!bar||!box) return; if(prc<=0||prc>=100){box.style.display='none'; bar.style.width='0%'} else {box.style.display='block'; bar.style.width=prc+'%'} }
 
-  /* ===== I18N (UZ/RU/EN) ===== */
+  /* ===== I18N ===== */
   const I18N = {
     uz:{headline:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",quote:"“Halollik — eng katta mukofot.”",
         lost:"❗ Yo‘qotdim",found:"✅ Topdim",lostlist:"📋 Yo‘qotilganlar",foundlist:"🔎 Topilganlar",mine:"⭐ Mening e’lonlarim",
         profile:"👤 Profil",lost_form:"Yo‘qotdim — e’lon",found_form:"Topdim — e’lon",
         item:"Narsa",city:"Shahar/Hudud",place:"Joy",date:"Sana/Vaqt",contact:"Aloqa",reward_lbl:"Mukofot (ixt.)",notes:"Qo‘shimcha",photo:"Rasm",
         submit:"E’lon berish",msg:"Xabar",send:"Yuborish",deleteMine:"Mening e’lonlarimni o‘chirish",
-        login:"🔑 Gmail orqali kirish",logout:"🚪 Chiqish",require:"Shahar va aloqa — majburiy",save:"💾 Saqlash",name:"Ism",email:"Email",phone:"Telefon",bio:"Bio"},
+        login:"🔑 Gmail orqali kirish",logout:"🚪 Chiqish",require:"Shahar va aloqa — majburiy",save:"💾 Saqlash",name:"Ism",email:"Email",phone:"Telefon",bio:"Bio",
+        alerts:"Ogohlantirishlar"},
     ru:{headline:"Потеряли или нашли? Оставьте объявление.",quote:"«Честность — самая большая награда.»",
         lost:"❗ Потерял(а)",found:"✅ Нашёл(ла)",lostlist:"📋 Потерянные",foundlist:"🔎 Найденные",mine:"⭐ Мои объявления",
         profile:"👤 Профиль",lost_form:"Потерял(а) — объявление",found_form:"Нашёл(ла) — объявление",
         item:"Предмет",city:"Город/Регион",place:"Место",date:"Дата/Время",contact:"Контакт",reward_lbl:"Вознаграждение (необ.)",notes:"Дополнительно",photo:"Фото",
         submit:"Опубликовать",msg:"Сообщение",send:"Отправить",deleteMine:"Удалить мои объявления",
-        login:"🔑 Войти через Gmail",logout:"🚪 Выйти",require:"Город и контакт обязательны",save:"💾 Сохранить",name:"Имя",email:"Email",phone:"Телефон",bio:"Био"},
+        login:"🔑 Войти через Gmail",logout:"🚪 Выйти",require:"Город и контакт обязательны",save:"💾 Сохранить",name:"Имя",email:"Email",phone:"Телефон",bio:"Био",
+        alerts:"Уведомления"},
     en:{headline:"Lost or found something? Post it.",quote:"“Honesty is the greatest reward.”",
         lost:"❗ Lost",found:"✅ Found",lostlist:"📋 Lost Items",foundlist:"🔎 Found Items",mine:"⭐ My Posts",
         profile:"👤 Profile",lost_form:"Lost — post",found_form:"Found — post",
         item:"Item",city:"City/Region",place:"Place",date:"Date/Time",contact:"Contact",reward_lbl:"Reward (opt.)",notes:"Notes",photo:"Photo",
         submit:"Post",msg:"Message",send:"Send",deleteMine:"Delete my posts",
-        login:"🔑 Sign in with Gmail",logout:"🚪 Sign out",require:"City & contact are required",save:"💾 Save",name:"Name",email:"Email",phone:"Phone",bio:"Bio"},
+        login:"🔑 Sign in with Gmail",logout:"🚪 Sign out",require:"City & contact are required",save:"💾 Save",name:"Name",email:"Email",phone:"Phone",bio:"Bio",
+        alerts:"Alerts"},
   };
   function t(k){ const L=localStorage.getItem('bingo_lang')||'uz'; return (I18N[L]||I18N.uz)[k]||k }
   function applyI18n(){
     document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'))});
-    // placeholders for forms
-    document.getElementById('l_item').placeholder=t('item');
-    document.getElementById('l_city').placeholder=t('city');
-    document.getElementById('l_place').placeholder=t('place');
-    document.getElementById('l_date').placeholder=t('date');
-    document.getElementById('l_contact').placeholder=t('contact');
-    document.getElementById('l_reward').placeholder=t('reward_lbl');
-    document.getElementById('l_notes').placeholder=t('notes');
-
-    document.getElementById('f_item').placeholder=t('item');
-    document.getElementById('f_city').placeholder=t('city');
-    document.getElementById('f_place').placeholder=t('place');
-    document.getElementById('f_date').placeholder=t('date');
-    document.getElementById('f_contact').placeholder=t('contact');
-    document.getElementById('f_notes').placeholder=t('notes');
+    // placeholders
+    ['l_','f_'].forEach(prefix=>{
+      const map={item:'item',city:'city',place:'place',date:'date',contact:'contact',notes:'notes'};
+      Object.keys(map).forEach(k=>{ const el=$('#'+prefix+k); if(el) el.placeholder=t(map[k]); });
+      if(prefix==='l_'){ const r=$('#l_reward'); if(r) r.placeholder=t('reward_lbl'); }
+    });
   }
-  const langSel=document.getElementById('langSel');
-  langSel.value = localStorage.getItem('bingo_lang')||'uz';
+  const langSel=$('#langSel'); langSel.value=localStorage.getItem('bingo_lang')||'uz';
   langSel.addEventListener('change', ()=>{ localStorage.setItem('bingo_lang', langSel.value); applyI18n(); });
   applyI18n();
 
   /* ===== Net badge ===== */
-  const netBadge=document.getElementById('netBadge');
+  const netBadge=$('#netBadge');
   function setNet(on){
     netBadge.className='net '+(on?'on':'off');
     netBadge.textContent=on?'Onlayn':'Offline (kesh rejimi)';
@@ -363,7 +378,7 @@
   let currentView='home', currentChatPostId=null, unsubChat=null;
   function showView(name){
     ['home','lostForm','foundForm','lostList','foundList','mine','postChat','profile']
-      .forEach(id=>{const el=document.getElementById('view_'+id); if(el) el.classList.toggle('active',id===name)});
+      .forEach(id=>{const el=$('#view_'+id); if(el) el.classList.toggle('active',id===name)});
     window.scrollTo(0,0);
   }
   function navigate(name,replace){
@@ -377,8 +392,8 @@
     if(replace) history.replaceState({view:name,id:currentChatPostId},'',hash);
     else history.pushState({view:name,id:currentChatPostId},'',hash);
   }
-  document.getElementById('homeBtn').addEventListener('click',()=>navigate('home'));
-  document.querySelectorAll('#mainMenu .btn').forEach(b=>{ if(b.dataset.nav) b.addEventListener('click',()=>navigate(b.dataset.nav)); });
+  $('#homeBtn').addEventListener('click',()=>navigate('home'));
+  $$('#mainMenu .btn').forEach(b=>{ if(b.dataset.nav) b.addEventListener('click',()=>navigate(b.dataset.nav)); });
   window.addEventListener('popstate',e=>{
     const st=e.state||{view:'home'}; currentChatPostId=st.id||null; showView(st.view||'home');
   });
@@ -389,15 +404,9 @@
   })();
 
   /* ===== Auth (Gmail) ===== */
-  const userMenu=document.getElementById('userMenu');
-  const userBtn=document.getElementById('userBtn');
-  const menuPanel=document.getElementById('menuPanel');
-  const btnLogin=document.getElementById('btnLogin');
-  const btnLogout=document.getElementById('btnLogout');
-  const btnProfile=document.getElementById('btnProfile');
-  const btnMyPosts=document.getElementById('btnMyPosts');
-  const avatarImg=document.getElementById('avatarImg');
-  const userNameLabel=document.getElementById('userNameLabel');
+  const userMenu=$('#userMenu'), userBtn=$('#userBtn'), menuPanel=$('#menuPanel');
+  const btnLogin=$('#btnLogin'), btnLogout=$('#btnLogout'), btnProfile=$('#btnProfile'), btnMyPosts=$('#btnMyPosts');
+  const avatarImg=$('#avatarImg'), userNameLabel=$('#userNameLabel');
 
   userBtn.addEventListener('click',()=> menuPanel.style.display = (menuPanel.style.display==='block'?'none':'block'));
   document.addEventListener('click',(e)=>{ if(!userMenu.contains(e.target)) menuPanel.style.display='none' });
@@ -420,22 +429,65 @@
       const ref=db.collection('users').doc(u.uid);
       const snap=await ref.get();
       if(!snap.exists){ await ref.set({uid:u.uid,name:u.displayName||'',email:u.email||'',photo:u.photoURL||'',city:'',phone:'',bio:'',created:Date.now(),updated:Date.now()}) }
-      else{ await ref.update({name:snap.data().name||u.displayName||'',email:u.email||'',photo:snap.data().photo||u.photoURL||'',updated:Date.now()}).catch(()=>{}); }
+      else{ await ref.set({name:snap.data().name||u.displayName||'',email:u.email||'',photo:snap.data().photo||u.photoURL||'',updated:Date.now()},{merge:true}); }
     }else{
       userNameLabel.textContent=t('login').replace('🔑 ','')||'Kirish';
     }
   });
 
   /* ===== Realtime posts ===== */
-  let ALL_POSTS=[]; let LAST_POST=null;
+  let ALL_POSTS=[]; let snapshotStart=Date.now();
   db.collection('posts').orderBy('created','desc').onSnapshot(snap=>{
+    const changes=snap.docChanges();
     ALL_POSTS=snap.docs.map(d=>({id:d.id,...d.data()}));
     if(currentView==='lostList') renderLost();
     if(currentView==='foundList') renderFound();
     if(currentView==='mine') renderMine();
+    // Alerts: yangi qo'shilganlarga bildirish
+    changes.filter(ch=>ch.type==='added').forEach(ch=>{
+      const p={id:ch.doc.id,...ch.doc.data()};
+      if(p.created && p.created<snapshotStart) return; // eski tarixiy
+      maybeNotify(p);
+    });
+    buildCityFilters();
   },err=>banner("Firestore o‘qish xatosi: "+err.message));
 
-  /* ===== Photo upload helpers (FIXED) ===== */
+  /* ===== Alerts (Notification API) ===== */
+  const alertKeywords=$('#alertKeywords'), alertCity=$('#alertCity'), btnEnableAlerts=$('#btnEnableAlerts'), alertStatus=$('#alertStatus');
+  // restore
+  (function(){
+    try{
+      const pref=JSON.parse(localStorage.getItem('bingo_alerts')||'{}');
+      if(pref.kws) alertKeywords.value=pref.kws.join(', ');
+      if(pref.city) alertCity.value=pref.city;
+      alertStatus.textContent = pref.on ? '✅ Yoqilgan' : '❌ O‘chiq';
+    }catch{}
+  })();
+  btnEnableAlerts.addEventListener('click', async ()=>{
+    const perm = await Notification.requestPermission();
+    if(perm!=='granted'){ alertStatus.textContent='❌ Ruxsat berilmadi'; return; }
+    const kws=alertKeywords.value.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+    const city=alertCity.value.trim().toLowerCase();
+    localStorage.setItem('bingo_alerts', JSON.stringify({on:true,kws,city}));
+    snapshotStart=Date.now(); // endi faqat keyingilar
+    alertStatus.textContent='✅ Yoqildi';
+    centerToast('🔔 Ogohlantirishlar yoqildi');
+  });
+  function maybeNotify(p){
+    try{
+      const pref=JSON.parse(localStorage.getItem('bingo_alerts')||'{}');
+      if(!pref.on) return;
+      const txt = [p.item,p.notes,p.city].join(' ').toLowerCase();
+      const okKW = (pref.kws||[]).length ? pref.kws.some(k=>txt.includes(k)) : true;
+      const okCity = pref.city ? (String(p.city||'').toLowerCase().includes(pref.city)) : true;
+      if(!(okKW && okCity)) return;
+      new Notification((p.kind==='lost'?'❗ Yo‘qotildi: ':'✅ Topildi: ')+ (p.item||''),
+        { body: (p.city||'')+' · '+(p.place||''), icon: p.photo||undefined }
+      ).onclick = ()=>{ openChat(p.id); };
+    }catch{}
+  }
+
+  /* ===== Photo upload helpers (await uploadTask) ===== */
   async function readFileAsDataURL(file){return new Promise(r=>{if(!file)return r(null);const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(file)})}
   async function getPhotoURL(file, prefix){
     if(!file) return null;
@@ -443,24 +495,30 @@
       try{
         const path = `uploads/${(auth.currentUser?.uid||'anon')}/${Date.now()}_${(file.name||'photo').replace(/[^a-z0-9_.-]/gi,'_')}`;
         const ref = storage.ref().child(path);
-        const uploadTask = ref.put(file);                 // <- to‘g‘ri
+        const uploadTask = ref.put(file);
         uploadTask.on('state_changed', snap=>{
           const prc = Math.round((snap.bytesTransferred/snap.totalBytes)*100);
           setProg(prefix, prc<100?prc:0);
         });
-        await uploadTask;                                  // <- kutamiz
+        await uploadTask;
         const url = await ref.getDownloadURL();
         setProg(prefix,0);
         return url;
       }catch(e){ console.warn('Storage upload failed, fallback to dataURL', e); setProg(prefix,0); }
     }
-    // Fallback — DataURL
     const dataUrl = await readFileAsDataURL(file);
     return dataUrl;
   }
 
-  /* ===== Submit (Lost / Found) ===== */
-  document.getElementById('btnLost').addEventListener('click', async ()=>{
+  /* ===== Submit (Lost / Found) + validation ===== */
+  function phoneOk(s){ return /^\+?\d[\d\s\-()]{6,}$/.test((s||'').trim()); } // juda qattiq emas
+  const rewardInput=$('#l_reward');
+  function formatUZS(s){ return String(s).replace(/\B(?=(\d{3})+(?!\d))/g,' '); }
+  if(rewardInput){
+    rewardInput.addEventListener('input',(e)=>{ const raw=onlyDigits(e.target.value); e.target.value=formatUZS(raw); });
+  }
+
+  $('#btnLost').addEventListener('click', async ()=>{
     const file=$('#l_photo').files?.[0]||null;
     const photo=await getPhotoURL(file,'l');
     const p={
@@ -471,15 +529,12 @@
       authorName:auth.currentUser?.displayName||'', authorEmail:auth.currentUser?.email||''
     };
     if(!p.item||!p.city||!p.contact){ return centerToast(t('require'),true) }
-    const sig=JSON.stringify([p.kind,p.item,p.city,p.contact,p.notes,!!p.photo]); const now=Date.now();
-    const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}');
-    if(last.sig===sig && (now-last.ts)<30000) return centerToast('⚠️ Bir xil e’lon (30s ichida).',true);
-    localStorage.setItem('bingo_last_post', JSON.stringify({sig,ts:now}));
+    if(!phoneOk(p.contact)) return centerToast('Telefon notog‘ri formatda', true);
     await db.collection('posts').add(p); centerToast('✅ '+t('submit')); navigate('lostList');
     ['l_item','l_city','l_place','l_date','l_contact','l_reward','l_notes','l_photo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   });
 
-  document.getElementById('btnFound').addEventListener('click', async ()=>{
+  $('#btnFound').addEventListener('click', async ()=>{
     const file=$('#f_photo').files?.[0]||null;
     const photo=await getPhotoURL(file,'f');
     const p={
@@ -490,27 +545,12 @@
       authorName:auth.currentUser?.displayName||'', authorEmail:auth.currentUser?.email||''
     };
     if(!p.item||!p.city||!p.contact){ return centerToast(t('require'),true) }
-    const sig=JSON.stringify([p.kind,p.item,p.city,p.contact,p.notes,!!p.photo]); const now=Date.now();
-    const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}');
-    if(last.sig===sig && (now-last.ts)<30000) return centerToast('⚠️ Bir xil e’lon (30s ichida).',true);
-    localStorage.setItem('bingo_last_post', JSON.stringify({sig,ts:now}));
+    if(!phoneOk(p.contact)) return centerToast('Telefon notog‘ri formatda', true);
     await db.collection('posts').add(p); centerToast('✅ '+t('submit')); navigate('foundList');
     ['f_item','f_city','f_place','f_date','f_contact','f_notes','f_photo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   });
 
-  // Mukofot inputini ko‘rkam ko‘rsatish (vizual), bazaga toza son tushadi
-  const rewardInput=document.getElementById('l_reward');
-  function formatUZS(s){ return String(s).replace(/\B(?=(\d{3})+(?!\d))/g,' '); }
-  if(rewardInput){
-    rewardInput.addEventListener('input', (e)=>{
-      const pos = e.target.selectionStart;
-      const raw=onlyDigits(e.target.value);
-      e.target.value = formatUZS(raw);
-      e.target.setSelectionRange(e.target.value.length, e.target.value.length);
-    });
-  }
-
-  /* ===== Renderers ===== */
+  /* ===== Renderers + filters ===== */
   function card(p, allowDelete){
     const kindLabel = p.kind==='lost' ? '❗ Yo‘qoldi' : '✅ Topildi';
     const shareBtn = navigator.share ? `<button class="btn btn-amber" onclick="sharePost('${esc(p.item)}','${esc(p.city||'')}', '${p.id}')">🔗 Ulashish</button>` : '';
@@ -530,14 +570,54 @@
       <div class="actions">
         ${allowDelete?`<button class="btn" onclick="editPost('${p.id}')">✏️ Tahrirlash</button>`:''}
         ${allowDelete?`<button class="btn" onclick="delPost('${p.id}')">🗑️ O‘chirish</button>`:''}
+        <button class="btn" onclick="reportPost('${p.id}')">🚩 Shikoyat</button>
         <button class="btn btn-blue" onclick="openChat('${p.id}')">${t('msg')}</button>
         ${shareBtn}
       </div>
     </div>`;
   }
-  function renderLost(){ const el=$('#lost_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='lost'); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—'; }
-  function renderFound(){ const el=$('#found_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='found'); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—'; }
-  function renderMine(){ const el=$('#mine_list'); if(!el) return; const u=auth.currentUser?.uid||'anon'; const arr=ALL_POSTS.filter(p=>p.uid===u); el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—'; }
+
+  function buildCityFilters(){
+    const cities=[...new Set(ALL_POSTS.map(p=>p.city).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
+    const lostCity=$('#lostCity'), foundCity=$('#foundCity');
+    function populate(sel){ if(!sel) return; const cur=sel.value; sel.innerHTML='<option value="">— Shahar —</option>'+cities.map(c=>`<option>${esc(c)}</option>`).join(''); if(cities.includes(cur)) sel.value=cur; }
+    populate(lostCity); populate(foundCity);
+  }
+
+  function filterAndRender(kind){
+    const listEl = kind==='lost' ? $('#lost_list') : $('#found_list');
+    const qEl    = kind==='lost' ? $('#lostSearch') : $('#foundSearch');
+    const cityEl = kind==='lost' ? $('#lostCity')   : $('#foundCity');
+    const rewardEl = kind==='lost' ? $('#lostReward') : null;
+
+    const q=(qEl?.value||'').toLowerCase();
+    const city=(cityEl?.value||'').toLowerCase();
+    const onlyReward = rewardEl ? (rewardEl.value==='rewarded') : false;
+
+    const arr = ALL_POSTS.filter(p=>p.kind===kind).filter(p=>{
+      const txt=[p.item,p.notes,p.contact,p.place,p.city].join(' ').toLowerCase();
+      const okQ = !q || txt.includes(q);
+      const okC = !city || String(p.city||'').toLowerCase()===city;
+      const okR = !onlyReward || (p.reward||0)>0;
+      return okQ && okC && okR;
+    });
+    listEl.innerHTML = arr.length? arr.map(p=>card(p,false)).join(''):'—';
+  }
+
+  function renderLost(){ filterAndRender('lost'); }
+  function renderFound(){ filterAndRender('found'); }
+  function renderMine(){
+    const el=$('#mine_list'); if(!el) return;
+    const u=auth.currentUser?.uid||'anon';
+    const arr=ALL_POSTS.filter(p=>p.uid===u);
+    el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—';
+  }
+
+  $('#lostSearch').addEventListener('input', renderLost);
+  $('#lostCity').addEventListener('change', renderLost);
+  $('#lostReward').addEventListener('change', renderLost);
+  $('#foundSearch').addEventListener('input', renderFound);
+  $('#foundCity').addEventListener('change', renderFound);
 
   /* ===== Share ===== */
   window.sharePost = async function(item, city, id){
@@ -546,7 +626,19 @@
     try{ await navigator.share({title:'BINGO: '+item, text:`${item} · ${city}`, url}); }catch{}
   }
 
-  /* ===== Edit/Delete/Clear ===== */
+  /* ===== Report / Edit / Delete / Clear ===== */
+  window.reportPost = async function(id){
+    const reason = prompt('Shikoyat sababi (ixtiyoriy, lekin foydali):','');
+    try{
+      await db.collection('posts').doc(id).collection('reports').add({
+        by: auth.currentUser?.uid||'anon',
+        reason: reason||'',
+        ts: Date.now()
+      });
+      centerToast('🚩 Shikoyat yuborildi');
+    }catch(e){ centerToast('Shikoyat xatosi: '+e.message,true) }
+  }
+
   async function editPost(id){
     try{
       const doc = await db.collection('posts').doc(id).get();
@@ -582,7 +674,7 @@
       centerToast('🗑️ O‘chirildi'); renderMine();
     }catch(e){ banner('O‘chirish xatosi: '+e.message) }
   }
-  document.getElementById('clearMineBtn').addEventListener('click', async ()=>{
+  $('#clearMineBtn').addEventListener('click', async ()=>{
     const u=auth.currentUser?.uid||'anon';
     if(!confirm(t('deleteMine')+'?')) return;
     try{
@@ -598,11 +690,11 @@
   function logEmpty(){return 'Xabarlar yo‘q.'}
   window.openChat = function(postId, keep){
     const post=ALL_POSTS.find(p=>p.id===postId); if(!post) return;
-    currentChatPostId=postId; document.getElementById('chatItemName').textContent=post.item;
+    currentChatPostId=postId; $('#chatItemName').textContent=post.item;
     if(unsubChat) unsubChat();
     unsubChat = db.collection('posts').doc(postId).collection('chats').orderBy('ts')
       .onSnapshot(s=>{
-        const log=document.getElementById('chatLog');
+        const log=$('#chatLog');
         const arr=s.docs.map(d=>d.data());
         log.innerHTML = arr.length
           ? arr.map(m=>`<div class="msg ${m.uid===((auth.currentUser?.uid)||'anon')?'me':'other'}"><b>${esc(m.name||'Anon')}</b> <span style="opacity:.8;font-size:12px">· ${new Date(m.ts).toLocaleTimeString()}</span><div>${esc(m.text)}</div></div>`).join('')
@@ -611,25 +703,21 @@
       }, e=> banner('Chat o‘qish xatosi: '+e.message));
     if(!keep) navigate('postChat');
   }
-  document.getElementById('sendChatBtn').addEventListener('click',()=>{
+  $('#sendChatBtn').addEventListener('click',()=>{
     if(!currentChatPostId) return;
-    const name=(document.getElementById('chatName').value.trim()||auth.currentUser?.displayName||'Anon');
-    const text=document.getElementById('chatText').value.trim(); if(!text) return;
+    const name=($('#chatName').value.trim()||auth.currentUser?.displayName||'Anon');
+    const text=$('#chatText').value.trim(); if(!text) return;
+    // Chatga telefon raqami yozilsa ogohlantiramiz (minimal)
+    if(/\+?\d[\d\s\-()]{6,}/.test(text)){ centerToast('⚠️ Telefonni chatga yozmang. Postdagi aloqa orqali bog‘laning.', true); }
     db.collection('posts').doc(currentChatPostId).collection('chats').add({name,uid:(auth.currentUser?.uid)||'anon',text,ts:Date.now()})
-      .then(()=>{document.getElementById('chatText').value='';})
+      .then(()=>{$('#chatText').value='';})
       .catch(e=> banner('Chat yozish xatosi: '+e.message));
   });
 
   /* ===== Profile ===== */
-  const profileAvatar=document.getElementById('profileAvatar');
-  const profileName=document.getElementById('profileName');
-  const profileEmail=document.getElementById('profileEmail');
-  const profilePhone=document.getElementById('profilePhone');
-  const profileCity=document.getElementById('profileCity');
-  const profileBio=document.getElementById('profileBio');
-  const btnChangePhoto=document.getElementById('btnChangePhoto');
-  const profilePhotoFile=document.getElementById('profilePhotoFile');
-  const btnSaveProfile=document.getElementById('btnSaveProfile');
+  const profileAvatar=$('#profileAvatar'), profileName=$('#profileName'), profileEmail=$('#profileEmail');
+  const profilePhone=$('#profilePhone'), profileCity=$('#profileCity'), profileBio=$('#profileBio');
+  const btnChangePhoto=$('#btnChangePhoto'), profilePhotoFile=$('#profilePhotoFile'), btnSaveProfile=$('#btnSaveProfile');
 
   function requireAuth(){ if(!auth.currentUser){ centerToast('Kirish talab qilinadi', true); return false } return true }
   function loadProfileForm(){
@@ -675,6 +763,11 @@
       centerToast('💾 Saqlandi');
     }catch(e){ centerToast('Saqlash xatosi: '+e.message,true) }
   });
+
+  /* ===== Init once ===== */
+  (function initFilters(){
+    $('#lostSearch').value=''; $('#foundSearch').value='';
+  })();
   </script>
 </body>
-                                                                                            </html>
+  </html>
