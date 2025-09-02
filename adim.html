@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BINGO — Admin</title>
+<style>
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto;background:#0b1220;color:#e5eef7}
+  .wrap{max-width:1000px;margin:0 auto;padding:16px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .btn{background:#1e293b;border:1px solid #334155;color:#e5eef7;padding:10px 12px;border-radius:10px;cursor:pointer}
+  .btn-red{background:#b91c1c;border-color:#fecaca}
+  .btn-green{background:#065f46;border-color:#34d399}
+  .card{background:#0f172a;border:1px solid #223047;border-radius:14px;padding:12px;margin:12px 0}
+  .row{display:grid;grid-template-columns:1fr 130px 160px 120px 120px;gap:10px;align-items:center}
+  .head{font-weight:800;opacity:.8}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #334155}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h2>🛡️ BINGO Admin</h2>
+    <div>
+      <button id="goSite" class="btn">↩️ Saytga qaytish</button>
+      <button id="signOut" class="btn btn-red">Chiqish</button>
+    </div>
+  </div>
+
+  <div id="who" class="pill">—</div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3>📋 E’lonlar</h3>
+      <div>
+        <button id="refresh" class="btn">Yangilash</button>
+        <select id="filter" class="btn">
+          <option value="all">Hammasi</option>
+          <option value="lost">Yo‘qotilgan</option>
+          <option value="found">Topilgan</option>
+          <option value="reward">Mukofotli</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row head">
+      <div>Narsa / Joy</div><div>Tur</div><div>Foydalanuvchi</div><div>Mukofot</div><div>Amallar</div>
+    </div>
+    <div id="list">Yuklanmoqda…</div>
+  </div>
+
+  <div class="card">
+    <h3>🔔 Bildirishnomalar (so‘nggi 50)</h3>
+    <div id="alerts">—</div>
+  </div>
+</div>
+
+<!-- Firebase (compat) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script>
+// === CONFIG: index.html dagi bilan BIR XIL bo‘lsin ===
+const firebaseConfig={
+  apiKey:"AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+  authDomain:"topildi.firebaseapp.com",
+  databaseURL:"https://topildi-default-rtdb.firebaseio.com",
+  projectId:"topildi",
+  storageBucket:"topildi.appspot.com",
+  messagingSenderId:"323891530719",
+  appId:"1:323891530719:web:d57c2ce38781dc37e4926a",
+  measurementId:"G-NKCMKCXZQ7"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+const auth=firebase.auth();
+
+// === UI helpers ===
+const $=s=>document.querySelector(s);
+function htmlesc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+
+// === Guard: faqat admin kiradi ===
+auth.onAuthStateChanged(async u=>{
+  if(!u){ location.href='./'; return; }
+  $('#who').textContent = (u.displayName||u.email||u.uid)+' (admin tekshirilmoqda…)';
+  try{
+    const r=await db.collection('rules').doc(u.uid).get();
+    if(!(r.exists && r.data().admin===true)){ location.href='./'; return; }
+    $('#who').textContent = (u.displayName||u.email||u.uid)+' · 🛡️ admin';
+    loadPosts(); loadAlerts();
+  }catch{ location.href='./'; }
+});
+
+$('#signOut').onclick=()=>auth.signOut().then(()=>location.href='./');
+$('#goSite').onclick=()=>location.href='./';
+$('#refresh').onclick=()=>loadPosts();
+
+$('#filter').onchange=()=>loadPosts();
+
+async function loadPosts(){
+  $('#list').innerHTML='Yuklanmoqda…';
+  let q=db.collection('posts').orderBy('created','desc').limit(200);
+  const f=$('#filter').value;
+  if(f==='lost')   q=db.collection('posts').where('kind','==','lost').orderBy('created','desc');
+  if(f==='found')  q=db.collection('posts').where('kind','==','found').orderBy('created','desc');
+  if(f==='reward') q=db.collection('posts').where('reward','>',0).orderBy('reward','desc');
+  const s=await q.get();
+  const html=s.docs.map(d=>{
+    const p=d.data();
+    return `<div class="row" style="border-top:1px solid #223047;padding-top:8px;margin-top:8px">
+      <div><b>${htmlesc(p.item)}</b><br><span style="opacity:.8">${htmlesc(p.city||'-')} · ${htmlesc(p.place||'-')}</span></div>
+      <div>${p.kind==='lost'?'❗Yo‘qotilgan':'✅Topilgan'}</div>
+      <div>${htmlesc(p.uid||'-')}</div>
+      <div>${p.reward?Number(p.reward).toLocaleString()+' so‘m':'—'}</div>
+      <div>
+        <button class="btn btn-green" onclick="openChat('${d.id}')">Chat</button>
+        <button class="btn btn-red" onclick="delPost('${d.id}')">O‘chirish</button>
+      </div>
+    </div>`;
+  }).join('') || '—';
+  $('#list').innerHTML=html;
+}
+
+async function delPost(id){
+  if(!confirm('E’lonni o‘chirishni tasdiqlaysizmi?')) return;
+  try{
+    // Post
+    await db.collection('posts').doc(id).delete();
+    // Chatlarni ham tozalaymiz
+    const sub=await db.collection('posts').doc(id).collection('chats').get();
+    const batch=db.batch(); sub.forEach(doc=>batch.delete(doc.ref)); await batch.commit();
+    loadPosts();
+  }catch(e){ alert('Xato: '+e.message); }
+}
+
+function openChat(id){ location.href='./#postChat-'+id; }
+
+// Alerts log
+async function loadAlerts(){
+  const s=await db.collection('alerts').orderBy('ts','desc').limit(50).get();
+  $('#alerts').innerHTML = s.docs.map(d=>{
+    const a=d.data();
+    return `<div style="border-top:1px solid #223047;padding:8px 0">
+      ${new Date(a.ts||Date.now()).toLocaleString()} · <b>${htmlesc(a.item||'Post')}</b><br>
+      to=<code>${htmlesc(a.to||'')}</code>, from=<code>${htmlesc(a.from||'')}</code> · ${a.read?'read':'UNREAD'}<br>
+      <i>${htmlesc(a.text||'')}</i>
+    </div>`;
+  }).join('') || '—';
+}
+</script>
+</body>
+  </html>
