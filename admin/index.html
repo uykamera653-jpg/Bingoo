@@ -1,48 +1,72 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Bingoo</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Panel · Bingo</title>
+
+  <!-- OQ FONNI MAJBURIY QILAMIZ -->
+  <meta name="color-scheme" content="light">
   <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      background: #fff; 
-      margin: 0; 
-      padding: 20px; 
-      color: #333;
-    }
-    h1 { text-align: center; }
-    .card {
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 10px 0;
-      background: #f9f9f9;
-    }
-    .card strong { color: #000; }
-    button {
-      background: red;
-      color: #fff;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover { background: darkred; }
+    :root { color-scheme: only light; }
+    * { box-sizing: border-box; }
+    html, body { background:#ffffff !important; color:#111827; margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif; }
+    .wrap { max-width: 960px; margin: 36px auto; padding: 0 16px; }
+    .title { display:flex; align-items:center; gap:12px; font-size: clamp(24px, 3.6vw, 42px); margin: 8px 0 24px; font-weight: 800; color:#111827; }
+    .shield { font-size: 40px; }
+    .bar { display:flex; flex-wrap: wrap; gap:10px; align-items:center; margin: 12px 0 24px; }
+    .btn { display:inline-flex; align-items:center; gap:8px; padding: .65rem 1rem; border-radius: 12px; border:1px solid #e5e7eb; background:#f9fafb; color:#111827; cursor:pointer; text-decoration:none; font-weight:600; }
+    .btn:hover { background:#f3f4f6; }
+    .danger { background:#ef4444; border-color:#ef4444; color:#fff; }
+    .danger:hover { background:#dc2626; }
+    .mute { opacity:.7; }
+    .cards { display:grid; grid-template-columns: 1fr; gap:16px; }
+    @media (min-width:740px){ .cards { grid-template-columns: 1fr 1fr; } }
+    .card { border:1px solid #e5e7eb; border-radius:16px; padding:16px; background:#ffffff; box-shadow: 0 1px 2px rgba(0,0,0,.04);}
+    .card h3 { margin:0 0 6px; font-size:18px; }
+    .meta { margin: 4px 0; color:#374151; }
+    .pill { display:inline-block; padding:.25rem .6rem; border-radius:999px; background:#eef2ff; color:#3730a3; font-size:12px; font-weight:700; }
+    .row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:10px; }
+    .empty { text-align:center; padding:40px 12px; color:#6b7280; }
+    .foot { margin:38px 0 8px; text-align:center; color:#6b7280; font-size:13px; }
+    input[type="search"]{ flex:1 1 320px; padding:.65rem .9rem; border-radius:12px; border:1px solid #e5e7eb; outline:none; }
+    select { padding:.55rem .7rem; border-radius:10px; border:1px solid #e5e7eb; background:#fff; }
   </style>
 </head>
 <body>
-  <h1>🛡 Admin Panel</h1>
-  <div id="posts"></div>
+  <div class="wrap">
+    <h1 class="title"><span class="shield">🛡</span> Admin Panel</h1>
 
-  <!-- Firebase -->
+    <!-- bosh panel: yangilash, filter, qidiruv -->
+    <div class="bar">
+      <button id="btnRefresh" class="btn">🔄 Yangilash</button>
+      <select id="selFilter" class="btn" title="Filtr">
+        <option value="all">Hammasi</option>
+        <option value="lost">Yo‘qotdim</option>
+        <option value="found">Topdim</option>
+        <option value="prize">Mukofotli</option>
+      </select>
+      <input id="searchBox" type="search" placeholder="Qidirish: narsa, shahar, email, uid" />
+      <span id="userBadge" class="pill" title="Admin holati" hidden>ADMIN</span>
+      <a class="btn" href="/Bingoo/">← Asosiy sahifa</a>
+    </div>
+
+    <!-- postlar -->
+    <div id="cards" class="cards">
+      <div class="empty">Yuklanmoqda…</div>
+    </div>
+
+    <div class="foot">© 2025 BINGO</div>
+  </div>
+
+  <!-- Firebase + Admin JS -->
   <script type="module">
-    // Firebase config (sendagi kalitlar bilan)
+    /************ Firebase SDK ************/
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    // === SIZNING KONFIGINGIZ (o'zingizniki) ===
     const firebaseConfig = {
       apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
       authDomain: "topildi.firebaseapp.com",
@@ -54,48 +78,135 @@
       measurementId: "G-NKCMKCXZQ7"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db   = getFirestore(app);
 
-    const postsDiv = document.getElementById("posts");
+    // --- sozlamalar ---
+    const ADMIN_EMAIL = "diyorabduraxmonov95@gmail.com"; // eski admin email
 
-    // Admin Gmail manzili (o‘zingniki yoz)
-    const adminEmail = "diyorabduraxmonov95@gmail.com";
+    // --- UI elementlar ---
+    const cardsEl  = document.getElementById("cards");
+    const searchEl = document.getElementById("searchBox");
+    const filterEl = document.getElementById("selFilter");
+    const refreshEl= document.getElementById("btnRefresh");
+    const badgeEl  = document.getElementById("userBadge");
 
-    // Auth tekshirish
+    // === Holat ===
+    let allPosts = [];
+
+    // === Asosiy oqim: faqat admin ko'radi ===
     onAuthStateChanged(auth, async (user) => {
-      if (user && user.email === adminEmail) {
-        loadPosts();
+      if (user?.email === ADMIN_EMAIL) {
+        badgeEl.hidden = false;
+        await loadPosts();
       } else {
-        postsDiv.innerHTML = "<p>⛔ Sizda admin huquqi yo‘q!</p>";
+        cardsEl.innerHTML = `
+          <div class="empty">⛔ Bu sahifa faqat <b>admin</b> uchun. 
+          Iltimos, bosh sahifadan o'z akkauntingiz bilan kiring.</div>`;
       }
     });
 
-    // E’lonlarni chiqarish
+    // === Ma'lumotlarni olish ===
     async function loadPosts() {
-      postsDiv.innerHTML = "";
-      const querySnapshot = await getDocs(collection(db, "posts"));
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const el = document.createElement("div");
-        el.classList.add("card");
-        el.innerHTML = `
-          <p><strong>Narsa:</strong> ${data.narsa || ""}</p>
-          <p><strong>Shahar:</strong> ${data.shahar || ""}</p>
-          <p><strong>Joylagan:</strong> ${data.userEmail || "Noma'lum"}</p>
-          <button onclick="deletePost('${docSnap.id}')">❌ O‘chirish</button>
-        `;
-        postsDiv.appendChild(el);
+      cardsEl.innerHTML = `<div class="empty">Yuklanmoqda…</div>`;
+
+      // Yaratilgan vaqt bo'yicha tartiblashga urinamiz (agar bunday maydon bo'lmasa ham xato bo'lmaydi)
+      let qRef;
+      try {
+        qRef = query(collection(db,"posts"), orderBy("createdAt","desc"));
+      } catch {
+        qRef = collection(db,"posts");
+      }
+
+      const snap = await getDocs(qRef);
+      allPosts = [];
+      snap.forEach(d => {
+        const x = d.data() || {};
+        // aliaslar
+        const narsa   = x.narsa ?? x.title ?? x.item ?? x.nomi ?? "";
+        const shahar  = x.shahar ?? x.city ?? x.viloyat ?? x.region ?? "";
+        const tur     = x.type ?? x.turi ?? x.status ?? ""; // lost|found|prize bo'lishi mumkin
+        const email   = x.userEmail ?? x.email ?? (x.user && x.user.email) ?? "Noma'lum";
+        const uid     = x.userId ?? x.uid ?? (x.user && x.user.uid) ?? "";
+        const tel     = x.tel ?? x.phone ?? "";
+        const desc    = x.izoh ?? x.desc ?? x.description ?? "";
+        const created = x.createdAt ?? "";
+        allPosts.push({ id:d.id, narsa, shahar, tur, email, uid, tel, desc, created });
       });
+
+      render();
     }
 
-    // E’lonni o‘chirish
-    window.deletePost = async function (id) {
-      await deleteDoc(doc(db, "posts", id));
-      alert("E’lon o‘chirildi!");
-      loadPosts();
+    // === Chizish ===
+    function render(){
+      const q = (searchEl.value || "").trim().toLowerCase();
+      const f = filterEl.value;
+
+      const filtered = allPosts.filter(p=>{
+        const okF = (f==="all") ||
+                    (f==="lost"  && /lost|yo'qot|yoqot/i.test(p.tur)) ||
+                    (f==="found" && /found|topdim|topildi/i.test(p.tur)) ||
+                    (f==="prize" && /prize|reward|mukofot/i.test(p.tur));
+        if(!okF) return false;
+
+        if(!q) return true;
+        const hay = `${p.narsa} ${p.shahar} ${p.email} ${p.uid} ${p.tel} ${p.desc}`.toLowerCase();
+        return hay.includes(q);
+      });
+
+      if(filtered.length===0){
+        cardsEl.innerHTML = `<div class="empty">Hozircha e’lon yo‘q yoki filtr bo‘yicha topilmadi.</div>`;
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      filtered.forEach(p=>{
+        const el = document.createElement("div");
+        el.className = "card";
+        el.innerHTML = `
+          <h3>${esc(p.narsa) || "Narsa: —"}</h3>
+          <div class="meta"><b>Shahar:</b> ${esc(p.shahar) || "—"}</div>
+          <div class="meta"><b>Joylagan:</b> ${esc(p.email)} ${p.uid?`<span class="mute">(${esc(p.uid)})</span>`:""}</div>
+          ${p.tel?`<div class="meta"><b>Tel:</b> ${esc(p.tel)}</div>`:""}
+          ${p.desc?`<div class="meta"><b>Izoh:</b> ${esc(p.desc)}</div>`:""}
+          <div class="row">
+            ${badgeType(p.tur)}
+            <button class="btn danger" data-id="${p.id}">❌ O‘chirish</button>
+          </div>
+        `;
+        frag.appendChild(el);
+      });
+      cardsEl.replaceChildren(frag);
     }
+
+    function badgeType(t){
+      if(/found|topdim|topildi/i.test(t)) return `<span class="pill">TOPILDI</span>`;
+      if(/prize|reward|mukofot/i.test(t)) return `<span class="pill" style="background:#fff7ed;color:#9a3412;">MUKOFOTLI</span>`;
+      if(/lost|yo'qot|yoqot/i.test(t))    return `<span class="pill" style="background:#fee2e2;color:#991b1b;">YO‘QOTILGAN</span>`;
+      return `<span class="pill" style="background:#e5e7eb;color:#111827;">ELON</span>`;
+    }
+
+    // === O‘chirish ===
+    cardsEl.addEventListener("click", async (e)=>{
+      const id = e.target?.dataset?.id;
+      if(!id) return;
+      if(!confirm("Rostdan ham o‘chirasizmi?")) return;
+      await deleteDoc(doc(db, "posts", id));
+      // lokal ro'yxatdan ham olib tashlaymiz
+      const ix = allPosts.findIndex(p=>p.id===id);
+      if(ix>-1) allPosts.splice(ix,1);
+      render();
+    });
+
+    // === Qidiruv / Filter / Yangilash ===
+    searchEl.addEventListener("input", debounce(render, 120));
+    filterEl.addEventListener("change", render);
+    refreshEl.addEventListener("click", loadPosts);
+
+    // === Kichik yordamchilar ===
+    function esc(s=""){ return String(s).replace(/[&<>\"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]) ); }
+    function debounce(fn,ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; }
   </script>
 </body>
 </html>
