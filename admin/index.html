@@ -3,60 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel</title>
+  <title>Admin Panel - Bingoo</title>
   <style>
-    body { font-family: sans-serif; background:#fff; color:#111; margin:20px; }
-    h1 { color:#d32f2f; }
-    .post { border:1px solid #ccc; padding:10px; margin-bottom:10px; }
-    button { background:#e53935; color:#fff; border:none; padding:5px 10px; cursor:pointer; }
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #fff; 
+      margin: 0; 
+      padding: 20px; 
+      color: #333;
+    }
+    h1 { text-align: center; }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      background: #f9f9f9;
+    }
+    .card strong { color: #000; }
+    button {
+      background: red;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover { background: darkred; }
   </style>
 </head>
 <body>
-  <h1>Admin panel</h1>
-  <div id="posts">Yuklanmoqda...</div>
+  <h1>🛡 Admin Panel</h1>
+  <div id="posts"></div>
 
+  <!-- Firebase -->
   <script type="module">
-    // Firebase konfiguratsiya
+    // Firebase config (sendagi kalitlar bilan)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, deleteDoc, doc } 
-      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
       authDomain: "topildi.firebaseapp.com",
+      databaseURL: "https://topildi-default-rtdb.firebaseio.com",
       projectId: "topildi",
       storageBucket: "topildi.firebasestorage.app",
       messagingSenderId: "323891530719",
-      appId: "1:323891530719:web:d57c2ce38781dc37e4926a"
+      appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
+      measurementId: "G-NKCMKCXZQ7"
     };
 
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const db = getFirestore(app);
 
-    async function loadPosts(){
-      const postsDiv = document.getElementById("posts");
+    const postsDiv = document.getElementById("posts");
+
+    // Admin Gmail manzili (o‘zingniki yoz)
+    const adminEmail = "diyorabduraxmonov95@gmail.com";
+
+    // Auth tekshirish
+    onAuthStateChanged(auth, async (user) => {
+      if (user && user.email === adminEmail) {
+        loadPosts();
+      } else {
+        postsDiv.innerHTML = "<p>⛔ Sizda admin huquqi yo‘q!</p>";
+      }
+    });
+
+    // E’lonlarni chiqarish
+    async function loadPosts() {
       postsDiv.innerHTML = "";
-      const querySnapshot = await getDocs(collection(db, "Elonlar"));
+      const querySnapshot = await getDocs(collection(db, "posts"));
       querySnapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        const div = document.createElement("div");
-        div.className = "post";
-        div.innerHTML = `
-          <b>${data.narsa || "Noma’lum"}</b> 
-          <p>Joylagan: ${data.email || "Noma’lum"}</p>
+        const el = document.createElement("div");
+        el.classList.add("card");
+        el.innerHTML = `
+          <p><strong>Narsa:</strong> ${data.narsa || ""}</p>
+          <p><strong>Shahar:</strong> ${data.shahar || ""}</p>
+          <p><strong>Joylagan:</strong> ${data.userEmail || "Noma'lum"}</p>
           <button onclick="deletePost('${docSnap.id}')">❌ O‘chirish</button>
         `;
-        postsDiv.appendChild(div);
+        postsDiv.appendChild(el);
       });
     }
 
-    window.deletePost = async (id) => {
-      await deleteDoc(doc(db, "Elonlar", id));
-      alert("O‘chirildi!");
+    // E’lonni o‘chirish
+    window.deletePost = async function (id) {
+      await deleteDoc(doc(db, "posts", id));
+      alert("E’lon o‘chirildi!");
       loadPosts();
-    };
-
-    loadPosts();
+    }
   </script>
 </body>
 </html>
