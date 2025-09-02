@@ -12,19 +12,26 @@
     --panel:#0f172a; --ring:#e5e7eb33; --text:#0F172A;
     --muted:#475569; --text-card:#F1F5F9; --muted-card:#94A3B8;
     --blue:#1e293b; --green:#16A34A; --red:#DC2626; --amber:#f59e0b;
+    --gold:#facc15;
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
   body{background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text)}
   .wrap{max-width:980px;margin:0 auto;padding:16px 14px 28px}
   .topbar{position:sticky;top:0;z-index:70;background:linear-gradient(180deg,rgba(255,243,204,.92),rgba(255,236,173,.78));border-bottom:1px solid #f1d28a}
-  .hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px}
+  .hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;gap:10px}
   .brand{display:flex;align-items:center;gap:10px}
   .logo{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:#fff3c4;border:1px solid #f1d28a;font-weight:900;color:#b45309}
   .title{font-weight:800;letter-spacing:.2px;color:#1f2937}
   .controls{display:flex;gap:8px;align-items:center}
   .iconbtn{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;cursor:pointer;color:#1f2937}
+  .btn-mini{padding:8px 10px;border-radius:10px;border:1px solid #f1d28a;background:#fff3c4;cursor:pointer;font-weight:700}
   select.lang{background:#fff3c4;color:#1f2937;border:1px solid #f1d28a;border-radius:10px;padding:8px 10px}
+
+  .userbox{display:flex;align-items:center;gap:8px}
+  .avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid #f1d28a;display:none}
+  .bell{position:relative;display:none}
+  .badge{position:absolute;top:-6px;right:-6px;background:#dc2626;color:#fff;border-radius:999px;padding:2px 6px;font-size:12px;font-weight:800;min-width:18px;text-align:center}
 
   .alert{display:none;margin:10px auto 0;max-width:980px;background:#7c2d12;color:#fff;padding:10px 12px;border-radius:10px;white-space:pre-wrap}
 
@@ -75,16 +82,18 @@
   .bar{height:100%;width:0%;background:#38bdf8}
 
   /* === Reklama (full-width) === */
-  .ad-box{
-    margin:18px 0;border-radius:16px;overflow:hidden;background:#0f172a;color:#facc15;text-align:center
-  }
-  .ad-title{font-weight:800;padding:8px 10px;background:#0f172a;color:#facc15}
+  .ad-box{margin:18px 0;border-radius:16px;overflow:hidden;background:#0f172a;color:var(--gold);text-align:center}
+  .ad-title{font-weight:800;padding:8px 10px;background:#0f172a;color:var(--gold)}
   .ad-slider img{width:100%;height:auto;max-height:420px;object-fit:contain;display:none;background:#000}
   .ad-slider img.active{display:block;animation:fadeIn .6s}
-  .ad-text{padding:12px;font-weight:800;font-size:18px;background:#facc15;color:#0f172a;animation:blink 1.6s infinite}
+  .ad-text{padding:12px;font-weight:800;font-size:18px;background:var(--gold);color:#0f172a;animation:blink 1.6s infinite}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
   @media(max-width:520px){ .ad-slider img{max-height:260px} }
+
+  /* Profile form */
+  .profile-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:620px){ .profile-row{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
@@ -95,6 +104,15 @@
         <div class="title">BINGO</div>
       </div>
       <div class="controls">
+        <div class="bell" id="bellBtn" title="Bildirishnomalar" onclick="openNotifs()">
+          🔔<span class="badge" id="notifBadge" style="display:none">0</span>
+        </div>
+        <div class="userbox">
+          <img id="avatarSmall" class="avatar" alt="avatar"/>
+          <button id="profileBtn" class="btn-mini" style="display:none" onclick="navigate('profile')">Profil</button>
+          <button id="loginBtn" class="btn-mini" onclick="login()">Kirish (Google)</button>
+          <button id="logoutBtn" class="btn-mini" style="display:none" onclick="logout()">Chiqish</button>
+        </div>
         <select id="langSel" class="lang">
           <option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option>
         </select>
@@ -150,10 +168,41 @@
         </div>
       </section>
 
+      <!-- PROFILE -->
+      <section id="view_profile" class="view">
+        <div class="card">
+          <div class="card-title">👤 Profil</div>
+          <div class="profile-row">
+            <div>
+              <label>Ism (display name)</label>
+              <input id="p_name" placeholder="Ismingiz"/>
+            </div>
+            <div>
+              <label>Shahar</label>
+              <input id="p_city" placeholder="Masalan: Toshkent"/>
+            </div>
+          </div>
+          <div class="profile-row">
+            <div>
+              <label>Telefon</label>
+              <input id="p_phone" placeholder="+998 ** *** ** **" inputmode="tel"/>
+            </div>
+            <div>
+              <label>Avatar (rasm)</label>
+              <input id="p_avatar" type="file" accept="image/*"/>
+              <div class="progress" id="p_prog" style="display:none"><div class="bar" id="p_bar"></div></div>
+            </div>
+          </div>
+          <div class="sp"></div>
+          <button class="btn btn-blue" id="saveProfileBtn">Saqlash</button>
+        </div>
+      </section>
+
       <!-- LOST FORM -->
       <section id="view_lostForm" class="view">
         <div class="card">
           <div class="card-title">Yo‘qotdim — e’lon</div>
+          <div class="hint" id="lostAuthHint" style="display:none">E’lon berish uchun avval kirish kerak.</div>
           <label>Narsa</label><input id="l_item" placeholder="Masalan: Qora hamyon, telefon" />
           <div class="hint">Aniq nom yozing: rang, firma, model.</div>
           <label>Shahar/Hudud</label><input id="l_city" placeholder="Masalan: Samarqand / Registon" />
@@ -172,6 +221,7 @@
       <section id="view_foundForm" class="view">
         <div class="card">
           <div class="card-title">Topdim — e’lon</div>
+          <div class="hint" id="foundAuthHint" style="display:none">E’lon berish uchun avval kirish kerak.</div>
           <label>Narsa</label><input id="f_item" placeholder="Masalan: Pasport, kalitlar, sumka" />
           <div class="hint">Agar pasport bo‘lsa: ismning bosh harfi, familiya qismi kabi.</div>
           <label>Shahar/Hudud</label><input id="f_city" placeholder="Masalan: Toshkent / Chilonzor" />
@@ -233,6 +283,14 @@
           <button class="btn btn-blue" id="sendChatBtn">Yuborish</button>
         </div>
       </section>
+
+      <!-- NOTIFS -->
+      <section id="view_notifs" class="view">
+        <div class="card">
+          <div class="card-title">🔔 Bildirishnomalar</div>
+          <div id="notifs_list">—</div>
+        </div>
+      </section>
     </div>
 
     <div class="footer">© <span id="year"></span> BINGO</div>
@@ -240,6 +298,7 @@
 
   <!-- Firebase compat -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
 
@@ -248,7 +307,7 @@
 (function registerSW(){
   if(!('serviceWorker' in navigator)) return;
   const CODE = `
-    const VER='bingo-v5';
+    const VER='bingo-v6';
     self.addEventListener('install',e=>{ self.skipWaiting(); e.waitUntil(caches.open(VER).then(c=>c.addAll(['./'])) )});
     self.addEventListener('activate',e=>{
       e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==VER).map(k=>caches.delete(k))))); 
@@ -270,30 +329,22 @@
   navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
 })();
 
-/* ======== I18N (minimum) ======== */
+/* ======== Tiny i18n ======== */
 const I18N={
-  uz:{btn_submit:"E’lon berish",confirm_del:"Ushbu e’lonni o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi."},
-  ru:{btn_submit:"Опубликовать",confirm_del:"Удалить это объявление? Действие необратимо."},
-  en:{btn_submit:"Post",confirm_del:"Delete this post? This cannot be undone."}
+  uz:{must_login:"E’lon berish uchun avval kirish kerak.", confirm_del:"Ushbu e’lon o‘chirilsinmi?", saved:"✅ Saqlandi"},
+  ru:{must_login:"Чтобы опубликовать, сначала войдите.", confirm_del:"Удалить это объявление?", saved:"✅ Сохранено"},
+  en:{must_login:"You must sign in first.", confirm_del:"Delete this post?", saved:"✅ Saved"}
 };
 function t(k){const L=localStorage.getItem('bingo_lang')||'uz';return (I18N[L]||I18N.uz)[k]||k}
-document.getElementById('langSel').addEventListener('change',e=>{
-  localStorage.setItem('bingo_lang',e.target.value);
-});
+document.getElementById('langSel').addEventListener('change',e=>{ localStorage.setItem('bingo_lang',e.target.value); });
 document.getElementById('year').textContent=new Date().getFullYear();
 
 /* ======== Router ======== */
-let currentView='home', currentChatPostId=null, unsubChat=null;
-function enableFormButtons(){
-  ['btnLost','btnFound'].forEach(id=>{
-    const b=document.getElementById(id); if(b){ b.disabled=false; b.classList.remove('btn-disabled'); }
-  });
-}
+let currentView='home', currentChatPostId=null, unsubChat=null, unsubNotifs=null;
 function showView(name){
-  ['home','lostForm','foundForm','lostList','rewardList','foundList','mine','postChat']
+  ['home','lostForm','foundForm','lostList','rewardList','foundList','mine','postChat','profile','notifs']
     .forEach(id=>{const el=document.getElementById('view_'+id); if(el) el.classList.toggle('active',id===name)});
   document.getElementById('backBtn').style.display=(name!=='home')?'grid':'none';
-  if(name==='lostForm'||name==='foundForm'){ enableFormButtons(); LAST_POST=null; }
   window.scrollTo(0,0);
 }
 function navigate(name,replace){
@@ -303,6 +354,7 @@ function navigate(name,replace){
   if(name==='foundList') renderFound();
   if(name==='mine') renderMine();
   if(name==='postChat' && currentChatPostId) openChat(currentChatPostId,true);
+  if(name==='notifs') renderNotifs();
   const hash='#'+name+(currentChatPostId?('-'+currentChatPostId):'');
   if(replace) history.replaceState({view:name,id:currentChatPostId},'',hash);
   else history.pushState({view:name,id:currentChatPostId},'',hash);
@@ -323,9 +375,7 @@ window.addEventListener('popstate',e=>{
   const box = document.querySelector('.ad-box');
   const titleEl = document.getElementById('adTitle');
   const imgs = Array.from(document.querySelectorAll('#adSlider img'));
-  imgs.forEach(img=>{
-    img.addEventListener('error', ()=>{ img.remove(); }, {once:true});
-  });
+  imgs.forEach(img=>{ img.addEventListener('error', ()=>{ img.remove(); }, {once:true}); });
   function start(){
     const slides = Array.from(document.querySelectorAll('#adSlider img'));
     if(!slides.length){ box.style.display='none'; return; }
@@ -341,7 +391,7 @@ window.addEventListener('popstate',e=>{
   setTimeout(start,300);
 })();
 
-/* ======== Firebase (TOPILDI) ======== */
+/* ======== Firebase (APP) ======== */
 const firebaseConfig={
   apiKey:"AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
   authDomain:"topildi.firebaseapp.com",
@@ -353,11 +403,71 @@ const firebaseConfig={
   measurementId:"G-NKCMKCXZQ7"
 };
 try{ firebase.initializeApp(firebaseConfig); }catch(e){}
+const auth=firebase.auth();
 firebase.firestore().enablePersistence().catch(()=>{});
 const db=firebase.firestore(); let storage=null; try{ storage=firebase.storage(); }catch(e){}
 
+/* ======== Auth UI ======== */
+const loginBtn=document.getElementById('loginBtn');
+const logoutBtn=document.getElementById('logoutBtn');
+const profileBtn=document.getElementById('profileBtn');
+const avatarSmall=document.getElementById('avatarSmall');
+const bellBtn=document.getElementById('bellBtn');
+const notifBadge=document.getElementById('notifBadge');
+document.getElementById('bellBtn').style.display='none';
+
+function login(){
+  const provider=new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(()=>auth.signInWithRedirect(provider)).catch(()=>{});
+}
+function logout(){ auth.signOut().catch(()=>{}); }
+function openNotifs(){ navigate('notifs'); }
+
+auth.onAuthStateChanged(async (user)=>{
+  if(user){
+    loginBtn.style.display='none';
+    logoutBtn.style.display='inline-block';
+    profileBtn.style.display='inline-block';
+    bellBtn.style.display='inline-block';
+    avatarSmall.style.display='inline-block';
+    avatarSmall.src=user.photoURL||'https://avatar.iran.liara.run/public';
+    // write users/{uid}
+    await db.collection('users').doc(user.uid).set({
+      uid:user.uid, name:user.displayName||'', email:user.email||'',
+      photo:user.photoURL||'', city:'', phone:'', updated:Date.now()
+    }, {merge:true});
+    // enable posting
+    document.getElementById('lostAuthHint').style.display='none';
+    document.getElementById('foundAuthHint').style.display='none';
+    // notifs listener
+    if(unsubNotifs) unsubNotifs();
+    unsubNotifs = db.collection('users').doc(user.uid).collection('notifs')
+      .where('read','==',false)
+      .orderBy('ts','desc')
+      .onSnapshot(s=>{
+        const n=s.size;
+        notifBadge.style.display = n>0 ? 'inline-block' : 'none';
+        if(n>0) notifBadge.textContent= String(n);
+      },()=>{});
+    // preload profile
+    const udoc=await db.collection('users').doc(user.uid).get();
+    const u=udoc.data()||{};
+    document.getElementById('p_name').value=u.name||user.displayName||'';
+    document.getElementById('p_city').value=u.city||'';
+    document.getElementById('p_phone').value=u.phone||'';
+  }else{
+    loginBtn.style.display='inline-block';
+    logoutBtn.style.display='none';
+    profileBtn.style.display='none';
+    bellBtn.style.display='none';
+    avatarSmall.style.display='none';
+    notifBadge.style.display='none';
+    document.getElementById('lostAuthHint').style.display='block';
+    document.getElementById('foundAuthHint').style.display='block';
+  }
+});
+
 /* ======== Helpers ======== */
-const MY_UID=(function(){let id=localStorage.getItem('bingo_uid');if(!id){id='u_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('bingo_uid',id)}return id})();
 function banner(msg){const a=document.getElementById('alert');a.textContent=msg||'';a.style.display=msg?'block':'none'}
 function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]) )}
 function val(id){const el=document.getElementById(id);return el?el.value.trim():''}
@@ -373,27 +483,25 @@ function centerToast(msg, err=false){
 }
 function setProg(prefix, prc){ const bar=document.getElementById(prefix+'_bar'); const box=document.getElementById(prefix+'_prog'); if(!bar||!box) return; if(prc<=0||prc>=100){box.style.display='none'; bar.style.width='0%'} else {box.style.display='block'; bar.style.width=prc+'%'} }
 
-/* ======== Photo upload (Storage + fallback) ======== */
-async function getPhotoURL(file, prefix){
+/* ======== Photo upload ======== */
+async function uploadTo(pathPrefix, file, progPrefix){
   if(!file) return null;
   if(storage){
     try{
-      const path = `uploads/${MY_UID}/${Date.now()}_${(file.name||'photo').replace(/[^a-z0-9_.-]/gi,'_')}`;
+      const path = `${pathPrefix}/${auth.currentUser?.uid||'anon'}/${Date.now()}_${(file.name||'file').replace(/[^a-z0-9_.-]/gi,'_')}`;
       const ref = storage.ref().child(path);
       await ref.put(file).on('state_changed', snap=>{
         const prc = Math.round((snap.bytesTransferred/snap.totalBytes)*100);
-        setProg(prefix, prc<100?prc:0);
+        setProg(progPrefix, prc<100?prc:0);
       });
-      const url = await ref.getDownloadURL();
-      setProg(prefix,0); return url;
-    }catch(e){ console.warn('Storage upload failed, fallback to dataURL', e); setProg(prefix,0); }
+      const url = await ref.getDownloadURL(); setProg(progPrefix,0); return url;
+    }catch(e){ console.warn('upload fail',e); setProg(progPrefix,0); }
   }
   const dataUrl = await readFileAsDataURL(file); return dataUrl;
 }
 
-/* ======== Global state ======== */
-let ALL_POSTS=[]; let SEARCH_GLOBAL=''; let LAST_POST=null;
-
+/* ======== Global state & feed ======== */
+let ALL_POSTS=[];
 db.collection('posts').orderBy('created','desc').onSnapshot(snap=>{
   ALL_POSTS=snap.docs.map(d=>({id:d.id,...d.data()}));
   if(currentView==='lostList') renderLost();
@@ -402,16 +510,19 @@ db.collection('posts').orderBy('created','desc').onSnapshot(snap=>{
   if(currentView==='mine') renderMine();
 },err=>banner("Firestore o‘qish xatosi: "+err.message));
 
-/* ======== Submit handlers (with dedup) ======== */
+/* ======== Submit handlers (auth required) ======== */
 document.querySelectorAll('[data-submit]').forEach(btn=>{
   btn.addEventListener('click', async ()=>{
+    const user=auth.currentUser;
+    if(!user){ centerToast(t('must_login'), true); return; }
+
     if(btn.disabled) return;
     const kind=btn.dataset.submit, isLost=kind==='lost';
     btn.disabled=true; btn.classList.add('btn-disabled');
 
     const fileEl=document.getElementById(isLost?'l_photo':'f_photo');
     const file=fileEl?.files?.[0]||null;
-    const photoUrl=await getPhotoURL(file, isLost?'l':'f');
+    const photoUrl=await uploadTo('uploads', file, isLost?'l':'f');
 
     const p={
       kind,
@@ -423,45 +534,40 @@ document.querySelectorAll('[data-submit]').forEach(btn=>{
       reward: isLost? num(val('l_reward')) : 0,
       notes:  val(isLost?'l_notes':'f_notes'),
       photo: photoUrl || null,
-      uid: MY_UID,
+      uid: user.uid,
       created: Date.now()
     };
 
     if(!p.item||!p.city||!p.contact){
-      centerToast('Shahar va aloqa — majburiy', true); enableFormButtons(); return;
+      centerToast('Shahar va aloqa — majburiy', true);
+      btn.disabled=false; btn.classList.remove('btn-disabled'); return;
     }
 
     const sig = JSON.stringify([p.kind,p.item,p.city,p.contact,p.notes,!!p.photo]);
     const now=Date.now();
     const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}');
-    if(LAST_POST===sig || (last.sig===sig && (now-last.ts)<30000)){
+    if(last.sig===sig && (now-last.ts)<30000){
       centerToast("⚠️ Bu e’lon allaqachon joylangan (30s ichida).", true);
-      enableFormButtons(); return;
+      btn.disabled=false; btn.classList.remove('btn-disabled'); return;
     }
-    LAST_POST=sig; localStorage.setItem('bingo_last_post', JSON.stringify({sig,ts:now}));
+    localStorage.setItem('bingo_last_post', JSON.stringify({sig,ts:now}));
 
     try{
       await db.collection('posts').add(p);
-      clearForm(isLost);
+      if(isLost) ['l_item','l_city','l_place','l_date','l_contact','l_reward','l_notes'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+      else       ['f_item','f_city','f_place','f_date','f_contact','f_notes'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
       centerToast("✅ E’lon joylandi!");
       navigate(isLost?'lostList':'foundList');
     }catch(e){ centerToast("❌ Xato: "+e.message, true); }
-    finally{ setTimeout(enableFormButtons, 800); }
+    finally{ btn.disabled=false; btn.classList.remove('btn-disabled'); }
   });
 });
-function clearForm(isLost){
-  const ids=isLost?['l_item','l_city','l_place','l_date','l_contact','l_reward','l_notes','l_photo']
-                  :['f_item','f_city','f_place','f_date','f_contact','f_notes','f_photo'];
-  ids.forEach(id=>{const el=document.getElementById(id); if(!el) return; el.value='';});
-}
 
 /* ======== Renderers ======== */
 function card(p, allowDelete){
-  const L=localStorage.getItem('bingo_lang')||'uz';
-  const kindLabel = p.kind==='lost' ? (L==='ru'?'❗ Потеряно':(L==='en'?'❗ Lost':'❗ Yo‘qoldi'))
-                                    : (L==='ru'?'✅ Найдено':(L==='en'?'✅ Found':'✅ Topildi'));
-  const msgBtn = L==='en'?'✉️ Message':(L==='ru'?'✉️ Написать':'✉️ Xabar');
-  const shareBtn = navigator.share ? `<button class="btn btn-amber" onclick="sharePost('${esc(p.item)}','${esc(p.city||'')}', '${p.id}')">🔗 Ulashish</button>` : '';
+  const kindLabel = p.kind==='lost' ? '❗ Yo‘qoldi' : '✅ Topildi';
+  const msgBtn = '✉️ Xabar';
+  const mineAct = allowDelete?`<button class="btn" onclick="delPost('${p.id}')">🗑️ O‘chirish</button>`:'';
   return `
   <div class="post-card">
     ${p.photo?`<img class="post-img" src="${p.photo}" alt="photo">`:''}
@@ -474,9 +580,8 @@ function card(p, allowDelete){
     <div style="margin-top:6px; white-space:pre-wrap">${esc(p.notes||'')}</div>
     <div class="post-meta" style="margin-top:6px">📞 ${esc(p.contact||'-')}</div>
     <div class="actions">
-      ${allowDelete?`<button class="btn" onclick="delPost('${p.id}')">🗑️ Mening e’lonlarimdan o‘chirish</button>`:''}
+      ${mineAct}
       <button class="btn btn-blue" onclick="openChat('${p.id}')">${msgBtn}</button>
-      ${shareBtn}
     </div>
   </div>`;
 }
@@ -490,28 +595,13 @@ function applySearch(listEl, arr, searchInputId, counterId){
 function renderLost(){const el=document.getElementById('lost_list'); if(!el) return; applySearch(el, ALL_POSTS.filter(p=>p.kind==='lost'),'lostSearch','lostCount');}
 function renderReward(){const el=document.getElementById('reward_list'); if(!el) return; applySearch(el, ALL_POSTS.filter(p=>p.kind==='lost'&&(p.reward||0)>0),'rewardSearch','rewardCount');}
 function renderFound(){const el=document.getElementById('found_list'); if(!el) return; applySearch(el, ALL_POSTS.filter(p=>p.kind==='found'),'foundSearch','foundCount');}
-function renderMine(){const el=document.getElementById('mine_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.uid===MY_UID); el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—';}
+function renderMine(){const el=document.getElementById('mine_list'); if(!el) return; const u=auth.currentUser; const arr=u?ALL_POSTS.filter(p=>p.uid===u.uid):[]; el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—';}
 
-['lostSearch','rewardSearch','foundSearch'].forEach(id=>{
-  const el=document.getElementById(id);
-  if(el) el.addEventListener('input', ()=> {
-    if(currentView==='lostList') renderLost();
-    if(currentView==='rewardList') renderReward();
-    if(currentView==='foundList') renderFound();
-  });
-});
-
-/* ======== Share post (Web Share API) ======== */
-window.sharePost = async function(item, city, id){
-  if(!navigator.share) return;
-  const url = location.origin+location.pathname+'#postChat-'+id;
-  try{ await navigator.share({title:'BINGO: '+item, text:`${item} · ${city}`, url}); }catch{}
-}
-
-/* ======== Delete only mine ======== */
+/* ======== Share & Delete ======== */
 window.delPost = async function(id){
+  const u=auth.currentUser; if(!u) return;
   const post=ALL_POSTS.find(p=>p.id===id);
-  if(!post || post.uid!==MY_UID) return;
+  if(!post || post.uid!==u.uid) return;
   if(!confirm(t('confirm_del'))) return;
   try{
     await db.collection('posts').doc(id).delete();
@@ -521,43 +611,104 @@ window.delPost = async function(id){
   }catch(e){ banner("O‘chirish xatosi: "+e.message); }
 }
 
-/* ======== Chat ======== */
+/* ======== Chat + Notifications ======== */
 function logEmpty(){return 'Xabarlar yo‘q.'}
 window.openChat = function(postId, keep){
   const post=ALL_POSTS.find(p=>p.id===postId); if(!post) return;
   currentChatPostId=postId; document.getElementById('chatItemName').textContent=post.item;
   if(unsubChat) unsubChat();
   unsubChat = db.collection('posts').doc(postId).collection('chats').orderBy('ts')
-    .onSnapshot(s=>{
+    .onSnapshot(async s=>{
       const log=document.getElementById('chatLog');
       const arr=s.docs.map(d=>d.data());
       log.innerHTML = arr.length
-        ? arr.map(m=>`<div class="msg ${m.uid===MY_UID?'me':'other'}"><b>${esc(m.name||'Anon')}</b> <span style="opacity:.8;font-size:12px">· ${new Date(m.ts).toLocaleTimeString()}</span><div>${esc(m.text)}</div></div>`).join('')
+        ? arr.map(m=>`<div class="msg ${m.uid===(auth.currentUser?.uid||'')?'me':'other'}"><b>${esc(m.name||'Anon')}</b> <span style="opacity:.8;font-size:12px">· ${new Date(m.ts).toLocaleTimeString()}</span><div>${esc(m.text)}</div></div>`).join('')
         : `<div class="msg">${logEmpty()}</div>`;
       log.scrollTop=log.scrollHeight;
+
+      // Agar post egasi bo'lsa va shu chatga kirsachi -> shu post bo‘yicha notifs-ni read=true qilamiz
+      const u=auth.currentUser;
+      if(u && post.uid===u.uid){
+        const qs=await db.collection('users').doc(u.uid).collection('notifs')
+          .where('postId','==',postId).where('read','==',false).get();
+        const batch=db.batch();
+        qs.forEach(d=>batch.update(d.ref,{read:true}));
+        if(!qs.empty) await batch.commit();
+      }
     }, e=> banner("Chat o‘qish xatosi: "+e.message));
   if(!keep) navigate('postChat');
 }
-document.getElementById('sendChatBtn').addEventListener('click',()=>{
+document.getElementById('sendChatBtn').addEventListener('click',async ()=>{
   if(!currentChatPostId) return;
-  const name=(document.getElementById('chatName').value.trim()||'Anon');
+  const name=(document.getElementById('chatName').value.trim()||(auth.currentUser?.displayName)||'Anon');
   const text=document.getElementById('chatText').value.trim(); if(!text) return;
-  db.collection('posts').doc(currentChatPostId).collection('chats').add({name,uid:MY_UID,text,ts:Date.now()})
-    .then(()=>{document.getElementById('chatText').value=''})
-    .catch(e=> banner("Chat yozish xatosi: "+e.message));
+  const u=auth.currentUser;
+  const uid=u?.uid||('g_'+Math.random().toString(36).slice(2));
+  const msg={name,uid,text,ts:Date.now()};
+  const post=ALL_POSTS.find(p=>p.id===currentChatPostId);
+  try{
+    await db.collection('posts').doc(currentChatPostId).collection('chats').add(msg);
+    document.getElementById('chatText').value='';
+    // === NOTIFICATION to post owner ===
+    if(post?.uid && post.uid!==uid){
+      await db.collection('users').doc(post.uid).collection('notifs').add({
+        postId: currentChatPostId,
+        fromUid: uid,
+        fromName: name,
+        text, ts: Date.now(), read:false
+      });
+    }
+  }catch(e){ banner("Chat yozish xatosi: "+e.message); }
 });
 
-/* ======== Clear my posts ======== */
-document.getElementById('clearMineBtn').addEventListener('click', async ()=>{
-  if(!confirm('Barcha shaxsiy e’lonlaringiz o‘chirilsinmi?')) return;
+/* ======== Notifications view ======== */
+async function renderNotifs(){
+  const box=document.getElementById('notifs_list'); const u=auth.currentUser;
+  if(!u){ box.innerHTML='Avval kirish kerak.'; return; }
+  const qs=await db.collection('users').doc(u.uid).collection('notifs').orderBy('ts','desc').limit(50).get();
+  if(qs.empty){ box.innerHTML='—'; return; }
+  box.innerHTML = qs.docs.map(d=>{
+    const n=d.data(); const dt=new Date(n.ts).toLocaleString();
+    return `<div class="post-card"><div><b>${esc(n.fromName||'Anon')}</b> · <span class="post-date">${dt}</span></div>
+            <div style="margin-top:6px">Sizning postingizga xabar qoldirdi:</div>
+            <div style="margin-top:6px;white-space:pre-wrap">${esc(n.text||'')}</div>
+            <div class="actions">
+              <button class="btn btn-blue" onclick="goChat('${esc(n.postId)}')">✉️ Chatga o‘tish</button>
+              ${n.read?'<span class="pill">O‘qilgan</span>':'<span class="pill">Yangi</span>'}
+            </div></div>`;
+  }).join('');
+}
+window.goChat=function(postId){
+  openChat(postId); // navigate ichida chaqiriladi
+}
+
+/* ======== Profile save ======== */
+document.getElementById('saveProfileBtn').addEventListener('click', async ()=>{
+  const u=auth.currentUser; if(!u){ centerToast('Avval kirish kerak',true); return; }
+  const name=val('p_name'), city=val('p_city'), phone=val('p_phone');
+  const file=document.getElementById('p_avatar')?.files?.[0]||null;
+  let photoURL=u.photoURL||'';
+  if(file){
+    const url=await uploadTo('avatars', file, 'p');
+    if(url){ photoURL=url; try{ await u.updateProfile({photoURL:url}); }catch{} }
+  }
   try{
-    const mine=ALL_POSTS.filter(p=>p.uid===MY_UID);
-    const batch=db.batch();
-    for(const p of mine){ batch.delete(db.collection('posts').doc(p.id)); }
-    await batch.commit();
-    centerToast('🧹 Tozalandi');
-  }catch(e){ banner('Xato: '+e.message); }
+    await db.collection('users').doc(u.uid).set({name,city,phone,photo:photoURL,updated:Date.now()},{merge:true});
+    if(name){ try{ await u.updateProfile({displayName:name}); }catch{} }
+    document.getElementById('avatarSmall').src=photoURL||'https://avatar.iran.liara.run/public';
+    centerToast(t('saved'));
+  }catch(e){ banner('Profil saqlash xatosi: '+e.message); }
+});
+
+/* ======== Lists & search ======== */
+['lostSearch','rewardSearch','foundSearch'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener('input', ()=> {
+    if(currentView==='lostList') renderLost();
+    if(currentView==='rewardList') renderReward();
+    if(currentView==='foundList') renderFound();
+  });
 });
 </script>
 </body>
-  </html>
+                                                                                                  </html>
