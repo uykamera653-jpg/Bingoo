@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BINGO — Admin</title>
+  <meta name="theme-color" content="#ffffff" />
+  <style>
+    /* ====== OQ FONLI, TO'LIQ EKRANLI ADMIN UI ====== */
+    :root{
+      --bg:#ffffff;
+      --text:#0f172a;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --accent:#0ea5e9;
+      --danger:#ef4444;
+      --ok:#16a34a;
+      --warn:#d97706;
+      --card:#ffffff;
+      --chip:#f8fafc;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;
+      background:var(--bg); color:var(--text);
+      display:flex; flex-direction:column;
+    }
+    header{
+      position:sticky; top:0; z-index:2;
+      display:flex; align-items:center; gap:.75rem;
+      padding:12px 16px; border-bottom:1px solid var(--border); background:#fff;
+    }
+    header h1{margin:0;font-size:1.05rem;font-weight:800}
+    .grow{flex:1}
+    .btn{
+      height:40px; padding:0 .9rem; border-radius:.65rem;
+      border:1px solid var(--border); background:#fff; color:#111827;
+      font-weight:700; display:inline-flex; align-items:center; gap:.5rem; cursor:pointer;
+    }
+    .btn.primary{background:var(--accent);color:#fff;border-color:transparent}
+    .btn.danger{background:var(--danger);color:#fff;border-color:transparent}
+    .btn.ok{background:var(--ok);color:#fff;border-color:transparent}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    main{padding:16px; display:flex; flex-direction:column; gap:12px; min-height:0}
+    .toolbar{display:flex; gap:.5rem; flex-wrap:wrap}
+    .input, select{
+      height:40px; padding:0 .75rem; border:1px solid var(--border); border-radius:.65rem; background:#fff; color:var(--text); font-weight:600;
+    }
+    .grid{flex:1; overflow:auto; display:grid; gap:.9rem; grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+    .card{border:1px solid var(--border); border-radius:.9rem; background:var(--card); padding:14px; display:flex; flex-direction:column; gap:.5rem}
+    .title{font-weight:900}
+    .meta{color:var(--muted); font-size:.86rem}
+    .chips{display:flex; gap:.35rem; flex-wrap:wrap}
+    .chip{font-size:.78rem; padding:.18rem .5rem; border-radius:999px; background:var(--chip); border:1px solid var(--border); font-weight:700}
+    .chip.ok{background:#ecfdf5; color:#065f46}
+    .chip.warn{background:#fff7ed; color:#9a3412}
+    .chip.danger{background:#fef2f2; color:#991b1b}
+    .actions{display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.25rem}
+    footer{padding:10px 16px; border-top:1px solid var(--border); color:var(--muted); font-size:.85rem}
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>👮 BINGO Admin</h1>
+    <div class="grow"></div>
+    <span id="who" class="meta"></span>
+    <button id="btnLogin" class="btn">Gmail bilan kirish</button>
+    <button id="btnLogout" class="btn hidden">Chiqish</button>
+  </header>
+
+  <main>
+    <!-- Admin tekshiruvi xabari -->
+    <div id="guard" class="card">
+      <div class="title">Kirish talab qilinadi</div>
+      <div class="meta">Admin panelidan foydalanish uchun Google orqali kiring. Admin huquqi Firestore’ning <code>rules/{your-uid}</code> hujjatida <code>admin: true</code> bo‘lishi shart.</div>
+    </div>
+
+    <!-- Asosiy boshqaruv paneli -->
+    <div id="panel" class="hidden">
+      <div class="toolbar">
+        <button class="btn primary" id="btnReload">🔄 Yangilash</button>
+        <select id="filter" title="Filtr" class="input">
+          <option value="hammasi">Hammasi</option>
+          <option value="yoqotdim">❗ Yo‘qotdim</option>
+          <option value="topdim">✅ Topdim</option>
+          <option value="mukofot">🎁 Mukofotli</option>
+          <option value="urgent">⚠️ Urgent</option>
+        </select>
+        <input id="q" class="input" placeholder="Qidirish: sarlavha, shahar, uid, email" />
+        <button class="btn" id="btnClear">Tozalash</button>
+      </div>
+
+      <div class="grid" id="grid"></div>
+    </div>
+  </main>
+
+  <footer>
+    © BINGO • Admin panel (oq fon, to‘liq ekran). Elonni o‘chirish: 🗑 tugmasi.
+  </footer>
+
+  <!-- ==== Firebase (modullar) ==== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, getDocs, query, orderBy, where, deleteDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // === SENING FIREBASE CONFIGING (o'zgartirmay qo'ydim) ===
+    const firebaseConfig = {
+      apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+      authDomain: "topildi.firebaseapp.com",
+      databaseURL: "https://topildi-default-rtdb.firebaseio.com",
+      projectId: "topildi",
+      storageBucket: "topildi.firebasestorage.app",
+      messagingSenderId: "323891530719",
+      appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
+      measurementId: "G-NKCMKCXZQ7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    // ====== UI elementlar ======
+    const $ = s => document.querySelector(s);
+    const guard = $("#guard");
+    const panel = $("#panel");
+    const who = $("#who");
+    const btnLogin = $("#btnLogin");
+    const btnLogout = $("#btnLogout");
+    const btnReload = $("#btnReload");
+    const btnClear = $("#btnClear");
+    const grid = $("#grid");
+    const q = $("#q");
+    const filter = $("#filter");
+
+    btnLogin.onclick = async () => {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    };
+    btnLogout.onclick = () => signOut(auth);
+    btnReload.onclick = () => loadElons();
+    btnClear.onclick = () => { q.value=""; loadElons(); };
+    q.addEventListener("input", () => loadElons());
+    filter.addEventListener("change", () => loadElons());
+
+    // ====== Auth va admin tekshiruvi ======
+    let currentUser = null;
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user || null;
+      who.textContent = user ? (user.email || user.uid) : "";
+      btnLogin.classList.toggle("hidden", !!user);
+      btnLogout.classList.toggle("hidden", !user);
+
+      if(!user){
+        panel.classList.add("hidden");
+        guard.classList.remove("hidden");
+        grid.innerHTML = "";
+        return;
+      }
+
+      // Firestore: rules/{uid} -> { admin: true }
+      const ruleRef = doc(db, "rules", user.uid);
+      const ruleSnap = await getDoc(ruleRef);
+      const isAdmin = ruleSnap.exists() && ruleSnap.data().admin === true;
+
+      if(!isAdmin){
+        guard.innerHTML = `
+          <div class="title">Admin ruxsati yo‘q</div>
+          <div class="meta">Kirish: <b>${user.email}</b> <br> Bu hisobda admin belgisi topilmadi. Firestore → <code>rules/${user.uid}</code> hujjatida <code>admin: true</code> ni qo‘ying.</div>`;
+        panel.classList.add("hidden");
+        guard.classList.remove("hidden");
+        return;
+      }
+
+      // Admin — panelni ko‘rsatamiz
+      guard.classList.add("hidden");
+      panel.classList.remove("hidden");
+      await loadElons();
+    });
+
+    // ====== E'lonlarni olish, filtr va qidirish ======
+    async function loadElons(){
+      grid.innerHTML = "";
+      const spinner = document.createElement("div");
+      spinner.className = "meta";
+      spinner.textContent = "Yuklanmoqda…";
+      grid.appendChild(spinner);
+
+      // Hamma e'lonlar kolleksiyasi nomi: elons  (biz shu nomdan foydalandik)
+      // Agar sendagi kolleksiya nomi boshqacha bo‘lsa — shu joyni o‘zgartir.
+      const col = collection(db,"elons");
+      let qy = query(col, orderBy("time","desc"));
+
+      // Qidiruv matni:
+      const text = (q.value || "").trim().toLowerCase();
+
+      // Hamma e'lonlarni olib, keyin frontda filterlaymiz (Firestore'da to'liq-text qidiruv yo'q)
+      const snap = await getDocs(qy);
+      const items = [];
+      snap.forEach(d=>{
+        const x = d.data();
+        items.push({ id:d.id, ...x });
+      });
+
+      // Filtr
+      const f = filter.value;
+      const filtered = items.filter(x=>{
+        if(f==="yoqotdim" && x.type!=="yoqotdim") return false;
+        if(f==="topdim" && x.type!=="topdim") return false;
+        if(f==="mukofot" && !x.reward) return false;
+        if(f==="urgent" && !x.urgent) return false;
+        if(text){
+          const blob = JSON.stringify(x).toLowerCase();
+          if(!blob.includes(text)) return false;
+        }
+        return true;
+      });
+
+      // Chizish
+      grid.innerHTML = "";
+      if(filtered.length===0){
+        const empty = document.createElement("div");
+        empty.className="meta";
+        empty.textContent="E’lon topilmadi.";
+        grid.appendChild(empty);
+        return;
+      }
+      for(const x of filtered){
+        grid.appendChild(renderCard(x));
+      }
+    }
+
+    // ====== Bitta karta ======
+    function renderCard(x){
+      const el = document.createElement("div");
+      el.className = "card";
+
+      const tp = x.type==="yoqotdim" ? "❗ Yo‘qotdim" : "✅ Topdim";
+      const title = x.title || x.narsa || "(sarlavha yo‘q)";
+      const city = x.city || x.shahar || "(shahar yo‘q)";
+      const email = x.email || "(email yo‘q)";
+      const phone = x.phone || x.tel || "";
+
+      el.innerHTML = `
+        <div class="title">${tp} — ${title}</div>
+        <div class="meta">ID: ${x.id || "(yo‘q)"} · Shahar: ${city}</div>
+        <div class="chips">
+          <span class="chip">${x.uid ? "UID: "+x.uid : "UID: yo‘q"}</span>
+          <span class="chip">${email}</span>
+          ${phone ? `<span class="chip">${phone}</span>`:""}
+          ${x.reward ? `<span class="chip ok">🎁 Mukofot</span>`:""}
+          ${x.urgent ? `<span class="chip warn">⚠️ Urgent</span>`:""}
+        </div>
+        <div class="meta">${x.desc || x.izoh || ""}</div>
+        <div class="actions">
+          <button class="btn danger" title="E’loni o‘chirish" data-id="${x.id}">🗑 O‘chirish</button>
+        </div>
+      `;
+
+      el.querySelector(".btn.danger").onclick = async () => {
+        if(!confirm("Ushbu e’loni o‘chirasizmi?")) return;
+        await deleteDoc(doc(db,"elons",x.id));
+        el.remove();
+      };
+
+      return el;
+    }
+  </script>
+</body>
+</html>
