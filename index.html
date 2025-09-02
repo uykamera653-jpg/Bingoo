@@ -1,120 +1,85 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-  <title>BINGO — Yo‘qoldi/Topildi</title>
-  <meta name="theme-color" content="#f59e0b"/>
-
-  <!-- =========================================================
-       BINGO — YO‘QOLDI/TOPILDI • TO‘LIQ INDEX.HTML (>700 qator)
-       Funksiyalar:
-       - 3 til (UZ/RU/EN) i18n
-       - Gmail (Google) bilan login (Firebase Auth)
-       - Profil (ismni yangilash), avatar harfi
-       - E’lon berish faqat login bo‘lsa
-       - RASM YUKLASH OLIB TASHLANGAN (talab bo‘yicha)
-       - Yo‘qotdim/Topdim formalar
-       - Lost/Found/Reward/Mine ro‘yxatlari
-       - Chat: har post ichida
-       - Realtime bildirishnoma: 🔔 badge + toast + “ding”
-         (chat oynasidan tashqarida bo‘lsang ham ishlaydi)
-       - Bosh sahifada reklama banneri: 2 ta rasm navbat bilan almashadi
-       - Offline: service worker caching
-       - Kesh yangilash uchun VER versiya satri
-     ========================================================= -->
-
-  <style>
-    /* ======================= 🟧 ORANGE — Asosiy UI stil ======================= */
-    :root{
-      --bg1:#FFF7D6; --bg2:#FFE59A;
-      --panel:#0f172a; --ring:#e5e7eb33; --text:#0F172A;
-      --muted:#475569; --text-card:#F1F5F9; --muted-card:#94A3B8;
-      --blue:#1e293b; --green:#16A34A; --red:#DC2626; --amber:#f59e0b;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
-    body{background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text)}
-    .wrap{max-width:980px;margin:0 auto;padding:16px 14px 28px}
-
-    .topbar{position:sticky;top:0;z-index:70;background:linear-gradient(180deg,rgba(255,243,204,.92),rgba(255,236,173,.78));border-bottom:1px solid #f1d28a;backdrop-filter:saturate(1.1) blur(2px)}
-    .hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;gap:10px}
-    .brand{display:flex;align-items:center;gap:10px}
-    .logo{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:#fff3c4;border:1px solid #f1d28a;font-weight:900;color:#b45309}
-    .title{font-weight:800;letter-spacing:.2px;color:#1f2937}
-    .controls{display:flex;gap:8px;align-items:center;position:relative}
-    .iconbtn{position:relative;display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;cursor:pointer;color:#1f2937}
-    .avatar{width:38px;height:38px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;display:grid;place-items:center;font-weight:900}
-    select.lang{background:#fff3c4;color:#1f2937;border:1px solid #f1d28a;border-radius:10px;padding:8px 10px}
-
-    .alert{display:none;margin:10px auto 0;max-width:980px;background:#7c2d12;color:#fff;padding:10px 12px;border-radius:10px;white-space:pre-wrap}
-
-    .views{min-height:70vh}
-    .view{display:none}
-    .view.active{display:block}
-
-    .headline{font-size:42px;line-height:1.2;font-weight:900;color:#111827;margin:14px 0}
-    .muted{color:#475569;margin-top:6px}
-
-    .btn{border-radius:16px;padding:12px 16px;cursor:pointer;border:1px solid #e2e8f0;background:#111a2b;color:#e5eef7;font-weight:700;font-size:15px;transition:.2s}
-    .btn:hover{transform:translateY(-1px)}
-    .btn-blue{background:var(--blue)} .btn-green{background:var(--green);color:#04140a} .btn-red{background:var(--red)} .btn-amber{background:var(--amber);color:#111}
-    .btn-sm{font-size:14px;padding:10px 12px}
-    .btn-disabled{background:#9ca3af!important;color:#f3f4f6!important;cursor:not-allowed}
-
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
-    @media (max-width:760px){ .grid{grid-template-columns:1fr} .headline{font-size:36px} }
-
-    .card{background:var(--panel);border:1px solid var(--ring);border-radius:18px;padding:12px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
-    .card-title{font-weight:800;margin-bottom:8px;font-size:16px;letter-spacing:.2px}
-    .card-text,.card-list{font-size:14px;color:var(--muted-card)}
-    label{font-size:13px;color:#8fa1b7;margin:8px 0 4px;display:block}
-    input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px}
-    textarea{min-height:96px;resize:vertical}
-    .sp{height:10px}
-
-    .post-card{background:#0f172a;border:1px solid #223047;border-radius:14px;padding:12px;margin:10px 0}
-    .post-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
-    .post-kind{font-weight:700}
-    .post-date{opacity:.8;font-size:12px}
-    .post-meta{opacity:.9;font-size:13px}
-
-    .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap}
-    .footer{text-align:center;color:#334155;margin-top:20px;font-size:13px}
-
-    .chat-log{height:46vh;overflow:auto;background:#0b1220;border:1px solid #223047;border-radius:12px;padding:10px}
-    .msg{margin:6px 0;padding:8px 10px;border-radius:12px;border:1px solid #223047;background:#0e1728}
-    .me{background:#0b2a1f;border-color:#0a7a46}
-    .other{background:#101e33;border-color:#263b5a}
-    .hint{font-size:12px;color:#94a3b8;margin-top:4px}
-
-    /* ======================= 🟪 PURPLE — Reklama banner ======================= */
-    .ad-wrap{margin:18px 0}
-    .ad{background:#0e1728;border:1px solid #223047;border-radius:18px;overflow:hidden;color:#f8fafc;position:relative}
-    .ad-head{position:absolute;left:0;right:0;top:6px;text-align:center;font-weight:900;letter-spacing:.4px;color:#f59e0b;text-shadow:0 1px 0 #111;z-index:2}
-    .ad-img{width:100%;height:320px;object-fit:cover;display:block;opacity:0;transition:opacity .45s ease}
-    .ad-img.show{opacity:1}
-    @media (max-width:760px){ .ad-img{height:240px} }
-    .ad-foot{padding:10px 12px;text-align:center;font-weight:900;opacity:.92;background:linear-gradient(180deg,rgba(14,23,40,0),rgba(14,23,40,.66));position:absolute;left:0;right:0;bottom:0}
-    .ad-foot .blink{display:inline-block;animation:blink 1.4s infinite}
-    @keyframes blink{50%{opacity:.45}}
-
-    /* ======================= 🟥 RED — Toast (markaziy) ======================= */
-    .center-toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);background:#16a34a;color:#fff;padding:18px 22px;border-radius:14px;font-weight:900;z-index:9999;opacity:0;transition:.18s}
-    .center-toast.err{background:#dc2626}
-    .center-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
-
-    /* 🔔 badge */
-    #notifBadge{position:absolute;right:-6px;top:-6px;background:#ef4444;color:#fff;border-radius:999px;padding:0 6px;font-size:12px;font-weight:900;display:none}
-
-    /* Network badge (optional) */
-    .net{position:sticky;top:56px;z-index:65;margin:0 auto;max-width:980px;padding:6px 10px;border-radius:10px;text-align:center;font-weight:800;display:none}
-    .net.off{display:block;background:#991b1b;color:#fff;border:1px solid #fecaca}
-    .net.on{display:block;background:#065f46;color:#d1fae5;border:1px solid #99f6e4}
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>BINGO — Yo‘qoldi/Topildi</title>
+<meta name="theme-color" content="#f59e0b"/>
+<style>
+  :root{
+    --bg1:#FFF7D6; --bg2:#FFE59A;
+    --panel:#0f172a; --ring:#e5e7eb33; --text:#0F172A;
+    --muted:#475569; --text-card:#F1F5F9; --muted-card:#94A3B8;
+    --blue:#1e293b; --green:#16A34A; --red:#DC2626; --amber:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
+  body{background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text)}
+  .wrap{max-width:980px;margin:0 auto;padding:16px 14px 28px}
+  .topbar{position:sticky;top:0;z-index:70;background:linear-gradient(180deg,rgba(255,243,204,.92),rgba(255,236,173,.78));border-bottom:1px solid #f1d28a;backdrop-filter:saturate(1.2) blur(6px)}
+  .hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:#fff3c4;border:1px solid #f1d28a;font-weight:900;color:#b45309}
+  .title{font-weight:800;letter-spacing:.2px;color:#1f2937}
+  .controls{display:flex;gap:8px;align-items:center}
+  .iconbtn{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;cursor:pointer;color:#1f2937}
+  .iconbtn.badge{position:relative}
+  .iconbtn.badge .dot{position:absolute;right:-2px;top:-2px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;display:grid;place-items:center;background:#ef4444;color:#fff;font-size:11px;border:2px solid #fff3c4}
+  select.lang{background:#fff3c4;color:#1f2937;border:1px solid #f1d28a;border-radius:10px;padding:8px 10px}
+  .alert{display:none;margin:10px auto 0;max-width:980px;background:#7c2d12;color:#fff;padding:10px 12px;border-radius:10px;white-space:pre-wrap}
+  .net{position:sticky;top:56px;z-index:65;margin:0 auto;max-width:980px;padding:6px 10px;border-radius:10px;text-align:center;font-weight:800;display:none}
+  .net.off{display:block;background:#991b1b;color:#fff;border:1px solid #fecaca}
+  .net.on{display:block;background:#065f46;color:#d1fae5;border:1px solid #99f6e4}
+  .hero{margin:24px 0 12px}
+  .headline{font-size:34px;line-height:1.25;font-weight:900;color:#111827}
+  .muted{color:#475569;margin-top:6px}
+  #mainMenu{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:20px 0}
+  .btn{border-radius:16px;padding:12px 16px;cursor:pointer;border:1px solid #e2e8f0;background:#111a2b;color:#e5eef7;font-weight:700;font-size:15px;transition:.2s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-blue{background:var(--blue)} .btn-green{background:var(--green);color:#04140a} .btn-red{background:var(--red)}
+  .btn-amber{background:var(--amber);color:#111}
+  .btn-sm{font-size:14px;padding:10px 12px}
+  .btn-disabled{background:#9ca3af!important;color:#f3f4f6!important;cursor:not-allowed}
+  .views{min-height:72vh}
+  .view{display:none}
+  .view.active{display:block}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  @media (max-width:760px){ .grid{grid-template-columns:1fr} }
+  .card{background:var(--panel);border:1px solid var(--ring);border-radius:18px;padding:12px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+  .card-title{font-weight:800;margin-bottom:8px;font-size:15px;letter-spacing:.2px}
+  .card-text,.card-list{font-size:13px;color:var(--muted-card)}
+  label{font-size:13px;color:#8fa1b7;margin:8px 0 4px;display:block}
+  input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px}
+  textarea{min-height:96px;resize:vertical}
+  .sp{height:10px}
+  .post-card{background:#0f172a;border:1px solid #223047;border-radius:14px;padding:12px;margin:10px 0}
+  .post-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .post-kind{font-weight:700}
+  .post-date{opacity:.8;font-size:12px}
+  .post-meta{opacity:.9;font-size:13px}
+  .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap}
+  .footer{text-align:center;color:#334155;margin-top:20px;font-size:13px}
+  .chat-log{height:46vh;overflow:auto;background:#0b1220;border:1px solid #223047;border-radius:12px;padding:10px}
+  .msg{margin:6px 0;padding:8px 10px;border-radius:12px;border:1px solid #223047;background:#0e1728}
+  .me{background:#0b2a1f;border-color:#0a7a46}
+  .other{background:#101e33;border-color:#263b5a}
+  .hint{font-size:12px;color:#94a3b8;margin-top:4px}
+  .pill{display:inline-block;padding:6px 10px;border-radius:999px;border:1px dashed #334155;background:#0b1220;color:#cbd5e1;font-weight:700}
+  .center-toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);background:#16a34a;color:#fff;padding:18px 22px;border-radius:14px;font-weight:900;z-index:9999;opacity:0;transition:.18s}
+  .center-toast.err{background:#dc2626}
+  .center-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .admin-post{border:1px dashed #334155;border-radius:12px;padding:10px;margin:8px 0;background:#0b1220}
+  .badge{display:inline-block;padding:2px 6px;border-radius:8px;font-size:12px;background:#1f2937;color:#e5e7eb;margin-left:6px}
+  /* Reklama banner */
+  .ad{background:#0d1628;border:1px solid #223047;color:#e8eef6;border-radius:20px;padding:10px;margin:10px 0}
+  .ad h4{margin:0 0 8px 0;text-align:center;color:#facc15;letter-spacing:.3px}
+  .adbox{position:relative;overflow:hidden;border-radius:16px;aspect-ratio:16/9;background:#0b1220;border:1px solid #223047}
+  .adbox img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s ease}
+  .adbox img.active{opacity:1}
+  .ad-marquee{padding:10px 6px 0;text-align:center;font-weight:800;opacity:.8}
+</style>
 </head>
 <body>
-  <!-- ======================= 🟧 ORANGE — HEADER ======================= -->
   <div class="topbar">
     <div class="hdr">
       <div class="brand">
@@ -122,43 +87,41 @@
         <div class="title">BINGO</div>
       </div>
       <div class="controls">
-        <select id="langSel" class="lang" title="Til">
+        <button id="notifBtn" class="iconbtn badge" title="Bildirishnomalar">🔔<span id="notifDot" class="dot" style="display:none">0</span></button>
+        <select id="langSel" class="lang">
           <option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option>
         </select>
-
-        <!-- 🔔 Bildirishnoma tugmasi + badge -->
-        <button id="notifBtn" class="iconbtn" title="Bildirishnomalar">🔔<span id="notifBadge">0</span></button>
-        <!-- 👤 Google authed avatar (harf) / login tugmasi -->
-        <div id="authArea">
-          <button id="loginBtn" class="btn btn-amber btn-sm">Google bilan kirish</button>
-        </div>
+        <button id="adminBtn" class="iconbtn" title="Admin panel" style="display:none">⚙️</button>
+        <button id="backBtn" class="iconbtn" style="display:none" title="Orqaga">⟵</button>
         <button id="homeBtn" class="iconbtn" title="Bosh sahifa">⌂</button>
+        <button id="loginBtn" class="iconbtn" title="Kirish">👤</button>
       </div>
     </div>
   </div>
 
-  <div id="netBadge" class="net on" style="display:none"></div>
   <div id="alert" class="alert" role="alert"></div>
 
   <div class="wrap">
     <div class="views">
-      <!-- ======================= 🟧 ORANGE — HOME ======================= -->
+      <!-- HOME -->
       <section id="view_home" class="view active">
         <div class="hero">
           <div class="headline" data-i18n="hero_title">Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.</div>
           <div class="muted" data-i18n="hero_sub">“Halollik — eng katta mukofot.”</div>
         </div>
 
-        <!-- 🟪 Reklama kartasi -->
-        <div class="ad-wrap">
-          <div class="ad">
-            <div class="ad-head">Reklama</div>
-            <img id="adImg" class="ad-img" src="" alt="reklama">
-            <div class="ad-foot">★ <span class="blink">Bu yerda sizning reklamangiz bo‘lishi mumkin</span></div>
+        <!-- Reklama banneri -->
+        <div class="ad">
+          <h4>Reklama</h4>
+          <div class="adbox" id="adBox">
+            <!-- Rasm URL larini JS qo‘yadi -->
+            <img alt="ad1" id="ad1"/>
+            <img alt="ad2" id="ad2"/>
           </div>
+          <div class="ad-marquee">★ Bu yerda sizning reklamangiz bo‘lishi mumkin</div>
         </div>
 
-        <div id="mainMenu" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:8px 0 0">
+        <div id="mainMenu">
           <button class="btn btn-red"  data-nav="lostForm"  data-i18n="btn_lost">❗ Yo‘qotdim</button>
           <button class="btn btn-green" data-nav="foundForm" data-i18n="btn_found">✅ Topdim</button>
           <button class="btn btn-blue" data-nav="lostList"  data-i18n="btn_lostlist">📋 Yo‘qotilganlar</button>
@@ -168,7 +131,7 @@
           <button class="btn btn-blue btn-sm" data-nav="profile">👤 Profil</button>
         </div>
 
-        <div class="grid" style="margin-top:14px">
+        <div class="grid">
           <div class="card">
             <div class="card-title" data-i18n="why_title">Nega BINGO?</div>
             <p class="card-text" data-i18n="why_text">Oddiy forma, tez natija. Barcha e’lonlar bir joyda.</p>
@@ -184,58 +147,93 @@
         </div>
       </section>
 
-      <!-- ======================= 🟦 BLUE — LOST FORM (photo yo‘q) ======================= -->
+      <!-- LOST FORM -->
       <section id="view_lostForm" class="view">
         <div class="card">
           <div class="card-title"><span data-i18n="lost_form_title">Yo‘qotdim — e’lon</span></div>
-          <label data-i18n="lbl_item">Narsa</label><input id="l_item" placeholder="Masalan: Qora hamyon, telefon"/>
-          <label data-i18n="lbl_city">Shahar/Hudud</label><input id="l_city" placeholder="Masalan: Samarqand / Registon"/>
-          <label data-i18n="lbl_place">Joy</label><input id="l_place" placeholder="Qayerda yo‘qotdingiz?"/>
-          <label data-i18n="lbl_date">Sana/Vaqt</label><input id="l_date" placeholder="2025-08-30 14:00"/>
-          <label data-i18n="lbl_contact">Aloqa</label><input id="l_contact" placeholder="+998 90 123 45 67" inputmode="tel"/>
-          <label data-i18n="lbl_reward">Mukofot (ixt.)</label><input id="l_reward" type="number" placeholder="100000 so‘m"/>
-          <label data-i18n="lbl_notes">Qo‘shimcha</label><textarea id="l_notes" placeholder="Belgilari: ..."></textarea>
+
+          <label data-i18n="lbl_item">Narsa</label>
+          <input id="l_item" placeholder="Masalan: Qora hamyon, telefon" />
+          <div class="hint">Aniq nom yozing: rang, firma, model.</div>
+
+          <label data-i18n="lbl_city">Shahar/Hudud</label>
+          <input id="l_city" placeholder="Masalan: Samarqand / Registon" />
+
+          <label data-i18n="lbl_place">Joy</label>
+          <input id="l_place" placeholder="Qayerda yo‘qotdingiz? (bozor, bekat...)" />
+
+          <label data-i18n="lbl_date">Sana/Vaqt</label>
+          <input id="l_date" placeholder="2025-08-30 14:00" />
+
+          <label data-i18n="lbl_contact">Aloqa</label>
+          <input id="l_contact" placeholder="+998 90 123 45 67" inputmode="tel" />
+
+          <label data-i18n="lbl_reward">Mukofot (ixt.)</label>
+          <input id="l_reward" type="number" placeholder="100000 so‘m" />
+
+          <label data-i18n="lbl_notes">Qo‘shimcha</label>
+          <textarea id="l_notes" placeholder="Belgilari: stiker, qopqoq, ichida hujjatlar..."></textarea>
+
           <div class="sp"></div>
           <button id="btnLost" class="btn btn-red" data-submit="lost" data-i18n="btn_submit">E’lon berish</button>
         </div>
       </section>
 
-      <!-- ======================= 🟩 GREEN — FOUND FORM (photo yo‘q) ======================= -->
+      <!-- FOUND FORM -->
       <section id="view_foundForm" class="view">
         <div class="card">
           <div class="card-title"><span data-i18n="found_form_title">Topdim — e’lon</span></div>
-          <label data-i18n="lbl_item">Narsa</label><input id="f_item" placeholder="Masalan: Pasport, kalitlar"/>
-          <label data-i18n="lbl_city">Shahar/Hudud</label><input id="f_city" placeholder="Masalan: Toshkent / Chilonzor"/>
-          <label data-i18n="lbl_place">Qayerdan topildi</label><input id="f_place" placeholder="Masalan: ..."/>
-          <label data-i18n="lbl_date">Sana/Vaqt</label><input id="f_date" placeholder="2025-08-30 10:00"/>
-          <label data-i18n="lbl_contact">Aloqa</label><input id="f_contact" placeholder="+998 90 987 65 43" inputmode="tel"/>
-          <label data-i18n="lbl_notes">Qo‘shimcha</label><textarea id="f_notes" placeholder="Topilgan holati ..."></textarea>
+
+          <label data-i18n="lbl_item">Narsa</label>
+          <input id="f_item" placeholder="Masalan: Pasport, kalitlar, sumka" />
+          <div class="hint">Agar pasport bo‘lsa: ismning bosh harfi, familiya qismi kabi.</div>
+
+          <label data-i18n="lbl_city">Shahar/Hudud</label>
+          <input id="f_city" placeholder="Masalan: Toshkent / Chilonzor" />
+
+          <label data-i18n="lbl_place">Qayerdan topildi</label>
+          <input id="f_place" placeholder="Masalan: Chorsu bozori yaqinida" />
+
+          <label data-i18n="lbl_date">Sana/Vaqt</label>
+          <input id="f_date" placeholder="2025-08-30 10:00" />
+
+          <label data-i18n="lbl_contact">Aloqa</label>
+          <input id="f_contact" placeholder="+998 90 987 65 43" inputmode="tel" />
+
+          <label data-i18n="lbl_notes">Qo‘shimcha</label>
+          <textarea id="f_notes" placeholder="Topilgan holati, qayerga topshirildi va h.k."></textarea>
+
           <div class="sp"></div>
           <button id="btnFound" class="btn btn-green" data-submit="found" data-i18n="btn_submit">E’lon berish</button>
         </div>
       </section>
 
-      <!-- ======================= 🟨 YELLOW — LISTS ======================= -->
+      <!-- LISTS -->
       <section id="view_lostList" class="view">
         <div class="card">
           <div class="card-title" data-i18n="lost_list_title">📋 Umumiy yo‘qotilganlar</div>
+          <div class="searchbar"><input id="lostSearch" placeholder="Qidirish (yo‘qotilganlar)"><span class="pill" id="lostCount">0</span></div>
           <div id="lost_list">—</div>
         </div>
       </section>
+
       <section id="view_rewardList" class="view">
         <div class="card">
           <div class="card-title" data-i18n="reward_list_title">🎁 Mukofotli</div>
+          <div class="searchbar"><input id="rewardSearch" placeholder="Qidirish (mukofotli)"><span class="pill" id="rewardCount">0</span></div>
           <div id="reward_list">—</div>
         </div>
       </section>
+
       <section id="view_foundList" class="view">
         <div class="card">
           <div class="card-title" data-i18n="found_list_title">🔎 Topilganlar</div>
+          <div class="searchbar"><input id="foundSearch" placeholder="Qidirish (topilganlar)"><span class="pill" id="foundCount">0</span></div>
           <div id="found_list">—</div>
         </div>
       </section>
 
-      <!-- ======================= 🟫 BROWN — MINE ======================= -->
+      <!-- MINE -->
       <section id="view_mine" class="view">
         <div class="card">
           <div class="card-title" data-i18n="mine_title">⭐ Mening e’lonlarim</div>
@@ -245,7 +243,28 @@
         </div>
       </section>
 
-      <!-- ======================= 🟦 BLUE — CHAT ======================= -->
+      <!-- NOTIFICATIONS -->
+      <section id="view_notifications" class="view">
+        <div class="card">
+          <div class="card-title">🔔 Bildirishnomalar</div>
+          <div id="notif_list">—</div>
+          <div class="sp"></div>
+          <button class="btn btn-sm" id="markAllRead">Barchasini o‘qilgan</button>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section id="view_profile" class="view">
+        <div class="card">
+          <div class="card-title">👤 Profil</div>
+          <div id="profileBox" class="card-text">Kirish qilinmagan.</div>
+          <div class="sp"></div>
+          <button id="googleLogin" class="btn btn-amber">🔐 Google bilan kirish</button>
+          <button id="logoutBtn" class="btn btn-sm" style="display:none">Chiqish</button>
+        </div>
+      </section>
+
+      <!-- CHAT -->
       <section id="view_postChat" class="view">
         <div class="card">
           <div class="card-title"><span data-i18n="chat_title">Xabar</span> — <span id="chatItemName"></span></div>
@@ -253,19 +272,41 @@
           <div class="chat-log" id="chatLog"></div>
           <div class="sp"></div>
           <input id="chatName" placeholder="Ismingiz"/>
-          <input id="chatText" placeholder="Xabar... (telefon raqamni yozmang)"/>
+          <input id="chatText" placeholder="Xabar... (telefon raqamni yozmang, faqat aloqa uchun postdagi raqamdan foydalaning)"/>
           <div class="sp"></div>
           <button class="btn btn-blue" id="sendChatBtn" data-i18n="btn_send">Yuborish</button>
         </div>
       </section>
 
-      <!-- ======================= 🟪 PURPLE — PROFIL ======================= -->
-      <section id="view_profile" class="view">
+      <!-- ADMIN -->
+      <section id="view_admin" class="view">
         <div class="card">
-          <div class="card-title">👤 Profil</div>
-          <div id="profileBox">—</div>
+          <div class="card-title">⚙️ Admin Panel</div>
+          <div id="adminInfo" class="card-text" style="margin-bottom:8px">Loading…</div>
+
+          <div class="grid" style="margin-top:8px">
+            <div class="card">
+              <div class="card-title">🧑‍💻 Role boshqaruvi</div>
+              <div class="sp"></div>
+              <input id="roleUid" placeholder="Foydalanuvchi UID (admin qilish)">
+              <div class="sp"></div>
+              <button id="makeAdminBtn" class="btn btn-amber btn-sm">Admin qilish</button>
+              <button id="revokeAdminBtn" class="btn btn-sm">Adminni bekor qilish</button>
+              <div class="sp"></div>
+              <div class="hint">`roles/{uid}` hujjatida <code>{ admin:true }</code> bo‘lsa — admin.</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">📌 Pinlangan e’lonlar</div>
+              <div id="pinned_list">—</div>
+            </div>
+          </div>
+
           <div class="sp"></div>
-          <button id="logoutBtn" class="btn">Chiqish</button>
+          <div class="card">
+            <div class="card-title">🧹 Moderatsiya — barcha e’lonlar</div>
+            <div id="admin_posts">—</div>
+          </div>
         </div>
       </section>
     </div>
@@ -273,22 +314,17 @@
     <div class="footer">© <span id="year"></span> BINGO</div>
   </div>
 
-  <!-- 🔊 Ding -->
-  <audio id="ding" preload="auto">
-    <source src="https://cdn.jsdelivr.net/gh/interactive-json/cdn@main/sfx/ding.mp3" type="audio/mpeg">
-  </audio>
-
-  <!-- ======================= 🟧 ORANGE — Firebase compat ======================= -->
+  <!-- Firebase compat -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <script>
-  /* ======================= 🟧 ORANGE — Service Worker (offline) ======================= */
+  /* ======== Service Worker (offline) ======== */
   (function registerSW(){
     if(!('serviceWorker' in navigator)) return;
     const CODE = `
-      const VER='bingo-v9'; // kesh versiyasi — URLlar yangilansa shu yerda oshirasiz
+      const VER='bingo-v6';
       self.addEventListener('install',e=>{ self.skipWaiting(); e.waitUntil(caches.open(VER).then(c=>c.addAll(['./'])) )});
       self.addEventListener('activate',e=>{
         e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==VER).map(k=>caches.delete(k))))); 
@@ -310,7 +346,7 @@
     navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
   })();
 
-  /* ======================= 🟩 GREEN — I18N (3 til) ======================= */
+  /* ======== I18N ======== */
   const I18N={
     uz:{hero_title:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",hero_sub:"“Halollik — eng katta mukofot.”",
         btn_lost:"❗ Yo‘qotdim",btn_found:"✅ Topdim",btn_lostlist:"📋 Yo‘qotilganlar",btn_reward:"🎁 Mukofotli",btn_foundlist:"🔎 Topilganlar",btn_mine:"⭐ Mening e’lonlarim",
@@ -319,8 +355,7 @@
         lost_form_title:"Yo‘qotdim — e’lon",found_form_title:"Topdim — e’lon",
         lost_list_title:"📋 Umumiy yo‘qotilganlar",reward_list_title:"🎁 Mukofotli",found_list_title:"🔎 Topilganlar",
         mine_title:"⭐ Mening e’lonlarim",btn_delete_mine:"Mening e’lonlarimni o‘chirish",
-        chat_title:"Xabar",btn_send:"Yuborish",btn_submit:"E’lon berish",
-        confirm_del:"Ushbu e’lonni o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi."},
+        chat_title:"Xabar",btn_send:"Yuborish",btn_submit:"E’lon berish"},
     ru:{hero_title:"Потеряли или нашли? Оставьте объявление.",hero_sub:"«Честность — самая большая награда.»",
         btn_lost:"❗ Потерял(а)",btn_found:"✅ Нашёл(ла)",btn_lostlist:"📋 Потерянные",btn_reward:"🎁 С вознаграждением",btn_foundlist:"🔎 Найденные",btn_mine:"⭐ Мои объявления",
         why_title:"Почему BINGO?",why_text:"Простая форма, быстрый результат. Все объявления в одном месте.",
@@ -328,8 +363,7 @@
         lost_form_title:"Потерял(а) — объявление",found_form_title:"Нашёл(ла) — объявление",
         lost_list_title:"📋 Все потерянные",reward_list_title:"🎁 С вознаграждением",found_list_title:"🔎 Найденные",
         mine_title:"⭐ Мои объявления",btn_delete_mine:"Удалить мои объявления",
-        chat_title:"Сообщение",btn_send:"Отправить",btn_submit:"Опубликовать",
-        confirm_del:"Удалить это объявление? Действие необратимо."},
+        chat_title:"Сообщение",btn_send:"Отправить",btn_submit:"Опубликовать"},
     en:{hero_title:"Lost or found something? Post it.",hero_sub:"“Honesty is the greatest reward.”",
         btn_lost:"❗ Lost",btn_found:"✅ Found",btn_lostlist:"📋 Lost Items",btn_reward:"🎁 With Reward",btn_foundlist:"🔎 Found Items",btn_mine:"⭐ My Posts",
         why_title:"Why BINGO?",why_text:"Simple form, fast results. All posts in one place.",
@@ -337,84 +371,36 @@
         lost_form_title:"Lost — post",found_form_title:"Found — post",
         lost_list_title:"📋 All Lost",reward_list_title:"🎁 With Reward",found_list_title:"🔎 All Found",
         mine_title:"⭐ My Posts",btn_delete_mine:"Delete my posts",
-        chat_title:"Message",btn_send:"Send",btn_submit:"Post",
-        confirm_del:"Delete this post? This cannot be undone."}
+        chat_title:"Message",btn_send:"Send",btn_submit:"Post"}
   };
   function t(k){const L=localStorage.getItem('bingo_lang')||'uz';return (I18N[L]||I18N.uz)[k]||k}
-  function applyI18n(){document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'))});}
+  function applyI18n(){
+    document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'))});
+    document.getElementById('langSel').value=(localStorage.getItem('bingo_lang')||detectLang());
+  }
+  function detectLang(){const n=(navigator.language||'uz').slice(0,2);return ['uz','ru','en'].includes(n)?n:'uz'}
   document.getElementById('langSel').addEventListener('change',e=>{
     localStorage.setItem('bingo_lang',e.target.value); applyI18n();
   });
 
-  /* ======================= 🟦 BLUE — Firebase init (auth+db) ======================= */
-  const firebaseConfig={
-    apiKey:"AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
-    authDomain:"topildi.firebaseapp.com",
-    projectId:"topildi",
-    storageBucket:"topildi.appspot.com",
-    messagingSenderId:"323891530719",
-    appId:"1:323891530719:web:d57c2ce38781dc37e4926a",
-    measurementId:"G-NKCMKCXZQ7"
-  };
-  try{ firebase.initializeApp(firebaseConfig);}catch(e){}
-  firebase.firestore().enablePersistence().catch(()=>{});
-  const db=firebase.firestore();
-  const auth=firebase.auth();
-  const provider=new firebase.auth.GoogleAuthProvider();
-
-  /* ======================= 🟪 PURPLE — Reklama slayder ======================= */
-  const AD_IMAGES=[
-    "./images/file_000000002de8624383c746f2d7d3cfd7.png",
-    "./images/file_00000000538861fab34b2e1a449b4ce5.png"
-  ];
-  (function runAd(){
-    const img=document.getElementById('adImg'); let i=0, ready=true;
-    function loadNext(){
-      const url = AD_IMAGES[i%AD_IMAGES.length] + (AD_IMAGES[i%AD_IMAGES.length].includes('?')?'&':'?') + 'v=9';
-      ready=false;
-      const probe=new Image();
-      probe.onload=()=>{ img.classList.remove('show'); setTimeout(()=>{ img.src=url; img.classList.add('show'); ready=true;},40) };
-      probe.onerror=()=>{ ready=true; };
-      probe.src=url;
-      i++;
-    }
-    loadNext();
-    setInterval(()=>{ if(ready) loadNext(); }, 5500);
-  })();
-
-  /* ======================= 🟨 YELLOW — Helpers, Router, UI ======================= */
-  const MY_UID=(function(){let id=localStorage.getItem('bingo_uid');if(!id){id='u_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('bingo_uid',id)}return id})();
-  document.getElementById('year').textContent=new Date().getFullYear();
-  applyI18n();
-
-  const netBadge=document.getElementById('netBadge');
+  /* ======== Network badge ======== */
+  const netBadge=document.createElement('div'); netBadge.id='netBadge'; netBadge.className='net'; document.body.appendChild(netBadge);
   function setNet(on){
     netBadge.className='net '+(on?'on':'off');
     netBadge.textContent=on?'Onlayn':'Offline (kesh rejimi)';
     netBadge.style.display='block';
     clearTimeout(setNet._t);
-    setNet._t=setTimeout(()=>{netBadge.style.display='none'}, 2000);
+    setNet._t=setTimeout(()=>{netBadge.style.display='none'}, 2500);
   }
   window.addEventListener('online', ()=>setNet(true));
   window.addEventListener('offline',()=>setNet(false));
-  setNet(navigator.onLine);
 
-  function banner(msg){const a=document.getElementById('alert');a.textContent=msg||'';a.style.display=msg?'block':'none'}
-  function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]) )}
-  function val(id){const el=document.getElementById(id);return el?el.value.trim():''}
-  function num(n){const x=parseInt(n,10);return isNaN(x)?0:x}
-  function centerToast(msg, err=false){
-    const old=document.getElementById('__toast__'); if(old) old.remove();
-    const el=document.createElement('div'); el.id='__toast__';
-    el.className='center-toast'+(err?' err':''); el.textContent=msg||'';
-    document.body.appendChild(el); requestAnimationFrame(()=> el.classList.add('show'));
-    setTimeout(()=>{el.classList.remove('show'); setTimeout(()=>el.remove(),180)},1800);
-  }
-
+  /* ======== Router ======== */
   let currentView='home', currentChatPostId=null, unsubChat=null;
   function showView(name){
-    ['home','lostForm','foundForm','lostList','rewardList','foundList','mine','postChat','profile']
+    ['home','lostForm','foundForm','lostList','rewardList','foundList','mine','profile','postChat','admin','notifications']
       .forEach(id=>{const el=document.getElementById('view_'+id); if(el) el.classList.toggle('active',id===name)});
+    document.getElementById('backBtn').style.display=(name!=='home')?'grid':'none';
     window.scrollTo(0,0);
   }
   function navigate(name,replace){
@@ -423,35 +409,128 @@
     if(name==='rewardList') renderReward();
     if(name==='foundList') renderFound();
     if(name==='mine') renderMine();
-    if(name==='profile') renderProfile();
+    if(name==='notifications') renderNotifications();
     if(name==='postChat' && currentChatPostId) openChat(currentChatPostId,true);
     const hash='#'+name+(currentChatPostId?('-'+currentChatPostId):'');
     if(replace) history.replaceState({view:name,id:currentChatPostId},'',hash);
     else history.pushState({view:name,id:currentChatPostId},'',hash);
   }
   document.getElementById('homeBtn').addEventListener('click',()=>navigate('home'));
-  document.querySelectorAll('#mainMenu .btn').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.nav||'home')));
+  document.getElementById('backBtn').addEventListener('click',()=>history.back());
+  document.querySelectorAll('#mainMenu .btn').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.nav)));
+  document.getElementById('notifBtn').addEventListener('click',()=>navigate('notifications'));
   window.addEventListener('popstate',e=>{
     const st=e.state||{view:'home'}; currentChatPostId=st.id||null; showView(st.view||'home');
   });
-  (function(){const h=location.hash?location.hash.substring(1):'home';const p=h.split('-');const v=p[0]||'home';currentChatPostId=p[1]||null;showView(v);history.replaceState({view:v,id:currentChatPostId||null},'', '#'+v+(currentChatPostId?('-'+currentChatPostId):''));})();
+  (function(){
+    const h=location.hash?location.hash.substring(1):'home';
+    const p=h.split('-'); const v=p[0]||'home'; currentChatPostId=p[1]||null;
+    showView(v); history.replaceState({view:v,id:currentChatPostId||null},'', '#'+v+(currentChatPostId?('-'+currentChatPostId):'')); 
+  })();
 
-  /* ======================= 🟥 RED — Google Auth (Gmail) ======================= */
-  const authArea=document.getElementById('authArea');
-  function renderAuth(u){
-    if(u){
-      const ch=`<div class="avatar" title="${esc(u.displayName||u.email||'User')}">${esc((u.displayName||u.email||'?').slice(0,1).toUpperCase())}</div>`;
-      authArea.innerHTML=ch;
-      document.getElementById('logoutBtn')?.addEventListener('click',()=>auth.signOut());
-    }else{
-      authArea.innerHTML=`<button id="loginBtn" class="btn btn-amber btn-sm">Google bilan kirish</button>`;
-      document.getElementById('loginBtn').onclick=()=>auth.signInWithPopup(provider).catch(e=>centerToast('Auth xato: '+e.message,true));
-    }
+  /* ======== Helpers ======== */
+  function banner(msg){const a=document.getElementById('alert');a.textContent=msg||'';a.style.display=msg?'block':'none'}
+  function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]) )}
+  function val(id){const el=document.getElementById(id);return el?el.value.trim():''}
+  function num(n){const x=parseInt(n,10);return isNaN(x)?0:x}
+  function centerToast(msg, err=false){
+    const old=document.getElementById('__toast__'); if(old) old.remove();
+    const el=document.createElement('div'); el.id='__toast__';
+    el.className='center-toast'+(err?' err':''); el.textContent=msg||'';
+    document.body.appendChild(el);
+    requestAnimationFrame(()=> el.classList.add('show'));
+    setTimeout(()=>{el.classList.remove('show'); setTimeout(()=>el.remove(),180)},1800);
   }
-  auth.onAuthStateChanged(u=>{ renderAuth(u); if(u) startRealtimeNotifications(); setBadge(0); });
+  document.getElementById('year').textContent=new Date().getFullYear();
+  applyI18n(); setNet(navigator.onLine);
 
-  /* ======================= 🟦 BLUE — Firestore realtime feed ======================= */
-  let ALL_POSTS=[]; let LAST_POST_SIG=null;
+  /* ======== Reklama rasmlari (GitHub Pages’dagi images/...) ======== */
+  const ADS=[
+    'images/file_000000002de8624383c746f2d7d3cfd7.png',
+    'images/file_00000000538861fab34b2e1a449b4ce5.png'
+  ];
+  (function initAds(){
+    const a1=document.getElementById('ad1'), a2=document.getElementById('ad2');
+    a1.src=ADS[0]; a2.src=ADS[1];
+    let i=0; const nodes=[a1,a2]; nodes[0].classList.add('active');
+    setInterval(()=>{ nodes[i].classList.remove('active'); i=(i+1)%nodes.length; nodes[i].classList.add('active'); }, 4000);
+  })();
+
+  /* ======== Firebase (TOPILDI) ======== */
+  const firebaseConfig={
+    apiKey:"AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+    authDomain:"topildi.firebaseapp.com",
+    databaseURL:"https://topildi-default-rtdb.firebaseio.com",
+    projectId:"topildi",
+    storageBucket:"topildi.appspot.com",
+    messagingSenderId:"323891530719",
+    appId:"1:323891530719:web:d57c2ce38781dc37e4926a",
+    measurementId:"G-NKCMKCXZQ7"
+  };
+  try{ firebase.initializeApp(firebaseConfig); }catch(e){}
+  firebase.firestore().enablePersistence().catch(()=>{});
+  const db=firebase.firestore();
+  const auth=firebase.auth();
+  const provider=new firebase.auth.GoogleAuthProvider();
+
+  /* ======== Auth UI ======== */
+  const ADMIN_EMAILS=['diyorabduraxmonov95@gmail.com']; // allow-list
+  const loginBtn=document.getElementById('loginBtn');
+  const googleLogin=document.getElementById('googleLogin');
+  const logoutBtn=document.getElementById('logoutBtn');
+  const adminBtn=document.getElementById('adminBtn');
+
+  loginBtn.addEventListener('click',()=>navigate('profile'));
+  googleLogin.addEventListener('click', async ()=>{
+    try{
+      await auth.signInWithPopup(provider);
+      centerToast('✅ Kirildi');
+    }catch(e){ centerToast('Xato: '+e.message,true); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{
+    try{ await auth.signOut(); centerToast('Chiqildi'); }catch(e){}
+  });
+
+  async function isAdmin(){
+    const u=auth.currentUser; if(!u) return false;
+    if(ADMIN_EMAILS.includes((u.email||'').toLowerCase())) return true;
+    try{
+      const doc=await db.collection('roles').doc(u.uid).get();
+      return !!(doc.exists && doc.data()?.admin===true);
+    }catch{ return false }
+  }
+  async function showAdminButton(){
+    const btn=adminBtn; const isA=await isAdmin();
+    btn.style.display=isA?'grid':'none';
+    if(isA) btn.onclick=()=>openAdmin();
+  }
+
+  auth.onAuthStateChanged(async (u)=>{
+    const prof=document.getElementById('profileBox');
+    if(u){
+      logoutBtn.style.display='inline-block';
+      const nm=u.displayName||'Foydalanuvchi';
+      prof.textContent=`Kirdingiz: ${nm} — ${u.email||''}`;
+      loginBtn.textContent = (nm.split(' ')[0]||'👤').slice(0,1);
+      await showAdminButton();
+      startMyPostsChatWatchers(); // notifications
+      if(await isAdmin() && currentView==='profile'){ openAdmin(); navigate('admin'); }
+    }else{
+      logoutBtn.style.display='none';
+      prof.textContent='Kirish qilinmagan.';
+      loginBtn.textContent='👤';
+      adminBtn.style.display='none';
+      stopMyPostsChatWatchers();
+      resetNotifications();
+    }
+  });
+
+  /* ======== Global state ======== */
+  let ALL_POSTS=[];
+  let SEARCH_GLOBAL='';
+  let LAST_POST_SIG=null;
+
+  // Feed
   db.collection('posts').orderBy('created','desc').onSnapshot(snap=>{
     ALL_POSTS=snap.docs.map(d=>({id:d.id,...d.data()}));
     if(currentView==='lostList') renderLost();
@@ -460,14 +539,23 @@
     if(currentView==='mine') renderMine();
   },err=>banner("Firestore o‘qish xatosi: "+err.message));
 
-  /* ======================= 🟩 GREEN — Post submit (LOGIN TALAB) ======================= */
+  /* ======== Submit handlers (auth required) ======== */
+  function requireAuth(){
+    if(!auth.currentUser){
+      centerToast('Avval kirish qiling (Profil).', true);
+      navigate('profile');
+      return false;
+    }
+    return true;
+  }
   document.querySelectorAll('[data-submit]').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
-      const user=auth.currentUser; if(!user){ centerToast('Avval Google bilan kiring',true); return; }
+      if(!requireAuth()) return;
       if(btn.disabled) return;
       const kind=btn.dataset.submit, isLost=kind==='lost';
       btn.disabled=true; btn.classList.add('btn-disabled');
 
+      const u=auth.currentUser;
       const p={
         kind,
         item: val(isLost?'l_item':'f_item'),
@@ -477,60 +565,127 @@
         contact: val(isLost?'l_contact':'f_contact'),
         reward: isLost? num(val('l_reward')) : 0,
         notes:  val(isLost?'l_notes':'f_notes'),
-        photo: null, // rasm olib tashlangan
-        uid: user.uid,
+        photo: null, // rasm yo‘q
+        uid: u.uid,
+        userName: u.displayName||'Anon',
+        userEmail: u.email||'',
+        pinned:false,
         created: Date.now()
       };
-      if(!p.item||!p.city||!p.contact){ centerToast(t('guide_2'), true); btn.disabled=false; btn.classList.remove('btn-disabled'); return; }
+
+      if(!p.item||!p.city||!p.contact){
+        centerToast(t('guide_2'), true); enableFormButtons(); return;
+      }
 
       const sig = JSON.stringify([p.kind,p.item,p.city,p.contact,p.notes]);
       const now=Date.now();
-      const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}');
-      if(LAST_POST_SIG===sig || (last.sig===sig && (now-last.ts)<30000)){ centerToast("⚠️ Bu e’lon allaqachon joylangan (30s ichida).", true); btn.disabled=false; btn.classList.remove('btn-disabled'); return; }
+      const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}'); // {sig,ts}
+      if(LAST_POST_SIG===sig || (last.sig===sig && (now-last.ts)<30000)){
+        centerToast("⚠️ Bu e’lon allaqachon joylangan (30s ichida).", true);
+        enableFormButtons(); return;
+      }
       LAST_POST_SIG=sig; localStorage.setItem('bingo_last_post', JSON.stringify({sig,ts:now}));
 
       try{
         await db.collection('posts').add(p);
-        if(isLost){['l_item','l_city','l_place','l_date','l_contact','l_reward','l_notes'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});}
-        else{['f_item','f_city','f_place','f_date','f_contact','f_notes'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});}
+        clearForm(isLost);
         centerToast("✅ E’lon joylandi!");
         navigate(isLost?'lostList':'foundList');
-      }catch(e){ centerToast("❌ Xato: "+e.message, true); }
-      finally{ btn.disabled=false; btn.classList.remove('btn-disabled'); }
+      }catch(e){
+        centerToast("❌ Xato: "+e.message, true);
+      } finally{
+        setTimeout(enableFormButtons, 800);
+      }
     });
   });
+  function enableFormButtons(){
+    ['btnLost','btnFound'].forEach(id=>{
+      const b=document.getElementById(id); if(b){ b.disabled=false; b.classList.remove('btn-disabled'); }
+    });
+  }
+  function clearForm(isLost){
+    const ids=isLost?['l_item','l_city','l_place','l_date','l_contact','l_reward','l_notes']
+                    :['f_item','f_city','f_place','f_date','f_contact','f_notes'];
+    ids.forEach(id=>{const el=document.getElementById(id); if(!el) return; el.value='';});
+  }
 
-  /* ======================= 🟨 YELLOW — Renderers ======================= */
-  function card(p, allowDelete){
+  /* ======== Renderers ======== */
+  function card(p, allowDelete, showPin){
     const L=localStorage.getItem('bingo_lang')||'uz';
     const kindLabel = p.kind==='lost' ? (L==='ru'?'❗ Потеряно':(L==='en'?'❗ Lost':'❗ Yo‘qoldi'))
                                       : (L==='ru'?'✅ Найдено':(L==='en'?'✅ Found':'✅ Topildi'));
-    return `
-      <div class="post-card">
-        <div class="post-head">
-          <div class="post-kind">${kindLabel}${p.reward>0?` · 🎁 ${Number(p.reward).toLocaleString()} so‘m`:''}</div>
-          <div class="post-date">${p.created?new Date(p.created).toLocaleString():''}</div>
-        </div>
-        <div style="margin-top:6px;font-weight:800">${esc(p.item)}</div>
-        <div class="post-meta">${esc(p.city||'-')} · ${esc(p.place||'-')} · ${esc(p.date||'-')}</div>
-        <div style="margin-top:6px; white-space:pre-wrap">${esc(p.notes||'')}</div>
-        <div class="post-meta" style="margin-top:6px">📞 ${esc(p.contact||'-')}</div>
-        <div class="actions">
-          ${allowDelete?`<button class="btn" onclick="delPost('${p.id}')">🗑️ ${t('btn_delete_mine')}</button>`:''}
-          <button class="btn btn-blue" onclick="openChat('${p.id}')">✉️ Xabar</button>
-        </div>
-      </div>`;
-  }
-  function renderLost(){ const el=document.getElementById('lost_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='lost'); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—'; }
-  function renderReward(){ const el=document.getElementById('reward_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='lost'&&(p.reward||0)>0); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—'; }
-  function renderFound(){ const el=document.getElementById('found_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.kind==='found'); el.innerHTML=arr.length?arr.map(p=>card(p,false)).join(''):'—'; }
-  function renderMine(){ const el=document.getElementById('mine_list'); if(!el) return; const u=auth.currentUser; const arr=ALL_POSTS.filter(p=>u&&p.uid===u.uid); el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—'; }
+    const msgBtn = L==='en'?'✉️ Message':(L==='ru'?'✉️ Написать':'✉️ Xabar');
 
-  /* ======================= 🟦 BLUE — Delete + Chat ======================= */
+    const adminActions = showPin ? (p.pinned
+      ? `<button class="btn btn-sm" onclick="unpinPost('${p.id}')">📌 Unpin</button>`
+      : `<button class="btn btn-amber btn-sm" onclick="pinPost('${p.id}')">📌 Pin</button>`)
+      : '';
+
+    return `
+    <div class="post-card">
+      <div class="post-head">
+        <div class="post-kind">${kindLabel}${p.reward>0?` · 🎁 ${Number(p.reward).toLocaleString()} so‘m`:''}${p.pinned?'<span class="badge">PINNED</span>':''}</div>
+        <div class="post-date">${p.created?new Date(p.created).toLocaleString():''}</div>
+      </div>
+      <div style="margin-top:6px;font-weight:800">${esc(p.item)}</div>
+      <div class="post-meta">${esc(p.city||'-')} · ${esc(p.place||'-')} · ${esc(p.date||'-')}</div>
+      <div style="margin-top:6px; white-space:pre-wrap">${esc(p.notes||'')}</div>
+      <div class="post-meta" style="margin-top:6px">📞 ${esc(p.contact||'-')}</div>
+      <div class="actions">
+        ${allowDelete?`<button class="btn btn-sm" onclick="delPost('${p.id}')">🗑️ O‘chirish</button>`:''}
+        ${adminActions}
+        <button class="btn btn-blue btn-sm" onclick="openChat('${p.id}')">${msgBtn}</button>
+      </div>
+    </div>`;
+  }
+
+  function applySearch(listEl, arr, searchInputId, counterId){
+    const term=(document.getElementById(searchInputId)?.value||'').toLowerCase();
+    const gq=(SEARCH_GLOBAL||'').toLowerCase();
+    const m = (p)=> [p.item,p.city,p.place,p.notes,p.contact].some(x=>(x||'').toLowerCase().includes(term)) &&
+                     [p.item,p.city,p.place,p.notes,p.contact].some(x=>(x||'').toLowerCase().includes(gq) || !gq);
+    const res = term||gq ? arr.filter(m) : arr.slice();
+    if(counterId){ const c=document.getElementById(counterId); if(c) c.textContent=String(res.length); }
+    listEl.innerHTML = res.length? res.map(p=>card(p,false,false)).join(''):'—';
+  }
+
+  function renderLost(){
+    const el=document.getElementById('lost_list'); if(!el) return;
+    const arr=ALL_POSTS.filter(p=>p.kind==='lost');
+    applySearch(el, arr, 'lostSearch', 'lostCount');
+  }
+  function renderReward(){
+    const el=document.getElementById('reward_list'); if(!el) return;
+    const arr=ALL_POSTS.filter(p=>p.kind==='lost'&&(p.reward||0)>0);
+    applySearch(el, arr, 'rewardSearch', 'rewardCount');
+  }
+  function renderFound(){
+    const el=document.getElementById('found_list'); if(!el) return;
+    const arr=ALL_POSTS.filter(p=>p.kind==='found');
+    applySearch(el, arr, 'foundSearch', 'foundCount');
+  }
+  function renderMine(){
+    const el=document.getElementById('mine_list'); if(!el) return;
+    const arr=ALL_POSTS.filter(p=>p.uid===auth.currentUser?.uid);
+    el.innerHTML=arr.length?arr.map(p=>card(p,true,false)).join(''):'—';
+  }
+
+  // Search inputs events
+  ['lostSearch','rewardSearch','foundSearch'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.addEventListener('input', ()=> {
+      if(currentView==='lostList') renderLost();
+      if(currentView==='rewardList') renderReward();
+      if(currentView==='foundList') renderFound();
+    });
+  });
+
+  /* ======== Delete only mine ======== */
   window.delPost = async function(id){
-    const u=auth.currentUser; if(!u) return;
-    const post=ALL_POSTS.find(p=>p.id===id); if(!post || post.uid!==u.uid) return;
-    if(!confirm(t('confirm_del'))) return;
+    const post=ALL_POSTS.find(p=>p.id===id);
+    const u=auth.currentUser;
+    if(!post || !u || (post.uid!==u.uid && !(await isAdmin()))) return;
+    if(!confirm('Ushbu e’lon o‘chirilsinmi?')) return;
     try{
       await db.collection('posts').doc(id).delete();
       const chats=await db.collection('posts').doc(id).collection('chats').get();
@@ -539,8 +694,9 @@
     }catch(e){ banner("O‘chirish xatosi: "+e.message); }
   }
 
+  /* ======== Chat ======== */
   function logEmpty(){const L=localStorage.getItem('bingo_lang')||'uz';return L==='en'?'No messages yet.':(L==='ru'?'Нет сообщений.':'Xabarlar yo‘q.')}
-  const __openChat_inner = function(postId, keep){
+  window.openChat = function(postId, keep){
     const post=ALL_POSTS.find(p=>p.id===postId); if(!post) return;
     currentChatPostId=postId; document.getElementById('chatItemName').textContent=post.item;
     if(unsubChat) unsubChat();
@@ -549,55 +705,29 @@
         const log=document.getElementById('chatLog');
         const arr=s.docs.map(d=>d.data());
         log.innerHTML = arr.length
-          ? arr.map(m=>`<div class="msg ${m.uid===(auth.currentUser&&auth.currentUser.uid)?'me':'other'}"><b>${esc(m.name||'Anon')}</b> <span style="opacity:.8;font-size:12px">· ${new Date(m.ts).toLocaleTimeString()}</span><div>${esc(m.text)}</div></div>`).join('')
+          ? arr.map(m=>`<div class="msg ${m.uid===auth.currentUser?.uid?'me':'other'}"><b>${esc(m.name||'Anon')}</b> <span style="opacity:.8;font-size:12px">· ${new Date(m.ts).toLocaleTimeString()}</span><div>${esc(m.text)}</div></div>`).join('')
           : `<div class="msg">${logEmpty()}</div>`;
         log.scrollTop=log.scrollHeight;
+        // mark read for notifications
+        if(post.uid===auth.currentUser?.uid){ markPostChatsRead(postId, arr.at(-1)?.ts||Date.now()); }
       }, e=> banner("Chat o‘qish xatosi: "+e.message));
     if(!keep) navigate('postChat');
   }
-  window.openChat = function(postId, keep){
-    // notif last seen update
-    LAST_SEEN_CACHE[postId] = Date.now();
-    localStorage.setItem('bingo_last_seen', JSON.stringify(LAST_SEEN_CACHE));
-    setBadge(0);
-    __openChat_inner(postId, keep);
-  }
   document.getElementById('sendChatBtn').addEventListener('click',()=>{
-    if(!currentChatPostId){return}
-    const u=auth.currentUser; if(!u){centerToast('Avval kiring',true); return;}
-    const name=(document.getElementById('chatName').value.trim()||u.displayName||'Anon');
+    if(!currentChatPostId) return;
+    const name=(document.getElementById('chatName').value.trim()||auth.currentUser?.displayName||'Anon');
     const text=document.getElementById('chatText').value.trim(); if(!text) return;
-    db.collection('posts').doc(currentChatPostId).collection('chats').add({name,uid:u.uid,text,ts:Date.now()})
+    db.collection('posts').doc(currentChatPostId).collection('chats').add({name,uid:auth.currentUser?.uid||'anon',text,ts:Date.now()})
       .then(()=>{document.getElementById('chatText').value=''})
       .catch(e=> banner("Chat yozish xatosi: "+e.message));
   });
 
-  /* ======================= 🟫 BROWN — Profil ======================= */
-  function renderProfile(){
-    const u=auth.currentUser;
-    const box=document.getElementById('profileBox');
-    if(!u){ box.innerHTML='<div>Avval tizimga kiring.</div>'; return; }
-    box.innerHTML = `
-      <div><b>Ism:</b> ${esc(u.displayName||'-')}</div>
-      <div><b>Email:</b> ${esc(u.email||'-')}</div>
-      <div class="sp"></div>
-      <input id="newName" placeholder="Yangi ism (ixtiyoriy)" />
-      <div class="sp"></div>
-      <button id="saveNameBtn" class="btn btn-amber btn-sm">Ismni saqlash</button>
-    `;
-    document.getElementById('saveNameBtn').onclick=async ()=>{
-      const name=val('newName'); if(!name) return;
-      try{ await u.updateProfile({displayName:name}); centerToast('✅ Ism yangilandi'); renderProfile(); renderAuth(u); }
-      catch(e){ centerToast('Xato: '+e.message,true); }
-    };
-  }
-
-  /* ======================= 🟪 PURPLE — Clear my posts ======================= */
+  /* ======== Clear my posts ======== */
   document.getElementById('clearMineBtn').addEventListener('click', async ()=>{
-    const u=auth.currentUser; if(!u){centerToast('Avval kiring',true); return;}
+    if(!auth.currentUser) return navigate('profile');
     if(!confirm('Barcha shaxsiy e’lonlaringiz o‘chirilsinmi?')) return;
     try{
-      const mine=ALL_POSTS.filter(p=>p.uid===u.uid);
+      const mine=ALL_POSTS.filter(p=>p.uid===auth.currentUser.uid);
       const batch=db.batch();
       for(const p of mine){ batch.delete(db.collection('posts').doc(p.id)); }
       await batch.commit();
@@ -605,40 +735,116 @@
     }catch(e){ banner('Xato: '+e.message); }
   });
 
-  /* ======================= 🟩 GREEN — REALTIME NOTIFIER (toast+badge) ======================= */
-  let CHAT_WATCHERS=[]; let LAST_SEEN_CACHE={};
-  try{ LAST_SEEN_CACHE=JSON.parse(localStorage.getItem('bingo_last_seen')||'{}'); }catch(_){}
-  function playDing(){document.getElementById('ding')?.play().catch(()=>{});}
-  function setBadge(n){const b=document.getElementById('notifBadge'); if(!b) return; if(n>0){ b.style.display='inline-block'; b.textContent=String(n);} else b.style.display='none';}
-  async function startRealtimeNotifications(){
-    CHAT_WATCHERS.forEach(u=>{try{u()}catch{}}); CHAT_WATCHERS=[]; setBadge(0);
-    const user=auth.currentUser; if(!user) return;
-    const mine=await db.collection('posts').where('uid','==',user.uid).get();
-    let total=0;
-    mine.forEach(doc=>{
-      const postId=doc.id; const post=doc.data();
-      const unsub=db.collection('posts').doc(postId).collection('chats').orderBy('ts','desc').limit(1)
-      .onSnapshot(s=>{
-        const d=s.docs[0]?.data(); if(!d) return;
-        // O'zim yozgan xabar emas
-        if(d.uid===user.uid) return;
-        const last=LAST_SEEN_CACHE[postId]||0;
-        // Agar ayni vaqtda shu chat oynasida bo'lsa — toast ko‘rsatmaymiz, lekin lastSeen yangilanadi
-        const inSameChat = (currentView==='postChat' && currentChatPostId===postId);
-        if(d.ts && d.ts>last){
-          LAST_SEEN_CACHE[postId]=d.ts; localStorage.setItem('bingo_last_seen', JSON.stringify(LAST_SEEN_CACHE));
-          if(!inSameChat){
-            total++; setBadge(total);
-            centerToast(`✉️ ${post.item||'E’lon'}: ${d.name||'Anon'} — ${(d.text||'').slice(0,120)}`);
-            playDing();
-          }
-        }
-      });
-      CHAT_WATCHERS.push(unsub);
+  /* ======== Notifications (on-site) ======== */
+  let MY_POST_WATCHERS=[];
+  let UNREAD_BY_POST={}; // {postId: lastUnreadTs}
+  function resetNotifications(){ UNREAD_BY_POST={}; renderNotifications(); updateNotifDot(); }
+  function updateNotifDot(){
+    const total=Object.keys(UNREAD_BY_POST).length;
+    const dot=document.getElementById('notifDot');
+    dot.textContent=String(total);
+    dot.style.display= total>0 ? 'grid':'none';
+  }
+  function renderNotifications(){
+    const el=document.getElementById('notif_list'); if(!el) return;
+    const items=Object.entries(UNREAD_BY_POST).map(([postId,ts])=>{
+      const p=ALL_POSTS.find(x=>x.id===postId); if(!p) return null;
+      return `<div class="post-card">
+        <div style="font-weight:800">${esc(p.item)}</div>
+        <div class="post-meta">${esc(p.city||'-')} · ${new Date(ts).toLocaleString()}</div>
+        <div class="actions" style="justify-content:flex-start">
+          <button class="btn btn-sm" onclick="openChat('${p.id}')">✉️ Chatga o‘tish</button>
+          <button class="btn btn-sm" onclick="markPostChatsRead('${p.id}', ${ts})">O‘qilgan</button>
+        </div>
+      </div>`;
+    }).filter(Boolean);
+    el.innerHTML = items.length? items.join('') : '—';
+  }
+  document.getElementById('markAllRead').addEventListener('click',()=>{
+    Object.keys(UNREAD_BY_POST).forEach(pid=>markPostChatsRead(pid, UNREAD_BY_POST[pid]));
+  });
+
+  function startMyPostsChatWatchers(){
+    stopMyPostsChatWatchers();
+    const u=auth.currentUser; if(!u) return;
+    const myPosts=ALL_POSTS.filter(p=>p.uid===u.uid);
+    for(const p of myPosts){
+      const lastSeen=getLastSeen(p.id);
+      const unsub=db.collection('posts').doc(p.id).collection('chats')
+        .where('ts','>', lastSeen).orderBy('ts')
+        .onSnapshot(s=>{
+          s.docChanges().forEach(ch=>{
+            if(ch.type==='added'){
+              const m=ch.doc.data();
+              if(m.uid!==u.uid && currentView!=='postChat'){
+                UNREAD_BY_POST[p.id]=m.ts;
+                centerToast('🔔 Yangi xabar: '+(p.item||'')); 
+                renderNotifications(); updateNotifDot();
+              }
+            }
+          });
+        },()=>{});
+      MY_POST_WATCHERS.push(unsub);
+    }
+  }
+  function stopMyPostsChatWatchers(){
+    MY_POST_WATCHERS.forEach(fn=>{try{fn()}catch{}});
+    MY_POST_WATCHERS=[];
+  }
+  function getLastSeen(postId){
+    const x=JSON.parse(localStorage.getItem('bingo_seen')||'{}');
+    return x[postId]||0;
+    }
+  function markPostChatsRead(postId, ts){
+    const x=JSON.parse(localStorage.getItem('bingo_seen')||'{}'); x[postId]=Math.max(ts||0, x[postId]||0);
+    localStorage.setItem('bingo_seen', JSON.stringify(x));
+    delete UNREAD_BY_POST[postId]; renderNotifications(); updateNotifDot();
+  }
+
+  /* ======== ADMIN ======== */
+  async function openAdmin(){
+    navigate('admin');
+    const info=document.getElementById('adminInfo');
+    const u=auth.currentUser;
+    info.textContent = u ? `Siz admin: ${u.email}` : 'Admin emassiz';
+    // Role tugmalari
+    document.getElementById('makeAdminBtn').onclick=async ()=>{
+      const uid=document.getElementById('roleUid').value.trim(); if(!uid) return;
+      try{ await db.collection('roles').doc(uid).set({admin:true},{merge:true}); centerToast('✅ Admin berildi'); }
+      catch(e){ centerToast('Xato: '+e.message,true) }
+    };
+    document.getElementById('revokeAdminBtn').onclick=async ()=>{
+      const uid=document.getElementById('roleUid').value.trim(); if(!uid) return;
+      try{ await db.collection('roles').doc(uid).set({admin:false},{merge:true}); centerToast('✅ Bekor qilindi'); }
+      catch(e){ centerToast('Xato: '+e.message,true) }
+    };
+
+    // Pinlangan
+    const pinnedEl=document.getElementById('pinned_list');
+    db.collection('posts').where('pinned','==',true).orderBy('created','desc').onSnapshot(s=>{
+      const arr=s.docs.map(d=>({id:d.id,...d.data()}));
+      pinnedEl.innerHTML = arr.length ? arr.map(p=>card(p,false,true)).join('') : '—';
     });
-    document.getElementById('notifBtn').onclick=()=>{ setBadge(0); navigate('mine'); };
+
+    // Barchasi
+    const adminPosts=document.getElementById('admin_posts');
+    db.collection('posts').orderBy('created','desc').limit(200).onSnapshot(s=>{
+      const arr=s.docs.map(d=>({id:d.id,...d.data()}));
+      adminPosts.innerHTML = arr.length ? arr.map(p=>card(p,false,true)).join('') : '—';
+    });
+  }
+
+  window.pinPost = async function(id){
+    if(!(await isAdmin())) return;
+    try{ await db.collection('posts').doc(id).set({pinned:true},{merge:true}); centerToast('📌 Pinned'); }
+    catch(e){ centerToast('Xato: '+e.message,true); }
+  }
+  window.unpinPost = async function(id){
+    if(!(await isAdmin())) return;
+    try{ await db.collection('posts').doc(id).set({pinned:false},{merge:true}); centerToast('📌 Unpinned'); }
+    catch(e){ centerToast('Xato: '+e.message,true); }
   }
 
   </script>
 </body>
-          </html>
+  </html>
