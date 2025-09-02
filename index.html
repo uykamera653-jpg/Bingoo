@@ -1,92 +1,117 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>BINGO — Yo‘qoldi/Topildi</title>
-<meta name="theme-color" content="#f59e0b"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>BINGO — Yo‘qoldi/Topildi</title>
+  <meta name="theme-color" content="#f59e0b"/>
 
-<style>
-  /* ======================= 🟧 ORANGE — Asosiy UI stil ======================= */
-  :root{
-    --bg1:#FFF7D6; --bg2:#FFE59A;
-    --panel:#0f172a; --ring:#e5e7eb33; --text:#0F172A;
-    --muted:#475569; --text-card:#F1F5F9; --muted-card:#94A3B8;
-    --blue:#1e293b; --green:#16A34A; --red:#DC2626; --amber:#f59e0b;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
-  body{background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text)}
-  .wrap{max-width:980px;margin:0 auto;padding:16px 14px 28px}
-  .topbar{position:sticky;top:0;z-index:70;background:linear-gradient(180deg,rgba(255,243,204,.92),rgba(255,236,173,.78));border-bottom:1px solid #f1d28a}
-  .hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;gap:10px}
-  .brand{display:flex;align-items:center;gap:10px}
-  .logo{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:#fff3c4;border:1px solid #f1d28a;font-weight:900;color:#b45309}
-  .title{font-weight:800;letter-spacing:.2px;color:#1f2937}
-  .controls{display:flex;gap:8px;align-items:center;position:relative}
-  .iconbtn{position:relative;display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;cursor:pointer;color:#1f2937}
-  .avatar{width:38px;height:38px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;display:grid;place-items:center;font-weight:900}
-  select.lang{background:#fff3c4;color:#1f2937;border:1px solid #f1d28a;border-radius:10px;padding:8px 10px}
-  .alert{display:none;margin:10px auto 0;max-width:980px;background:#7c2d12;color:#fff;padding:10px 12px;border-radius:10px;white-space:pre-wrap}
+  <!-- =========================================================
+       BINGO — YO‘QOLDI/TOPILDI • TO‘LIQ INDEX.HTML (>700 qator)
+       Funksiyalar:
+       - 3 til (UZ/RU/EN) i18n
+       - Gmail (Google) bilan login (Firebase Auth)
+       - Profil (ismni yangilash), avatar harfi
+       - E’lon berish faqat login bo‘lsa
+       - RASM YUKLASH OLIB TASHLANGAN (talab bo‘yicha)
+       - Yo‘qotdim/Topdim formalar
+       - Lost/Found/Reward/Mine ro‘yxatlari
+       - Chat: har post ichida
+       - Realtime bildirishnoma: 🔔 badge + toast + “ding”
+         (chat oynasidan tashqarida bo‘lsang ham ishlaydi)
+       - Bosh sahifada reklama banneri: 2 ta rasm navbat bilan almashadi
+       - Offline: service worker caching
+       - Kesh yangilash uchun VER versiya satri
+     ========================================================= -->
 
-  .views{min-height:70vh}
-  .view{display:none}
-  .view.active{display:block}
+  <style>
+    /* ======================= 🟧 ORANGE — Asosiy UI stil ======================= */
+    :root{
+      --bg1:#FFF7D6; --bg2:#FFE59A;
+      --panel:#0f172a; --ring:#e5e7eb33; --text:#0F172A;
+      --muted:#475569; --text-card:#F1F5F9; --muted-card:#94A3B8;
+      --blue:#1e293b; --green:#16A34A; --red:#DC2626; --amber:#f59e0b;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
+    body{background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:16px 14px 28px}
 
-  .headline{font-size:42px;line-height:1.2;font-weight:900;color:#111827;margin:14px 0}
-  .muted{color:#475569;margin-top:6px}
+    .topbar{position:sticky;top:0;z-index:70;background:linear-gradient(180deg,rgba(255,243,204,.92),rgba(255,236,173,.78));border-bottom:1px solid #f1d28a;backdrop-filter:saturate(1.1) blur(2px)}
+    .hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;gap:10px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:#fff3c4;border:1px solid #f1d28a;font-weight:900;color:#b45309}
+    .title{font-weight:800;letter-spacing:.2px;color:#1f2937}
+    .controls{display:flex;gap:8px;align-items:center;position:relative}
+    .iconbtn{position:relative;display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;cursor:pointer;color:#1f2937}
+    .avatar{width:38px;height:38px;border-radius:10px;background:#fff3c4;border:1px solid #f1d28a;display:grid;place-items:center;font-weight:900}
+    select.lang{background:#fff3c4;color:#1f2937;border:1px solid #f1d28a;border-radius:10px;padding:8px 10px}
 
-  .btn{border-radius:16px;padding:12px 16px;cursor:pointer;border:1px solid #e2e8f0;background:#111a2b;color:#e5eef7;font-weight:700;font-size:15px;transition:.2s}
-  .btn:hover{transform:translateY(-1px)}
-  .btn-blue{background:var(--blue)} .btn-green{background:var(--green);color:#04140a} .btn-red{background:var(--red)} .btn-amber{background:var(--amber);color:#111}
-  .btn-sm{font-size:14px;padding:10px 12px}
-  .btn-disabled{background:#9ca3af!important;color:#f3f4f6!important;cursor:not-allowed}
+    .alert{display:none;margin:10px auto 0;max-width:980px;background:#7c2d12;color:#fff;padding:10px 12px;border-radius:10px;white-space:pre-wrap}
 
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
-  @media (max-width:760px){ .grid{grid-template-columns:1fr} .headline{font-size:36px} }
+    .views{min-height:70vh}
+    .view{display:none}
+    .view.active{display:block}
 
-  .card{background:var(--panel);border:1px solid var(--ring);border-radius:18px;padding:12px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
-  .card-title{font-weight:800;margin-bottom:8px;font-size:16px;letter-spacing:.2px}
-  .card-text,.card-list{font-size:14px;color:var(--muted-card)}
-  label{font-size:13px;color:#8fa1b7;margin:8px 0 4px;display:block}
-  input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px}
-  textarea{min-height:96px;resize:vertical}
-  .sp{height:10px}
+    .headline{font-size:42px;line-height:1.2;font-weight:900;color:#111827;margin:14px 0}
+    .muted{color:#475569;margin-top:6px}
 
-  .post-card{background:#0f172a;border:1px solid #223047;border-radius:14px;padding:12px;margin:10px 0}
-  .post-img{width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:1px solid #223047;background:#0b1220}
-  .post-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
-  .post-kind{font-weight:700}
-  .post-date{opacity:.8;font-size:12px}
-  .post-meta{opacity:.9;font-size:13px}
+    .btn{border-radius:16px;padding:12px 16px;cursor:pointer;border:1px solid #e2e8f0;background:#111a2b;color:#e5eef7;font-weight:700;font-size:15px;transition:.2s}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-blue{background:var(--blue)} .btn-green{background:var(--green);color:#04140a} .btn-red{background:var(--red)} .btn-amber{background:var(--amber);color:#111}
+    .btn-sm{font-size:14px;padding:10px 12px}
+    .btn-disabled{background:#9ca3af!important;color:#f3f4f6!important;cursor:not-allowed}
 
-  .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap}
-  .footer{text-align:center;color:#334155;margin-top:20px;font-size:13px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+    @media (max-width:760px){ .grid{grid-template-columns:1fr} .headline{font-size:36px} }
 
-  .chat-log{height:46vh;overflow:auto;background:#0b1220;border:1px solid #223047;border-radius:12px;padding:10px}
-  .msg{margin:6px 0;padding:8px 10px;border-radius:12px;border:1px solid #223047;background:#0e1728}
-  .me{background:#0b2a1f;border-color:#0a7a46}
-  .other{background:#101e33;border-color:#263b5a}
-  .hint{font-size:12px;color:#94a3b8;margin-top:4px}
+    .card{background:var(--panel);border:1px solid var(--ring);border-radius:18px;padding:12px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+    .card-title{font-weight:800;margin-bottom:8px;font-size:16px;letter-spacing:.2px}
+    .card-text,.card-list{font-size:14px;color:var(--muted-card)}
+    label{font-size:13px;color:#8fa1b7;margin:8px 0 4px;display:block}
+    input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px}
+    textarea{min-height:96px;resize:vertical}
+    .sp{height:10px}
 
-  /* ======================= 🟪 PURPLE — Reklama banner ======================= */
-  .ad-wrap{margin:18px 0}
-  .ad{background:#0e1728;border:1px solid #223047;border-radius:18px;overflow:hidden;color:#f8fafc;position:relative}
-  .ad-head{position:absolute;left:0;right:0;top:6px;text-align:center;font-weight:900;letter-spacing:.4px;color:#f59e0b;text-shadow:0 1px 0 #111}
-  .ad-img{width:100%;height:320px;object-fit:cover;display:block}
-  @media (max-width:760px){ .ad-img{height:240px} }
-  .ad-foot{padding:10px 12px;text-align:center;font-weight:900;opacity:.92}
-  .ad-foot .blink{display:inline-block;animation:blink 1.4s infinite}
-  @keyframes blink{50%{opacity:.45}}
+    .post-card{background:#0f172a;border:1px solid #223047;border-radius:14px;padding:12px;margin:10px 0}
+    .post-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
+    .post-kind{font-weight:700}
+    .post-date{opacity:.8;font-size:12px}
+    .post-meta{opacity:.9;font-size:13px}
 
-  /* ======================= 🟥 RED — Toast (markaziy) ======================= */
-  .center-toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);background:#16a34a;color:#fff;padding:18px 22px;border-radius:14px;font-weight:900;z-index:9999;opacity:0;transition:.18s}
-  .center-toast.err{background:#dc2626}
-  .center-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+    .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap}
+    .footer{text-align:center;color:#334155;margin-top:20px;font-size:13px}
 
-  /* 🔔 badge */
-  #notifBadge{position:absolute;right:-6px;top:-6px;background:#ef4444;color:#fff;border-radius:999px;padding:0 6px;font-size:12px;font-weight:900;display:none}
-</style>
+    .chat-log{height:46vh;overflow:auto;background:#0b1220;border:1px solid #223047;border-radius:12px;padding:10px}
+    .msg{margin:6px 0;padding:8px 10px;border-radius:12px;border:1px solid #223047;background:#0e1728}
+    .me{background:#0b2a1f;border-color:#0a7a46}
+    .other{background:#101e33;border-color:#263b5a}
+    .hint{font-size:12px;color:#94a3b8;margin-top:4px}
+
+    /* ======================= 🟪 PURPLE — Reklama banner ======================= */
+    .ad-wrap{margin:18px 0}
+    .ad{background:#0e1728;border:1px solid #223047;border-radius:18px;overflow:hidden;color:#f8fafc;position:relative}
+    .ad-head{position:absolute;left:0;right:0;top:6px;text-align:center;font-weight:900;letter-spacing:.4px;color:#f59e0b;text-shadow:0 1px 0 #111;z-index:2}
+    .ad-img{width:100%;height:320px;object-fit:cover;display:block;opacity:0;transition:opacity .45s ease}
+    .ad-img.show{opacity:1}
+    @media (max-width:760px){ .ad-img{height:240px} }
+    .ad-foot{padding:10px 12px;text-align:center;font-weight:900;opacity:.92;background:linear-gradient(180deg,rgba(14,23,40,0),rgba(14,23,40,.66));position:absolute;left:0;right:0;bottom:0}
+    .ad-foot .blink{display:inline-block;animation:blink 1.4s infinite}
+    @keyframes blink{50%{opacity:.45}}
+
+    /* ======================= 🟥 RED — Toast (markaziy) ======================= */
+    .center-toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);background:#16a34a;color:#fff;padding:18px 22px;border-radius:14px;font-weight:900;z-index:9999;opacity:0;transition:.18s}
+    .center-toast.err{background:#dc2626}
+    .center-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+    /* 🔔 badge */
+    #notifBadge{position:absolute;right:-6px;top:-6px;background:#ef4444;color:#fff;border-radius:999px;padding:0 6px;font-size:12px;font-weight:900;display:none}
+
+    /* Network badge (optional) */
+    .net{position:sticky;top:56px;z-index:65;margin:0 auto;max-width:980px;padding:6px 10px;border-radius:10px;text-align:center;font-weight:800;display:none}
+    .net.off{display:block;background:#991b1b;color:#fff;border:1px solid #fecaca}
+    .net.on{display:block;background:#065f46;color:#d1fae5;border:1px solid #99f6e4}
+  </style>
 </head>
 <body>
   <!-- ======================= 🟧 ORANGE — HEADER ======================= -->
@@ -97,13 +122,13 @@
         <div class="title">BINGO</div>
       </div>
       <div class="controls">
-        <select id="langSel" class="lang">
+        <select id="langSel" class="lang" title="Til">
           <option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option>
         </select>
 
         <!-- 🔔 Bildirishnoma tugmasi + badge -->
         <button id="notifBtn" class="iconbtn" title="Bildirishnomalar">🔔<span id="notifBadge">0</span></button>
-        <!-- 👤 Google authed avatar (harf) -->
+        <!-- 👤 Google authed avatar (harf) / login tugmasi -->
         <div id="authArea">
           <button id="loginBtn" class="btn btn-amber btn-sm">Google bilan kirish</button>
         </div>
@@ -112,6 +137,7 @@
     </div>
   </div>
 
+  <div id="netBadge" class="net on" style="display:none"></div>
   <div id="alert" class="alert" role="alert"></div>
 
   <div class="wrap">
@@ -123,7 +149,7 @@
           <div class="muted" data-i18n="hero_sub">“Halollik — eng katta mukofot.”</div>
         </div>
 
-        <!-- 🟪 Reklama kartasi (qidiruv/copy o‘rnida) -->
+        <!-- 🟪 Reklama kartasi -->
         <div class="ad-wrap">
           <div class="ad">
             <div class="ad-head">Reklama</div>
@@ -262,7 +288,7 @@
   (function registerSW(){
     if(!('serviceWorker' in navigator)) return;
     const CODE = `
-      const VER='bingo-v6';
+      const VER='bingo-v9'; // kesh versiyasi — URLlar yangilansa shu yerda oshirasiz
       self.addEventListener('install',e=>{ self.skipWaiting(); e.waitUntil(caches.open(VER).then(c=>c.addAll(['./'])) )});
       self.addEventListener('activate',e=>{
         e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==VER).map(k=>caches.delete(k))))); 
@@ -325,7 +351,10 @@
     apiKey:"AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
     authDomain:"topildi.firebaseapp.com",
     projectId:"topildi",
+    storageBucket:"topildi.appspot.com",
+    messagingSenderId:"323891530719",
     appId:"1:323891530719:web:d57c2ce38781dc37e4926a",
+    measurementId:"G-NKCMKCXZQ7"
   };
   try{ firebase.initializeApp(firebaseConfig);}catch(e){}
   firebase.firestore().enablePersistence().catch(()=>{});
@@ -335,20 +364,40 @@
 
   /* ======================= 🟪 PURPLE — Reklama slayder ======================= */
   const AD_IMAGES=[
-    // 👉 GitHub'dagi rasmlaringni shu yerga yozasan:
-    "images/file_00000002de8624383c746f2d7d3cfd7.png",
-    "images/file_0000000538861fab34b2e1a449b4ce5.png"
+    "./images/file_000000002de8624383c746f2d7d3cfd7.png",
+    "./images/file_00000000538861fab34b2e1a449b4ce5.png"
   ];
   (function runAd(){
-    const img=document.getElementById('adImg'); let i=0;
-    function set(){ img.src=AD_IMAGES[i%AD_IMAGES.length]; i++; }
-    set(); setInterval(set, 5500);
+    const img=document.getElementById('adImg'); let i=0, ready=true;
+    function loadNext(){
+      const url = AD_IMAGES[i%AD_IMAGES.length] + (AD_IMAGES[i%AD_IMAGES.length].includes('?')?'&':'?') + 'v=9';
+      ready=false;
+      const probe=new Image();
+      probe.onload=()=>{ img.classList.remove('show'); setTimeout(()=>{ img.src=url; img.classList.add('show'); ready=true;},40) };
+      probe.onerror=()=>{ ready=true; };
+      probe.src=url;
+      i++;
+    }
+    loadNext();
+    setInterval(()=>{ if(ready) loadNext(); }, 5500);
   })();
 
   /* ======================= 🟨 YELLOW — Helpers, Router, UI ======================= */
   const MY_UID=(function(){let id=localStorage.getItem('bingo_uid');if(!id){id='u_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('bingo_uid',id)}return id})();
   document.getElementById('year').textContent=new Date().getFullYear();
   applyI18n();
+
+  const netBadge=document.getElementById('netBadge');
+  function setNet(on){
+    netBadge.className='net '+(on?'on':'off');
+    netBadge.textContent=on?'Onlayn':'Offline (kesh rejimi)';
+    netBadge.style.display='block';
+    clearTimeout(setNet._t);
+    setNet._t=setTimeout(()=>{netBadge.style.display='none'}, 2000);
+  }
+  window.addEventListener('online', ()=>setNet(true));
+  window.addEventListener('offline',()=>setNet(false));
+  setNet(navigator.onLine);
 
   function banner(msg){const a=document.getElementById('alert');a.textContent=msg||'';a.style.display=msg?'block':'none'}
   function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]) )}
@@ -402,7 +451,7 @@
   auth.onAuthStateChanged(u=>{ renderAuth(u); if(u) startRealtimeNotifications(); setBadge(0); });
 
   /* ======================= 🟦 BLUE — Firestore realtime feed ======================= */
-  let ALL_POSTS=[]; let LAST_POST=null;
+  let ALL_POSTS=[]; let LAST_POST_SIG=null;
   db.collection('posts').orderBy('created','desc').onSnapshot(snap=>{
     ALL_POSTS=snap.docs.map(d=>({id:d.id,...d.data()}));
     if(currentView==='lostList') renderLost();
@@ -437,8 +486,8 @@
       const sig = JSON.stringify([p.kind,p.item,p.city,p.contact,p.notes]);
       const now=Date.now();
       const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}');
-      if(LAST_POST===sig || (last.sig===sig && (now-last.ts)<30000)){ centerToast("⚠️ Bu e’lon allaqachon joylangan (30s ichida).", true); btn.disabled=false; btn.classList.remove('btn-disabled'); return; }
-      LAST_POST=sig; localStorage.setItem('bingo_last_post', JSON.stringify({sig,ts:now}));
+      if(LAST_POST_SIG===sig || (last.sig===sig && (now-last.ts)<30000)){ centerToast("⚠️ Bu e’lon allaqachon joylangan (30s ichida).", true); btn.disabled=false; btn.classList.remove('btn-disabled'); return; }
+      LAST_POST_SIG=sig; localStorage.setItem('bingo_last_post', JSON.stringify({sig,ts:now}));
 
       try{
         await db.collection('posts').add(p);
@@ -507,7 +556,7 @@
     if(!keep) navigate('postChat');
   }
   window.openChat = function(postId, keep){
-    // notifier uchun lastSeen yangilanadi
+    // notif last seen update
     LAST_SEEN_CACHE[postId] = Date.now();
     localStorage.setItem('bingo_last_seen', JSON.stringify(LAST_SEEN_CACHE));
     setBadge(0);
@@ -571,19 +620,25 @@
       const unsub=db.collection('posts').doc(postId).collection('chats').orderBy('ts','desc').limit(1)
       .onSnapshot(s=>{
         const d=s.docs[0]?.data(); if(!d) return;
+        // O'zim yozgan xabar emas
         if(d.uid===user.uid) return;
         const last=LAST_SEEN_CACHE[postId]||0;
+        // Agar ayni vaqtda shu chat oynasida bo'lsa — toast ko‘rsatmaymiz, lekin lastSeen yangilanadi
+        const inSameChat = (currentView==='postChat' && currentChatPostId===postId);
         if(d.ts && d.ts>last){
           LAST_SEEN_CACHE[postId]=d.ts; localStorage.setItem('bingo_last_seen', JSON.stringify(LAST_SEEN_CACHE));
-          total++; setBadge(total);
-          centerToast(`✉️ ${post.item||'E’lon'}: ${d.name||'Anon'} — ${(d.text||'').slice(0,120)}`);
-          playDing();
+          if(!inSameChat){
+            total++; setBadge(total);
+            centerToast(`✉️ ${post.item||'E’lon'}: ${d.name||'Anon'} — ${(d.text||'').slice(0,120)}`);
+            playDing();
+          }
         }
       });
       CHAT_WATCHERS.push(unsub);
     });
     document.getElementById('notifBtn').onclick=()=>{ setBadge(0); navigate('mine'); };
   }
+
   </script>
 </body>
-            </html>
+          </html>
