@@ -1,71 +1,289 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BINGO — Admin</title>
+  <meta name="color-scheme" content="light only" />
   <style>
-    body { font-family: sans-serif; background:#fff; color:#222; margin:20px; }
-    h1 { color:#d00; }
-    .ad { border:1px solid #ccc; padding:10px; margin:10px 0; border-radius:8px; }
-    button { background:#d00; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; }
+    :root{
+      --bg:#ffffff; --text:#111827; --muted:#6b7280; --card:#f9fafb; --border:#e5e7eb;
+      --brand:#0ea5e9; --brand-600:#0284c7; --danger:#ef4444; --danger-700:#b91c1c;
+      --ok:#16a34a; --chip:#11182710;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";}
+    header{position:sticky;top:0;z-index:10;background:#fff8;border-bottom:1px solid var(--border);backdrop-filter:saturate(150%) blur(6px)}
+    .wrap{max-width:980px;margin:0 auto;padding:16px}
+    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .grow{flex:1}
+    h1{font-size:22px;margin:0 0 4px}
+    .muted{color:var(--muted)}
+    button,.btn{
+      appearance:none;border:1px solid var(--border);background:#fff;color:var(--text);
+      padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600
+    }
+    .btn-brand{background:var(--brand);border-color:var(--brand);color:#fff}
+    .btn-brand:hover{background:var(--brand-600);border-color:var(--brand-600)}
+    .btn-danger{background:var(--danger);border-color:var(--danger);color:#fff}
+    .btn-danger:hover{background:var(--danger-700);border-color:var(--danger-700)}
+    .btn-ghost{background:#0000}
+    .card{
+      background:var(--card);border:1px solid var(--border);border-radius:16px;
+      padding:14px 14px 12px;margin:12px 0; box-shadow:0 1px 0 rgba(17,24,39,.02)
+    }
+    .grid{display:grid;gap:12px}
+    @media(min-width:700px){ .grid{grid-template-columns:1fr 1fr} }
+    .pill{display:inline-flex;gap:8px;align-items:center;background:var(--chip);padding:6px 10px;border-radius:999px;font-size:13px}
+    .pill b{font-weight:700}
+    .split{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .title{font-size:18px;margin:0 0 2px;font-weight:700}
+    .small{font-size:13px}
+    .code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;background:#0f172a0a;border:1px dashed var(--border);padding:3px 6px;border-radius:6px}
+    .empty{padding:26px;text-align:center;border:1px dashed var(--border);border-radius:14px;color:var(--muted)}
+    .footer-space{height:60px}
   </style>
 </head>
 <body>
-  <h1>📋 Admin Panel</h1>
-  <p>Bu yerda barcha e’lonlarni ko‘rib, keraklisini o‘chirishingiz mumkin.</p>
+  <header>
+    <div class="wrap">
+      <div class="row">
+        <div class="grow">
+          <h1>Admin panel — BINGO</h1>
+          <div class="muted small">Faqat ruxsat etilgan admin email’lari kira oladi. E’lonlarni ko‘rish va o‘chirish.</div>
+        </div>
+        <div id="authBox" class="row">
+          <button id="btnSignIn" class="btn-brand">Google bilan kirish</button>
+          <button id="btnSignOut" class="btn-ghost" style="display:none">Chiqish</button>
+        </div>
+      </div>
+    </div>
+  </header>
 
-  <div id="ads"></div>
+  <main class="wrap">
+    <div id="guard" class="card" style="display:none">
+      <div class="row">
+        <div class="grow">
+          <div class="title">Kirish talab qilinadi</div>
+          <div class="muted small">Admin sahifasini ko‘rish uchun Google bilan kiring.</div>
+        </div>
+        <button id="btnSignIn2" class="btn-brand">Kirish</button>
+      </div>
+    </div>
 
+    <div id="notAdmin" class="card" style="display:none">
+      <div class="title">Kirish rad etildi</div>
+      <div class="muted small">Siz administrator ro‘yxatida emassiz. Hisobingiz: <span id="who"></span></div>
+      <div style="margin-top:10px">
+        <button id="btnSignOut2" class="btn">Hisobni almashtirish</button>
+      </div>
+    </div>
+
+    <div id="dash" style="display:none">
+      <div class="card split">
+        <div class="row">
+          <div class="pill"><span>👤</span><span id="adminEmail" class="small"></span></div>
+          <div class="pill"><span>📚 Kolleksiya:</span> <b id="liveCol">—</b></div>
+        </div>
+        <div class="row">
+          <button id="btnRefresh" class="btn">🔄 Yangilash</button>
+        </div>
+      </div>
+
+      <div id="list" class="grid"></div>
+      <div id="empty" class="empty" style="display:none">Hozircha e’lon topilmadi.</div>
+      <div class="footer-space"></div>
+    </div>
+  </main>
+
+  <!-- Firebase v10 (modular) CDN -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, getDocs, deleteDoc, doc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // 🔑 Sizning Firebase configingiz
+    // 👉 Ruxsat berilgan admin email’lari (xohlasang o'zgartirish mumkin)
+    const ADMINS = [
+      "diyorabduraxmonov95@gmail.com",
+      "prostaffuz2025@gmail.com"
+    ];
+
+    // 👉 Sening Firebase config’ing (o’zing bergan)
     const firebaseConfig = {
       apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
       authDomain: "topildi.firebaseapp.com",
+      databaseURL: "https://topildi-default-rtdb.firebaseio.com",
       projectId: "topildi",
       storageBucket: "topildi.firebasestorage.app",
       messagingSenderId: "323891530719",
       appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
+      measurementId: "G-NKCMKCXZQ7"
     };
 
+    // Init
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db   = getFirestore(app);
+    const provider = new GoogleAuthProvider();
 
-    const ADMIN_EMAIL = "diyorabduraxmonov95@gmail.com";
-    const adsDiv = document.getElementById("ads");
+    // UI qismlari
+    const guardEl    = document.getElementById('guard');
+    const notAdminEl = document.getElementById('notAdmin');
+    const whoEl      = document.getElementById('who');
+    const dashEl     = document.getElementById('dash');
+    const listEl     = document.getElementById('list');
+    const emptyEl    = document.getElementById('empty');
+    const btnIn      = document.getElementById('btnSignIn');
+    const btnOut     = document.getElementById('btnSignOut');
+    document.getElementById('btnSignIn2').onclick = () => signInWithPopup(auth, provider);
+    document.getElementById('btnSignOut2').onclick = () => signOut(auth);
+    btnIn.onclick  = () => signInWithPopup(auth, provider);
+    btnOut.onclick = () => signOut(auth);
+    document.getElementById('btnRefresh').onclick = () => loadOnce(activeCollectionName);
 
+    let unsub = null;
+    let activeCollectionName = null; // 'posts' yoki 'Elonlar'
+
+    // Auth holati
     onAuthStateChanged(auth, async (user) => {
-      if (!user || user.email !== ADMIN_EMAIL) {
-        document.body.innerHTML = "<h2>⛔ Sizga ruxsat yo‘q</h2>";
+      // UI ni tozalash
+      guardEl.style.display = user ? 'none' : '';
+      notAdminEl.style.display = 'none';
+      dashEl.style.display = 'none';
+      btnOut.style.display = user ? '' : 'none';
+
+      if (!user) return;
+
+      const email = (user.email||'').toLowerCase();
+      if (!ADMINS.map(e=>e.toLowerCase()).includes(email)) {
+        whoEl.textContent = email;
+        notAdminEl.style.display = '';
         return;
       }
 
-      // 🔥 E’lonlarni yuklash
-      const querySnap = await getDocs(collection(db, "Elonlar"));
-      querySnap.forEach((docSnap) => {
-        const data = docSnap.data();
-        const div = document.createElement("div");
-        div.className = "ad";
-        div.innerHTML = `
-          <strong>${data.sarlavha || "Sarlavhasiz"}</strong><br>
-          <em>${data.shahar || ""}</em><br>
-          <button onclick="deleteAd('${docSnap.id}')">🗑 O‘chirish</button>
-        `;
-        adsDiv.appendChild(div);
-      });
+      // Admin – panelni ochamiz
+      document.getElementById('adminEmail').textContent = email;
+      dashEl.style.display = '';
+
+      // Jonli tinglovchini ishga tushirish
+      startLive();
     });
 
-    // 🔥 E’lon o‘chirish
-    window.deleteAd = async (id) => {
-      await deleteDoc(doc(db, "Elonlar", id));
-      alert("E’lon o‘chirildi!");
-      location.reload();
-    };
+    // E’lon maydonlaridan mos qiymatlarni olishga harakat qiladi (nomlar turli bo‘lishi mumkin)
+    function pick(obj, keys, def='') {
+      for (const k of keys) {
+        if (obj && obj[k] != null && obj[k] !== '') return obj[k];
+      }
+      return def;
+    }
+
+    function formatTime(ts){
+      try{
+        if (!ts) return '';
+        if (typeof ts === 'number') return new Date(ts).toLocaleString('uz-UZ');
+        if (ts.seconds) return new Date(ts.seconds*1000).toLocaleString('uz-UZ');
+        return new Date(ts).toLocaleString('uz-UZ');
+      }catch{ return '' }
+    }
+
+    // Jonli tinglash: avval 'posts', bo'lmasa 'Elonlar'
+    async function startLive(){
+      // Oldingi listener bo'lsa uzamiz
+      if (unsub) { try{unsub();}catch{} unsub=null; }
+
+      // Qaysi kolleksiyada ma'lumot borligini aniqlaymiz
+      const tryPosts = await getDocs(query(collection(db,'posts'), limit(1)));
+      if (!tryPosts.empty) {
+        activeCollectionName = 'posts';
+      } else {
+        const tryElonlar = await getDocs(query(collection(db,'Elonlar'), limit(1)));
+        activeCollectionName = tryElonlar.empty ? 'posts' : 'Elonlar';
+      }
+      document.getElementById('liveCol').textContent = activeCollectionName;
+
+      // Listener
+      const q = query(collection(db, activeCollectionName), orderBy('createdAt','desc'));
+      unsub = onSnapshot(q, (snap)=>{
+        renderList(snap.docs.map(d=>({id:d.id, ...d.data()})));
+      }, (err)=>{
+        console.error(err);
+        // createdAt bo'lmasa orderBy yiqiladi — unda tartiblashsiz tinglaymiz
+        const q2 = query(collection(db, activeCollectionName));
+        unsub = onSnapshot(q2, (snap)=>{
+          renderList(snap.docs.map(d=>({id:d.id, ...d.data()})));
+        });
+      });
+    }
+
+    // Bir marta yuklash (Yangilash tugmasi uchun)
+    async function loadOnce(colName){
+      if (!colName) return;
+      const q = query(collection(db,colName));
+      const snap = await getDocs(q);
+      renderList(snap.docs.map(d=>({id:d.id,...d.data()})));
+    }
+
+    // Chizish
+    function renderList(items){
+      listEl.innerHTML = '';
+      if (!items || items.length===0){
+        emptyEl.style.display = '';
+        return;
+      }
+      emptyEl.style.display = 'none';
+
+      for (const it of items){
+        const title = pick(it, ['title','sarlavha','narsa','mavzu'], '(Sarlavha yo‘q)');
+        const city  = pick(it, ['city','shahar','manzil','location'], '');
+        const body  = pick(it, ['desc','description','matn','izoh','text'], '');
+        const who   = pick(it, ['userEmail','email','ownerEmail','postingEmail','authorEmail'], '');
+        const whoNm = pick(it, ['userName','name','ism','user','authorName'], '');
+        const tel   = pick(it, ['phone','telefon','tel','phoneNumber'], '');
+        const when  = formatTime(pick(it, ['createdAt','time','timestamp','created'],''));
+
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        card.innerHTML = `
+          <div class="split">
+            <div>
+              <div class="title">${escapeHtml(title)}</div>
+              <div class="small muted">
+                ${when ? '🗓 '+when+' &nbsp; ' : '' }
+                ${city ? '📍 '+escapeHtml(city) : ''}
+              </div>
+            </div>
+            <button class="btn-danger" data-id="${it.id}">🗑 O‘chirish</button>
+          </div>
+
+          ${body ? `<p style="margin:10px 0 6px">${escapeHtml(body)}</p>`:''}
+
+          <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px">
+            ${whoNm || who ? `<span class="pill">👤 <b>${escapeHtml(whoNm||'Foydalanuvchi')}</b> <span class="muted small">${escapeHtml(who||'')}</span></span>`:''}
+            ${tel ? `<span class="pill">📞 ${escapeHtml(tel)}</span>`:''}
+            <span class="pill small">#id: <span class="code">${it.id}</span></span>
+          </div>
+        `;
+
+        // Delete handler
+        card.querySelector('.btn-danger').onclick = async (ev)=>{
+          const id = ev.currentTarget.getAttribute('data-id');
+          if (!confirm('Ushbu e’lonni o‘chiraymi?')) return;
+          try{
+            await deleteDoc(doc(db, activeCollectionName, id));
+          }catch(e){
+            console.error(e);
+            alert('O‘chirishda xato. Brauzer konsolini tekshiring.');
+          }
+        };
+
+        listEl.appendChild(card);
+      }
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
   </script>
 </body>
-</html>
+  </html>
