@@ -1,364 +1,340 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>BINGO — Admin Panel</title>
-<meta name="theme-color" content="#0b1220"/>
-
-<style>
-  :root{
-    --bg:#0b1220; --panel:#0f172a; --ring:#223047; --ink:#e5eef7;
-    --muted:#94a3b8; --accent:#1e293b; --ok:#065f46; --danger:#b91c1c; --warn:#a16207; --line:#334155;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
-  body{background:var(--bg);color:var(--ink)}
-  a{color:#93c5fd;text-decoration:none}
-  .wrap{max-width:1200px;margin:0 auto;padding:16px}
-  .top{display:flex;gap:10px;justify-content:space-between;align-items:center}
-  .left{display:flex;gap:10px;align-items:center}
-  .brand{display:flex;gap:10px;align-items:center}
-  .logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:#122037;border:1px solid var(--line);font-weight:900}
-  .title{font-weight:900;letter-spacing:.3px}
-  .btn{background:var(--accent);border:1px solid var(--line);color:var(--ink);padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
-  .btn:hover{opacity:.95}
-  .btn-red{background:var(--danger);border-color:#fecaca}
-  .btn-green{background:var(--ok);border-color:#34d399}
-  .btn-warn{background:#1f2937;border-color:#facc15}
-  .btn-ghost{background:transparent;border:1px dashed var(--line);color:#cbd5e1}
-  .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:#cbd5e1}
-  .grid{display:grid;gap:12px}
-  .two{grid-template-columns:1fr 1fr}
-  .card{background:var(--panel);border:1px solid var(--ring);border-radius:14px;padding:12px}
-  .h3{margin:0 0 8px;font-size:18px;font-weight:800}
-  .muted{color:var(--muted);font-size:13px}
-  .row{display:grid;grid-template-columns:2fr 1fr 1.2fr 0.7fr 1.2fr;gap:10px;align-items:center}
-  .head{font-weight:800;opacity:.9}
-  .item{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}
-  .tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  input,select{background:#0b1220;border:1px solid var(--line);color:#e5eef7;border-radius:10px;padding:10px 12px}
-  input::placeholder{color:#8aa0b8}
-  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-  .toolbar .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .stat{display:flex;gap:10px;flex-wrap:wrap}
-  .stat .chip{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
-  code{background:#0b1220;border:1px solid var(--line);padding:1px 6px;border-radius:6px}
-  .danger{color:#fecaca}
-  .ok{color:#86efac}
-  .warn{color:#fde68a}
-  .small{font-size:12px;opacity:.85}
-  .center-toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);
-    background:#065f46;color:#fff;padding:14px 18px;border-radius:14px;font-weight:900;z-index:9999;opacity:0;transition:.18s}
-  .center-toast.err{background:#b91c1c}
-  .center-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
-  .hint{font-size:12px;color:#94a3b8}
-  .list-empty{opacity:.8;padding:8px 0}
-  .footnote{margin-top:6px;color:#9fb0c5;font-size:12px}
-  .hr{height:1px;background:var(--line);margin:12px 0;border-radius:1px}
-  .select-all{display:flex;align-items:center;gap:6px}
-  .checkbox{width:18px;height:18px}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BINGO — Admin panel</title>
+  <link rel="icon" href="../icon.png" />
+  <style>
+    :root{
+      --bg:#0f172a;         /* fon (slate-900) */
+      --card:#111827;       /* kartalar (gray-900) */
+      --muted:#1f2937;      /* panel */
+      --text:#e5e7eb;       /* matn */
+      --sub:#9ca3af;        /* ikkilamchi matn */
+      --brand:#fbbf24;      /* sariq */
+      --good:#22c55e;       /* yashil */
+      --bad:#ef4444;        /* qizil */
+      --chip:#334155;       /* chip foni */
+      --chipText:#cbd5e1;
+      --border:#1f2937;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;background:#fef3c7;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Ubuntu,Arial}
+    .wrap{max-width:1024px;margin:32px auto;padding:16px}
+    .head{
+      background:var(--bg); color:var(--text);
+      padding:20px;border-radius:16px; box-shadow:0 8px 24px rgba(2,6,23,.25)
+    }
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .btn{cursor:pointer;background:var(--brand);color:#1f2937;border:none;border-radius:12px;
+         font-weight:700;padding:12px 16px;display:inline-flex;gap:10px;align-items:center}
+    .btn.secondary{background:var(--muted);color:var(--text)}
+    .btn.danger{background:var(--bad);color:#fff}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .select, .search{
+      background:var(--muted); color:var(--text); border:1px solid var(--border);
+      border-radius:12px; padding:12px 14px; outline:none
+    }
+    .search{min-width:260px;flex:1}
+    .hint{color:var(--sub);font-size:13px;margin-top:6px}
+    .grid{margin-top:18px;display:grid;grid-template-columns:1fr;gap:14px}
+    .card{
+      border-radius:14px;background:var(--bg);color:var(--text);border:1px solid var(--border);
+      padding:14px 14px 10px 14px
+    }
+    .cardHead{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .chips{display:flex;gap:6px;flex-wrap:wrap}
+    .chip{background:var(--chip);color:var(--chipText);padding:6px 10px;border-radius:999px;font-size:12.5px}
+    .chip.good{background:#064e3b;color:#a7f3d0}
+    .chip.bad{background:#7f1d1d;color:#fecaca}
+    .chip.reward{background:#3f1f06;color:#fde68a}
+    .meta{color:var(--sub);font-size:12.5px;display:flex;gap:10px;flex-wrap:wrap}
+    .title{font-weight:800}
+    .body{margin-top:8px;white-space:pre-wrap;line-height:1.5}
+    .acts{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+    .author{margin-top:10px}
+    .sep{height:1px;background:var(--border);margin:10px 0}
+    .empty{color:#475569;background:var(--bg);border:1px dashed #334155;border-radius:14px;padding:22px;text-align:center}
+    .foot{margin-top:22px;color:#374151;font-size:13px;text-align:center}
+    .shield{font-size:18px}
+    .tag{font-weight:700;color:var(--brand)}
+    @media(min-width:700px){ .grid{grid-template-columns:1fr 1fr} }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <!-- HEADER -->
-  <div class="top">
-    <div class="left">
-      <div class="brand">
-        <div class="logo">BG</div>
-        <div>
-          <div class="title">BINGO — Admin Panel</div>
-          <div id="who" class="muted small">Tekshirilmoqda…</div>
-        </div>
+  <div class="wrap">
+    <div class="head">
+      <div class="row">
+        <div class="shield">🛡️</div>
+        <h2 style="margin:0">Admin panel</h2>
       </div>
-    </div>
-    <div class="tools">
-      <button id="goSite" class="btn">↩️ Saytga qaytish</button>
-      <button id="signOut" class="btn btn-red">Chiqish</button>
-    </div>
-  </div>
 
-  <!-- STAT & FILTER BAR -->
-  <div class="card" style="margin-top:12px">
-    <div class="toolbar">
-      <div class="filters">
-        <button id="refresh" class="btn">🔄 Yangilash</button>
-        <select id="filter" title="Filtr">
+      <div class="row" style="margin-top:14px">
+        <button id="btnRefresh" class="btn"><span>🔄</span>Yangilash</button>
+        <select id="filterKind" class="select">
           <option value="all">Hammasi</option>
-          <option value="lost">❗ Yo‘qotilgan</option>
-          <option value="found">✅ Topilgan</option>
+          <option value="lost">❗ Yo‘qolganlar</option>
+          <option value="found">✅ Topilganlar</option>
           <option value="reward">🎁 Mukofotli</option>
-          <option value="closed">🛑 Yopiq</option>
         </select>
-        <input id="search" placeholder="Qidirish: narsa, shahar, joy, izoh, aloqa, UID/ism/email" style="min-width:340px"/>
+        <input id="q" class="search" placeholder="Qidirish: narsa, shahar, uid, email, ism..." />
       </div>
-      <div class="tools">
-        <label class="select-all"><input type="checkbox" id="checkAll" class="checkbox"> Hammasini belgilash</label>
-        <button id="bulkDelete" class="btn btn-red">🗑️ Belgilanganlarni o‘chirish</button>
-      </div>
+      <div class="hint">Faqat <span class="tag">/rules/{uid} → {"admin": true}</span> bo‘lgan foydalanuvchi kira oladi. Deleting uchun Firestore Rules’ni mos qiling.</div>
     </div>
-    <div class="stat" style="margin-top:10px">
-      <div id="statAll"   class="chip">Umumiy: —</div>
-      <div id="statLost"  class="chip">❗ Yo‘qotilgan: —</div>
-      <div id="statFound" class="chip">✅ Topilgan: —</div>
-      <div id="statReward"class="chip">🎁 Mukofotli: —</div>
-      <div id="statClosed"class="chip">🛑 Yopiq: —</div>
-      <div id="statTime"  class="chip">⏱️ Yangilandi: —</div>
+
+    <div id="list" class="grid" style="min-height:120px;margin-top:14px">
+      <div class="empty">Ma’lumot yuklanmoqda…</div>
     </div>
+
+    <div class="foot">© 2025 BINGO — Admin</div>
   </div>
 
-  <!-- POSTS LIST -->
-  <div class="card">
-    <div class="row head">
-      <div>Narsa / joy / vaqt</div>
-      <div>Tur</div>
-      <div>Foydalanuvchi</div>
-      <div>Mukofot</div>
-      <div>Amallar</div>
-    </div>
-    <div id="list">Yuklanmoqda…</div>
-    <div class="footnote">Eslatma: “O‘chirish” tugmasi e’lonni va unga tegishli barcha chat xabarlarini o‘chiradi.</div>
-  </div>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
 
-  <div class="grid two">
-    <!-- USERS -->
-    <div class="card">
-      <div class="h3">👥 Foydalanuvchilar</div>
-      <div id="users">—</div>
-    </div>
+  <script>
+    // =====================  FIREBASE CONFIG  =====================
+    // TODO: paste your firebaseConfig here (xuddi asosiy index.html dagidek)
+    const firebaseConfig = window.__FBCONFIG || {
+      /* PASTE YOUR CONFIG HERE */
+    };
+    // ============================================================
 
-    <!-- ALERTS -->
-    <div class="card">
-      <div class="h3">🔔 Bildirishnomalar (so‘nggi 50)</div>
-      <div id="alerts">—</div>
-    </div>
-  </div>
-</div>
+    // Init
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.firestore();
 
-<!-- TOAST -->
-<div id="toast" class="center-toast"></div>
+    // ----- DOM
+    const listEl   = document.getElementById('list');
+    const btnRef   = document.getElementById('btnRefresh');
+    const qEl      = document.getElementById('q');
+    const kindEl   = document.getElementById('filterKind');
 
-<!-- Firebase (compat) -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    // State
+    let ALL = [];      // normalizatsiya qilingan postlar
+    let ADMIN = false; // /rules/{uid}.admin
 
-<script>
-/* ===========================
-   CONFIG — sizning mavjud config’ingiz
-   =========================== */
-const firebaseConfig={
-  apiKey:"AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
-  authDomain:"topildi.firebaseapp.com",
-  databaseURL:"https://topildi-default-rtdb.firebaseio.com",
-  projectId:"topildi",
-  storageBucket:"topildi.appspot.com",
-  messagingSenderId:"323891530719",
-  appId:"1:323891530719:web:d57c2ce38781dc37e4926a",
-  measurementId:"G-NKCMKCXZQ7"
-};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
-const auth=firebase.auth();
+    // --------- UTIL: field aliaslarni normalizatsiya ----------
+    const pick = (...vals) => vals.find(v => v !== undefined && v !== null && v !== "") ?? undefined;
 
-/* ===========================
-   HELPERS
-   =========================== */
-const $=s=>document.querySelector(s);
-function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function toast(msg,err=false){
-  const t=$('#toast'); t.textContent=msg; t.className='center-toast'+(err?' err':''); 
-  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1600);
-}
-function fmt(n){return Number(n).toLocaleString('uz-UZ')}
-function nowStr(){return new Date().toLocaleString()}
+    function normalize(doc) {
+      const d = doc.data();
+      // Maydon aliaslari: sizdagi nomlar bo‘lsa ham ushlashga harakat qiladi
+      const item        = pick(d.item, d.narsa, d.title, d.sarlavha, d.object);
+      const city        = pick(d.city, d.shahar, d.location);
+      const kind        = (pick(d.kind, d.tur, d.type, d.status) || '').toString().toLowerCase(); // lost/found
+      const reward      = pick(d.reward, d.mukofot, d.price, d.sum);
+      const desc        = pick(d.desc, d.description, d.izoh, d.matn, d.body, d.info);
+      const contact     = pick(d.contact, d.aloqa, d.phone, d.telefon, d.tel);
+      const authorName  = pick(d.authorName, d.name, d.ism, d.fullname, d.fio);
+      const authorEmail = pick(d.authorEmail, d.email, d.mail);
+      const uid         = pick(d.uid, d.userId, d.createdBy, d.ownerUid);
+      const created     = pick(d.created, d.createdAt, d.ts, d.time, d.timestamp);
+      const pinned      = !!pick(d.pinned, d.pin, d.isPinned);
+      const cityLc      = (city||'').toString();
 
-/* ===========================
-   AUTH GUARD — faqat admin
-   =========================== */
-let ME=null, IS_ADMIN=false;
-auth.onAuthStateChanged(async u=>{
-  if(!u){ location.href='./'; return; }
-  $('#who').innerHTML = `<b>${esc(u.displayName||u.email||u.uid)}</b> · tekshirilmoqda…`;
-  try{
-    const r=await db.collection('rules').doc(u.uid).get();
-    if(!(r.exists && r.data().admin===true)){ location.href='./'; return; }
-    IS_ADMIN=true; ME=u;
-    $('#who').innerHTML = `<b>${esc(u.displayName||u.email||u.uid)}</b> · 🛡️ admin`;
-    loadAll();
-  }catch(e){ location.href='./'; }
-});
-$('#signOut').onclick=()=>auth.signOut().then(()=>location.href='./');
-$('#goSite').onclick=()=>location.href='./';
+      // qidirish satri uchun qulay satr
+      const index = [
+        item, city, kind, reward, desc, contact, authorName, authorEmail, uid
+      ].filter(Boolean).join(' ').toLowerCase();
 
-/* ===========================
-   LOADERS
-   =========================== */
-let CACHE={posts:[], users:[], alerts:[]};
-async function loadAll(){
-  try{
-    const [p,u,a]=await Promise.all([
-      db.collection('posts').orderBy('created','desc').limit(800).get(),
-      db.collection('users').orderBy('lastLogin','desc').limit(400).get(),
-      db.collection('alerts').orderBy('ts','desc').limit(50).get()
-    ]);
-    CACHE.posts=p.docs.map(d=>({id:d.id,...d.data()}));
-    CACHE.users=u.docs.map(d=>({id:d.id,...d.data()}));
-    CACHE.alerts=a.docs.map(d=>({id:d.id,...d.data()}));
-    renderStats(); renderPosts(); renderUsers(); renderAlerts();
-    $('#statTime').textContent='⏱️ Yangilandi: '+nowStr();
-  }catch(e){ toast('Yuklash xatosi: '+e.message,true); }
-}
-$('#refresh').onclick=loadAll;
+      // status bayroqlari
+      const isLost   = /lost|yoqol|yo'qol|yo‘qol/i.test(kind || '');
+      const isFound  = /found|topild/i.test(kind || '');
+      const hasRw    = reward !== undefined && reward !== null && reward !== '' && Number(reward) > 0;
 
-/* ===========================
-   STATS
-   =========================== */
-function renderStats(){
-  const arr=CACHE.posts;
-  const lost=arr.filter(p=>p.kind==='lost').length;
-  const found=arr.filter(p=>p.kind==='found').length;
-  const reward=arr.filter(p=>(p.reward||0)>0).length;
-  const closed=arr.filter(p=>p.closed===true).length;
-  $('#statAll').textContent='Umumiy: '+fmt(arr.length);
-  $('#statLost').textContent='❗ Yo‘qotilgan: '+fmt(lost);
-  $('#statFound').textContent='✅ Topilgan: '+fmt(found);
-  $('#statReward').textContent='🎁 Mukofotli: '+fmt(reward);
-  $('#statClosed').textContent='🛑 Yopiq: '+fmt(closed);
-}
-
-/* ===========================
-   POSTS RENDER + SEARCH/FILTER
-   =========================== */
-$('#filter').onchange=renderPosts;
-$('#search').oninput=()=>{ renderPosts(); };
-$('#checkAll').onchange=()=>{ 
-  const on=$('#checkAll').checked; document.querySelectorAll('.chk').forEach(c=>c.checked=on);
-};
-
-function matchesQuery(p,q){
-  const f=[p.item,p.city,p.place,p.notes,p.contact,p.uid,p.authorName,p.authorEmail].join(' ').toLowerCase();
-  return f.includes(q);
-}
-
-function renderPosts(){
-  let arr=CACHE.posts.slice();
-  const f=$('#filter').value;
-  const q=$('#search').value.trim().toLowerCase();
-  if(f==='lost')   arr=arr.filter(p=>p.kind==='lost');
-  if(f==='found')  arr=arr.filter(p=>p.kind==='found');
-  if(f==='reward') arr=arr.filter(p=>(p.reward||0)>0);
-  if(f==='closed') arr=arr.filter(p=>p.closed===true);
-  if(q) arr=arr.filter(p=>matchesQuery(p,q));
-  const html = arr.length? arr.map(p=>rowPost(p)).join('') : `<div class="list-empty">— Topilmadi —</div>`;
-  $('#list').innerHTML=html;
-}
-
-function rowPost(p){
-  const kind = p.kind==='lost' ? '❗Yo‘qotilgan' : '✅Topilgan';
-  const badge = [
-    p.closed?'<span class="pill">🛑 yopiq</span>':'',
-    (p.reward||0)>0?'<span class="pill">🎁+</span>':''
-  ].join(' ');
-  return `
-    <div class="row item">
-      <div>
-        <label style="display:flex;align-items:start;gap:8px">
-          <input type="checkbox" class="chk" value="${p.id}"/>
-          <div>
-            <b>${esc(p.item)}</b> ${badge}<br/>
-            <span class="muted">${esc(p.city||'-')} · ${esc(p.place||'-')}</span><br/>
-            <span class="small" style="opacity:.8">${new Date(p.created||0).toLocaleString()}</span>
-          </div>
-        </label>
-      </div>
-      <div>${kind}</div>
-      <div>
-        ${esc(p.authorName||'—')}<br/>
-        <span class="small" style="opacity:.8">${esc(p.authorEmail||'')}</span><br/>
-        <code class="small">${esc(p.uid||'')}</code>
-      </div>
-      <div>${(p.reward||0)>0? (fmt(p.reward)+' so‘m'):'—'}</div>
-      <div class="tools">
-        <button class="btn" onclick="openChat('${p.id}')">💬 Chat</button>
-        <button class="btn btn-warn" onclick="toggleClose('${p.id}', ${!!p.closed})">${p.closed?'🟢 Ochish':'🛑 Yopish'}</button>
-        <button class="btn btn-red" onclick="delPost('${p.id}')">🗑️ O‘chirish</button>
-      </div>
-    </div>
-  `;
-}
-
-/* ===========================
-   POST ACTIONS
-   =========================== */
-async function toggleClose(id,closed){
-  try{ await db.collection('posts').doc(id).set({closed:!closed},{merge:true}); toast('Holat yangilandi'); loadAll(); }
-  catch(e){ toast('Xato: '+e.message,true); }
-}
-
-async function delPost(id){
-  if(!confirm('E’lonni o‘chirishni tasdiqlaysizmi?')) return;
-  try{
-    await db.collection('posts').doc(id).delete();
-    const sub=await db.collection('posts').doc(id).collection('chats').get();
-    const batch=db.batch(); sub.forEach(doc=>batch.delete(doc.ref)); await batch.commit();
-    toast('🗑️ O‘chirildi'); loadAll();
-  }catch(e){ toast('Xato: '+e.message,true); }
-}
-
-window.delPost=delPost;
-window.toggleClose=toggleClose;
-window.openChat=function(id){ location.href='./#postChat-'+id; };
-
-/* ===========================
-   BULK DELETE
-   =========================== */
-$('#bulkDelete').onclick=async ()=>{
-  const ids=[...document.querySelectorAll('.chk:checked')].map(c=>c.value);
-  if(!ids.length){ toast('Hech narsa tanlanmadi',true); return; }
-  if(!confirm('Belgilangan '+ids.length+' ta e’lonni o‘chirilsinmi?')) return;
-  try{
-    // postlarni o‘chirish
-    for(const id of ids){
-      await db.collection('posts').doc(id).delete();
-      const sub=await db.collection('posts').doc(id).collection('chats').get();
-      const batch=db.batch(); sub.forEach(doc=>batch.delete(doc.ref)); await batch.commit();
+      return {
+        id: doc.id,
+        ref: doc.ref,
+        raw: d,
+        item, city: cityLc, kind, reward, desc, contact,
+        authorName, authorEmail, uid,
+        created: typeof created === 'number' ? created : (created?.toMillis?.() ?? Date.now()),
+        pinned,
+        flags: { lost: isLost, found: isFound, reward: hasRw },
+        index
+      };
     }
-    toast('🗑️ '+ids.length+' ta e’lon o‘chirildi');
-    loadAll();
-  }catch(e){ toast('Xato: '+e.message,true); }
-};
 
-/* ===========================
-   USERS
-   =========================== */
-function renderUsers(){
-  const arr=CACHE.users;
-  $('#users').innerHTML = arr.length? arr.map(u=>`
-    <div class="item" style="display:flex;gap:10px;align-items:center">
-      ${u.photoURL?`<img src="${esc(u.photoURL)}" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--line)">`:''}
-      <div style="flex:1">
-        <b>${esc(u.displayName||'Foydalanuvchi')}</b> · <span class="muted">${esc(u.email||'')}</span><br/>
-        <code class="small">${esc(u.uid||u.id||'')}</code> · <span class="small">${new Date(u.lastLogin||0).toLocaleString()}</span>
-      </div>
-    </div>
-  `).join('') : '—';
-}
+    // ------- UI chizish -------
+    function timeAgo(ms) {
+      const s = Math.max(1, Math.floor((Date.now() - ms)/1000));
+      const m = Math.floor(s/60), h=Math.floor(m/60), d=Math.floor(h/24);
+      if (d>0) return d+" kun avval";
+      if (h>0) return h+" soat avval";
+      if (m>0) return m+" daqiqa avval";
+      return s+" soniya avval";
+    }
 
-/* ===========================
-   ALERTS
-   =========================== */
-function renderAlerts(){
-  const arr=CACHE.alerts;
-  $('#alerts').innerHTML = arr.length? arr.map(a=>`
-    <div class="item">
-      ${new Date(a.ts||0).toLocaleString()} · 
-      <b>${esc(a.item||'Post')}</b> · to=<code>${esc(a.to||'')}</code> from=<code>${esc(a.from||'')}</code><br/>
-      <span class="muted">${esc(a.text||'')}</span>
-    </div>
-  `).join('') : '—';
-}
-</script>
+    function row(p) {
+      const chips = [];
+      if (p.flags.lost)   chips.push('<span class="chip bad">❗ Yo‘qolgan</span>');
+      if (p.flags.found)  chips.push('<span class="chip good">✅ Topilgan</span>');
+      if (p.flags.reward) chips.push('<span class="chip reward">🎁 Mukofotli</span>');
+
+      const title = [p.item || 'Noma’lum narsa', p.city && ' · ' + p.city].filter(Boolean).join('');
+      const meta  = [
+        p.uid && `UID: <b>${p.uid}</b>`,
+        p.authorEmail && `Email: <b>${p.authorEmail}</b>`,
+        p.authorName && `Ism: <b>${p.authorName}</b>`,
+        'Vaqt: ' + timeAgo(p.created)
+      ].filter(Boolean).join(' • ');
+
+      return `
+      <div class="card" data-id="${p.id}">
+        <div class="cardHead">
+          <div class="chips">${chips.join(' ')}</div>
+          ${p.pinned ? '<span class="chip">📌 pinned</span>' : ''}
+        </div>
+        <div class="title">${title}</div>
+        <div class="meta" style="margin-top:6px">${meta}</div>
+        ${p.desc ? `<div class="body">${escapeHtml(p.desc)}</div>` : ''}
+        <div class="sep"></div>
+        <div class="author">
+          <div class="meta">Aloqa: <b>${p.contact ? escapeHtml(p.contact) : '—'}</b></div>
+        </div>
+        <div class="acts">
+          <button class="btn danger" data-act="del" data-id="${p.id}">🗑️ O‘chirish</button>
+          <button class="btn secondary" data-act="copy" data-id="${p.id}">🔗 ID nusxa</button>
+        </div>
+      </div>`;
+    }
+
+    function escapeHtml(s){
+      return (s||'').toString()
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+    }
+
+    function render() {
+      const q = qEl.value.trim().toLowerCase();
+      const k = kindEl.value;
+
+      let arr = ALL.slice().sort((a,b)=>{
+        // pinned birinchi, so‘ngra so‘nggi e’lon
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+        return b.created - a.created;
+      });
+
+      if (k==='lost')   arr = arr.filter(x=>x.flags.lost);
+      if (k==='found')  arr = arr.filter(x=>x.flags.found);
+      if (k==='reward') arr = arr.filter(x=>x.flags.reward);
+
+      if (q) arr = arr.filter(x=>x.index.includes(q));
+
+      if (!arr.length) {
+        listEl.innerHTML = `<div class="empty">Hech narsa topilmadi.</div>`;
+        attachActions();
+        return;
+      }
+
+      listEl.innerHTML = arr.map(row).join('');
+      attachActions();
+    }
+
+    function attachActions(){
+      listEl.querySelectorAll('[data-act="del"]').forEach(btn=>{
+        btn.onclick = async ()=>{
+          if (!ADMIN) { alert('Sizda admin huquqi yo‘q.'); return; }
+          const id = btn.dataset.id;
+          const post = ALL.find(x=>x.id===id);
+          if (!post) return;
+          if (!confirm(`Rostdan ham o‘chirasizmi?\n\n${post.item || ''} (${post.city || ''})`)) return;
+          btn.disabled=true;
+          try{
+            await post.ref.delete();
+            ALL = ALL.filter(x=>x.id!==id);
+            render();
+          }catch(e){
+            console.error(e);
+            alert('O‘chirishda xatolik: '+e.message);
+          }finally{ btn.disabled=false; }
+        };
+      });
+
+      listEl.querySelectorAll('[data-act="copy"]').forEach(btn=>{
+        btn.onclick = async ()=>{
+          const id = btn.dataset.id;
+          await navigator.clipboard.writeText(id);
+          btn.textContent = '✅ Nusxa olindi';
+          setTimeout(()=>btn.textContent='🔗 ID nusxa',1200);
+        };
+      });
+    }
+
+    // ---------- Firestore’dan o‘qish ----------
+    async function loadAll() {
+      if (!auth.currentUser) return;
+
+      btnRef.disabled = true;
+      listEl.innerHTML = `<div class="empty">Yuklanmoqda…</div>`;
+
+      // 1) rules/{uid} dan admin holatini tekshirish
+      try{
+        const r = await db.collection('rules').doc(auth.currentUser.uid).get();
+        ADMIN = !!(r.exists && r.data()?.admin);
+      }catch(e){ console.warn('rules read fail', e); }
+
+      // 2) posts kolleksiyasi
+      let out = [];
+      try{
+        const snap = await db.collection('posts').get();
+        snap.forEach(d=> out.push(normalize(d)));
+      }catch(e){ console.warn('posts read fail', e); }
+
+      // 3) Agar bo‘sh bo‘lsa fallback’lar
+      if (out.length===0) {
+        // Elonlar (agar shu nomda saqlagan bo‘lsangiz)
+        try{
+          const snap = await db.collection('Elonlar').get();
+          snap.forEach(d=> out.push(normalize(d)));
+        }catch(e){}
+
+        // alerts — agar ishlatsangiz
+        try{
+          const snap = await db.collection('alerts').get();
+          snap.forEach(d=> out.push(normalize(d)));
+        }catch(e){}
+      }
+
+      ALL = out;
+      render();
+      btnRef.disabled = false;
+    }
+
+    // ---------- Auth (faqat Google) ----------
+    async function ensureAuth(){
+      return new Promise((resolve)=>{
+        auth.onAuthStateChanged(async (u)=>{
+          if(!u){
+            // Google bilan login oynasi
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try{
+              await auth.signInWithPopup(provider);
+            }catch(e){
+              alert('Kirish kerak: '+e.message);
+              return;
+            }
+          }
+          resolve(auth.currentUser);
+        });
+      });
+    }
+
+    // --------- events ----------
+    btnRef.onclick = loadAll;
+    qEl.addEventListener('input', render);
+    kindEl.onchange = render;
+
+    (async function start(){
+      await ensureAuth();
+      await loadAll();
+    })();
+  </script>
 </body>
 </html>
