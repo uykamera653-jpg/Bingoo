@@ -25,12 +25,27 @@
   .net.off{display:block;background:#991b1b;color:#fff;border:1px solid #fecaca}
   .net.on{display:block;background:#065f46;color:#d1fae5;border:1px solid #99f6e4}
   .hero{margin:24px 0 12px}.headline{font-size:34px;line-height:1.3;font-weight:900;color:#111827}.muted{color:#475569;margin-top:6px}
+
+  /* REKLAMA */
+  .ad-card{background:#0B1326;border:1px solid #223047;border-radius:18px;padding:8px 8px 14px;margin-top:16px;color:#EAF1FF;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+  .ad-head{font-weight:900;letter-spacing:.2px;text-align:center;color:#f8d04f;margin:6px 0 8px}
+  .ad-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0a0f1d}
+  .ad-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:contrast(1.04) saturate(1.02)}
+  .ad-caption{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:10px}
+  .ad-star{font-size:18px}
+  .ad-text{font-weight:900}
+  /* matn “yurishi” */
+  .ticker{white-space:nowrap;overflow:hidden}
+  .ticker span{display:inline-block;padding-left:100%;animation:ticker 10s linear infinite}
+  @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+
   #mainMenu{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:20px 0}
   .btn{border-radius:16px;padding:12px 16px;cursor:pointer;border:1px solid #e2e8f0;background:#111a2b;color:#e5eef7;font-weight:700;font-size:15px;transition:.2s}
   .btn:hover{transform:translateY(-1px)} .btn-blue{background:var(--blue)} .btn-green{background:var(--green);color:#04140a} .btn-red{background:var(--red)} .btn-amber{background:var(--amber);color:#111} .btn-sm{font-size:14px;padding:10px 12px} .btn-disabled{background:#9ca3af!important;color:#f3f4f6!important;cursor:not-allowed}
+
   .views{min-height:70vh}.view{display:none}.view.active{display:block}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px} @media (max-width:760px){.grid{grid-template-columns:1fr}}
-  .card{background:var(--panel);border:1px solid --ring;border:1px solid #e5e7eb33;border-radius:18px;padding:12px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+  .card{background:var(--panel);border:1px solid #e5e7eb33;border-radius:18px;padding:12px;color:var(--text-card);box-shadow:0 4px 14px rgba(0,0,0,.12)}
   .card-title{font-weight:800;margin-bottom:8px;font-size:15px;letter-spacing:.2px}.card-text,.card-list{font-size:13px;color:var(--muted-card)}
   label{font-size:13px;color:#8fa1b7;margin:8px 0 4px;display:block}
   input,textarea{width:100%;background:#0b1220;color:#eef4fa;border:1px solid #223047;border-radius:12px;padding:12px} textarea{min-height:96px;resize:vertical}
@@ -44,21 +59,13 @@
   .msg{margin:6px 0;padding:8px 10px;border-radius:12px;border:1px solid #223047;background:#0e1728}
   .me{background:#0b2a1f;border-color:#0a7a46}.other{background:#101e33;border-color:#263b5a}
   .hint{font-size:12px;color:#94a3b8;margin-top:4px}
-  .searchbar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.searchbar input{flex:1}
   .pill{display:inline-block;padding:6px 10px;border-radius:999px;border:1px dashed #334155;background:#0b1220;color:#cbd5e1;font-weight:700}
-  .center-toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);background:#16a34a;color:#fff;padding:18px 22px;border-radius:14px;font-weight:900;z-index:9999;opacity:0;transition:.18s}
-  .center-toast.err{background:#dc2626}.center-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
-  .profile{display:flex;gap:12px;align-items:center}
-  .notif-item{background:#0b1220;border:1px solid #223047;border-radius:12px;padding:10px;margin:8px 0}
 </style>
 </head>
 <body>
   <div class="topbar">
     <div class="hdr">
-      <div class="brand">
-        <div class="logo">BG</div>
-        <div class="title">BINGO</div>
-      </div>
+      <div class="brand"><div class="logo">BG</div><div class="title">BINGO</div></div>
       <div class="controls">
         <button id="bellBtn" class="iconbtn" title="Bildirishnomalar">🔔 <span id="bellCount" class="badge" style="display:none">0</span></button>
         <div id="userBox" class="iconbtn" title="Kirish">
@@ -83,9 +90,16 @@
           <div class="muted" data-i18n="hero_sub">“Halollik — eng katta mukofot.”</div>
         </div>
 
-        <div class="searchbar">
-          <input id="qSearch" placeholder="Qidirish: sarlavha, shahar, aloqa"/>
-          <button class="btn btn-amber" id="btnCopyLink">🔗 Havolani nusxalash</button>
+        <!-- REKLAMA BANNER (asosiy sahifa) -->
+        <div class="ad-card" aria-label="Reklama">
+          <div class="ad-head">Reklama</div>
+          <div class="ad-frame">
+            <img id="adImg" class="ad-img" src="" alt="reklama">
+          </div>
+          <div class="ad-caption">
+            <div class="ad-star">★</div>
+            <div class="ad-text ticker"><span>Bu yerda sizning reklamangiz bo‘lishi mumkin · Aloqa: +998 ** *** ** ** · Bu yerda sizning reklamangiz bo‘lishi mumkin · </span></div>
+          </div>
         </div>
 
         <div id="mainMenu">
@@ -135,14 +149,14 @@
       <section id="view_foundForm" class="view">
         <div class="card">
           <div class="card-title"><span data-i18n="found_form_title">Topdim — e’lon</span></div>
-          <label data-i18n="lbl_item">Narsa</label><input id="f_item" placeholder="Masalan: Pasport, kalitlar, sumka" />
-          <div class="hint">Agar pasport bo‘lsa: ismning bosh harfi, familiya qismi kabi.</div>
-          <label data-i18n="lbl_city">Shahar/Hudud</label><input id="f_city" placeholder="Masalan: Toshkent / Chilonzor" />
-          <label data-i18n="lbl_place">Qayerdan topildi</label><input id="f_place" placeholder="Masalan: Chorsu bozori yaqinida" />
-          <label data-i18n="lbl_date">Sana/Vaqt</label><input id="f_date" placeholder="2025-08-30 10:00" />
-          <label data-i18n="lbl_contact">Aloqa</label><input id="f_contact" placeholder="+998 90 987 65 43" inputmode="tel" />
-          <label data-i18n="lbl_notes">Qo‘shimcha</label><textarea id="f_notes" placeholder="Topilgan holati, qayerga topshirildi va h.k."></textarea>
-          <div class="sp"></div><button id="btnFound" class="btn btn-green" data-submit="found" data-i18n="btn_submit">E’lon berish</button>
+        <label data-i18n="lbl_item">Narsa</label><input id="f_item" placeholder="Masalan: Pasport, kalitlar, sumka" />
+        <div class="hint">Agar pasport bo‘lsa: ismning bosh harfi, familiya qismi kabi.</div>
+        <label data-i18n="lbl_city">Shahar/Hudud</label><input id="f_city" placeholder="Masalan: Toshkent / Chilonzor" />
+        <label data-i18n="lbl_place">Qayerdan topildi</label><input id="f_place" placeholder="Masalan: Chorsu bozori yaqinida" />
+        <label data-i18n="lbl_date">Sana/Vaqt</label><input id="f_date" placeholder="2025-08-30 10:00" />
+        <label data-i18n="lbl_contact">Aloqa</label><input id="f_contact" placeholder="+998 90 987 65 43" inputmode="tel" />
+        <label data-i18n="lbl_notes">Qo‘shimcha</label><textarea id="f_notes" placeholder="Topilgan holati, qayerga topshirildi va h.k."></textarea>
+        <div class="sp"></div><button id="btnFound" class="btn btn-green" data-submit="found" data-i18n="btn_submit">E’lon berish</button>
         </div>
       </section>
 
@@ -150,23 +164,18 @@
       <section id="view_lostList" class="view">
         <div class="card">
           <div class="card-title" data-i18n="lost_list_title">📋 Umumiy yo‘qotilganlar</div>
-          <div class="searchbar"><input id="lostSearch" placeholder="Qidirish (yo‘qotilganlar)"><span class="pill" id="lostCount">0</span></div>
           <div id="lost_list">—</div>
         </div>
       </section>
-
       <section id="view_rewardList" class="view">
         <div class="card">
           <div class="card-title" data-i18n="reward_list_title">🎁 Mukofotli</div>
-          <div class="searchbar"><input id="rewardSearch" placeholder="Qidirish (mukofotli)"><span class="pill" id="rewardCount">0</span></div>
           <div id="reward_list">—</div>
         </div>
       </section>
-
       <section id="view_foundList" class="view">
         <div class="card">
           <div class="card-title" data-i18n="found_list_title">🔎 Topilganlar</div>
-          <div class="searchbar"><input id="foundSearch" placeholder="Qidirish (topilganlar)"><span class="pill" id="foundCount">0</span></div>
           <div id="found_list">—</div>
         </div>
       </section>
@@ -236,10 +245,10 @@
     const blob=new Blob([CODE],{type:'text/javascript'}); navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
   })();
 
-  /* ===== I18N ===== */
-  const I18N={uz:{hero_title:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",hero_sub:"“Halollik — eng katta mukofot.”",btn_lost:"❗ Yo‘qotdim",btn_found:"✅ Topdim",btn_lostlist:"📋 Yo‘qotilganlar",btn_reward:"🎁 Mukofotli",btn_foundlist:"🔎 Topilganlar",btn_mine:"⭐ Mening e’lonlarim",why_title:"Nega BINGO?",why_text:"Oddiy forma, tez natija. Barcha e’lonlar bir joyda.",guide_title:"Qisqa yo‘riqnoma",guide_1:"❗ Yo‘qotdim yoki ✅ Topdim formasini to‘ldiring",guide_2:"Shahar va aloqa — majburiy",guide_3:"Mukofot yozilsa, alohida bo‘limda ko‘rinadi",lost_form_title:"Yo‘qotdim — e’lon",found_form_title:"Topdim — e’lon",lost_list_title:"📋 Umumiy yo‘qotilganlar",reward_list_title:"🎁 Mukofotli",found_list_title:"🔎 Topilganlar",mine_title:"⭐ Mening e’lonlarim",btn_delete_mine:"Mening e’lonlarimni o‘chirish",chat_title:"Xabar",btn_send:"Yuborish",btn_submit:"E’lon berish",confirm_del:"Ushbu e’lonni o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi.",lbl_item:"Narsa",lbl_city:"Shahar/Hudud",lbl_place:"Joy",lbl_date:"Sana/Vaqt",lbl_contact:"Aloqa",lbl_reward:"Mukofot (ixt.)",lbl_notes:"Qo‘shimcha"},
-  ru:{hero_title:"Потеряли или нашли? Оставьте объявление.",hero_sub:"«Честность — самая большая награда.»",btn_lost:"❗ Потерял(а)",btn_found:"✅ Нашёл(ла)",btn_lostlist:"📋 Потерянные",btn_reward:"🎁 С вознаграждением",btn_foundlist:"🔎 Найденные",btn_mine:"⭐ Мои объявления",why_title:"Почему BINGO?",why_text:"Простая форма, быстрый результат. Все объявления в одном месте.",guide_title:"Краткая инструкция",guide_1:"Заполните форму ❗/✅",guide_2:"Город и контакт — обязательны",guide_3:"Вознаграждение показывается отдельно",lost_form_title:"Потерял(а) — объявление",found_form_title:"Нашёл(ла) — объявление",lost_list_title:"📋 Все потерянные",reward_list_title:"🎁 С вознаграждением",found_list_title:"🔎 Найденные",mine_title:"⭐ Мои объявления",btn_delete_mine:"Удалить мои объявления",chat_title:"Сообщение",btn_send:"Отправить",btn_submit:"Опубликовать",confirm_del:"Удалить это объявление? Действие необратимо.",lbl_item:"Предмет",lbl_city:"Город/Регион",lbl_place:"Место",lbl_date:"Дата/Время",lbl_contact:"Контакт",lbl_reward:"Вознаграждение (необ.)",lbl_notes:"Дополнительно"},
-  en:{hero_title:"Lost or found something? Post it.",hero_sub:"“Honesty is the greatest reward.”",btn_lost:"❗ Lost",btn_found:"✅ Found",btn_lostlist:"📋 Lost Items",btn_reward:"🎁 With Reward",btn_foundlist:"🔎 Found Items",btn_mine:"⭐ My Posts",why_title:"Why BINGO?",why_text:"Simple form, fast results. All posts in one place.",guide_title:"Quick guide",guide_1:"Fill the ❗/✅ form",guide_2:"City & contact are required",guide_3:"Rewarded posts show separately",lost_form_title:"Lost — post",found_form_title:"Found — post",lost_list_title:"📋 All Lost",reward_list_title:"🎁 With Reward",found_list_title:"🔎 All Found",mine_title:"⭐ My Posts",btn_delete_mine:"Delete my posts",chat_title:"Message",btn_send:"Send",btn_submit:"Post",confirm_del:"Delete this post? This cannot be undone.",lbl_item:"Item",lbl_city:"City/Region",lbl_place:"Place",lbl_date:"Date/Time",lbl_contact:"Contact",lbl_reward:"Reward (opt.)",lbl_notes:"Notes"}};
+  /* ===== I18N (qisqartirilgan) ===== */
+  const I18N={uz:{hero_title:"Yo‘qotdingizmi yoki topdingizmi? E’lon qoldiring.",hero_sub:"“Halollik — eng katta mukofot.”",btn_lost:"❗ Yo‘qotdim",btn_found:"✅ Topdim",btn_lostlist:"📋 Yo‘qotilganlar",btn_reward:"🎁 Mukofotli",btn_foundlist:"🔎 Topilganlar",btn_mine:"⭐ Mening e’lonlarim",why_title:"Nega BINGO?",why_text:"Oddiy forma, tez natija. Barcha e’lonlar bir joyda.",guide_title:"Qisqa yo‘riqnoma",guide_1:"❗ Yo‘qotdim yoki ✅ Topdim formasini to‘ldiring",guide_2:"Shahar va aloqa — majburiy",guide_3:"Mukofot yozilsa, alohida bo‘limda ko‘rinadi",lost_form_title:"Yo‘qotdim — e’lon",found_form_title:"Topdim — e’lon",lost_list_title:"📋 Umumiy yo‘qotilganlar",reward_list_title:"🎁 Mukofotli",found_list_title:"🔎 Topilganlar",mine_title:"⭐ Mening e’lonlarim",chat_title:"Xabar",btn_send:"Yuborish",btn_submit:"E’lon berish",btn_delete_mine:"Mening e’lonlarimni o‘chirish",confirm_del:"Ushbu e’lonni o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi.",lbl_item:"Narsa",lbl_city:"Shahar/Hudud",lbl_place:"Joy",lbl_date:"Sana/Vaqt",lbl_contact:"Aloqa",lbl_reward:"Mukofot (ixt.)",lbl_notes:"Qo‘shimcha"},
+  ru:{hero_title:"Потеряли или нашли? Оставьте объявление.",hero_sub:"«Честность — самая большая награда.»",btn_lost:"❗ Потерял(а)",btn_found:"✅ Нашёл(ла)",btn_lostlist:"📋 Потерянные",btn_reward:"🎁 С вознаграждением",btn_foundlist:"🔎 Найденные",btn_mine:"⭐ Мои объявления",why_title:"Почему BINGO?",why_text:"Простая форма, быстрый результат. Все объявления в одном месте.",guide_title:"Краткая инструкция",guide_1:"Заполните форму ❗/✅",guide_2:"Город и контакт — обязательны",guide_3:"Вознаграждение показывается отдельно",lost_form_title:"Потерял(а) — объявление",found_form_title:"Нашёл(ла) — объявление",lost_list_title:"📋 Все потерянные",reward_list_title:"🎁 С вознаграждением",found_list_title:"🔎 Найденные",mine_title:"⭐ Мои объявления",chat_title:"Сообщение",btn_send:"Отправить",btn_submit:"Опубликовать",btn_delete_mine:"Удалить мои объявления",confirm_del:"Удалить это объявление? Действие необратимо.",lbl_item:"Предмет",lbl_city:"Город/Регион",lbl_place:"Место",lbl_date:"Дата/Время",lbl_contact:"Контакт",lbl_reward:"Вознаграждение (необ.)",lbl_notes:"Дополнительно"},
+  en:{hero_title:"Lost or found something? Post it.",hero_sub:"“Honesty is the greatest reward.”",btn_lost:"❗ Lost",btn_found:"✅ Found",btn_lostlist:"📋 Lost Items",btn_reward:"🎁 With Reward",btn_foundlist:"🔎 Found Items",btn_mine:"⭐ My Posts",why_title:"Why BINGO?",why_text:"Simple form, fast results. All posts in one place.",guide_title:"Quick guide",guide_1:"Fill the ❗/✅ form",guide_2:"City & contact are required",guide_3:"Rewarded posts show separately",lost_form_title:"Lost — post",found_form_title:"Found — post",lost_list_title:"📋 All Lost",reward_list_title:"🎁 With Reward",found_list_title:"🔎 All Found",mine_title:"⭐ My Posts",chat_title:"Message",btn_send:"Send",btn_submit:"Post",btn_delete_mine:"Delete my posts",confirm_del:"Delete this post? This cannot be undone.",lbl_item:"Item",lbl_city:"City/Region",lbl_place:"Place",lbl_date:"Date/Time",lbl_contact:"Contact",lbl_reward:"Reward (opt.)",lbl_notes:"Notes"}};
   function t(k){const L=localStorage.getItem('bingo_lang')||'uz';return (I18N[L]||I18N.uz)[k]||k}
   function applyI18n(){document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.getAttribute('data-i18n'))); document.getElementById('langSel').value=(localStorage.getItem('bingo_lang')||detectLang());}
   function detectLang(){const n=(navigator.language||'uz').slice(0,2);return ['uz','ru','en'].includes(n)?n:'uz'}
@@ -289,8 +298,6 @@
   document.getElementById('bellBtn').addEventListener('click',()=>navigate('notifs'));
   (function(){const h=location.hash?location.hash.substring(1):'home'; const p=h.split('-'); const v=p[0]||'home'; currentChatPostId=p[1]||null; showView(v); history.replaceState({view:v,id:currentChatPostId||null},'', '#'+v+(currentChatPostId?('-'+currentChatPostId):'')); })();
 
-  document.getElementById('btnCopyLink').addEventListener('click', async ()=>{try{await navigator.clipboard.writeText(location.href); centerToast('🔗 Havola nusxalandi')}catch{centerToast('⚠️ Nusxalab bo‘lmadi',true)}});
-
   /* ===== Auth UI ===== */
   const userBox=document.getElementById('userBox'), authBtnTxt=document.getElementById('authBtnTxt'), userAvatar=document.getElementById('userAvatar');
   userBox.addEventListener('click',()=>{
@@ -302,15 +309,26 @@
     else { authBtnTxt.textContent='Kirish'; userAvatar.style.display='none'; stopNotifs(); }
     renderProfile(); renderMine();
   });
-
   function renderProfile(){
     const u=auth.currentUser;
     if(!u){ document.getElementById('pPhoto').src=''; document.getElementById('pName').textContent='Kirmagansiz'; document.getElementById('pEmail').textContent=''; document.getElementById('pUid').textContent=''; return;}
     document.getElementById('pPhoto').src=u.photoURL||''; document.getElementById('pName').textContent=u.displayName||'—'; document.getElementById('pEmail').textContent=u.email||'—'; document.getElementById('pUid').textContent='UID: '+u.uid;
   }
 
+  /* ===== Reklama slayder ===== */
+  const AD_IMAGES=[
+    // Shu yerda rasmlar yo‘llari. Siz yuklagan fayllar:
+    'images/file_000000002de8624383c746f2d7d3cfd7.png',
+    'images/file_0000000538861fab34b2e1a449b4ce5.png'
+  ];
+  (function runAd(){
+    const img=document.getElementById('adImg'); let i=0;
+    function show(){ img.src=AD_IMAGES[i%AD_IMAGES.length]; i++; }
+    show(); setInterval(show, 6000);
+  })();
+
   /* ===== Data & real-time ===== */
-  let ALL_POSTS=[]; let SEARCH_GLOBAL=''; let LAST_POST=null;
+  let ALL_POSTS=[]; let LAST_POST=null;
   db.collection('posts').orderBy('created','desc').onSnapshot(snap=>{
     ALL_POSTS=snap.docs.map(d=>({id:d.id,...d.data()}));
     if(currentView==='lostList') renderLost();
@@ -319,22 +337,17 @@
     if(currentView==='mine') renderMine();
   },err=>banner("Firestore o‘qish xatosi: "+err.message));
 
-  document.getElementById('qSearch').addEventListener('input',e=>{SEARCH_GLOBAL=e.target.value||''; if(currentView==='lostList') renderLost(); if(currentView==='rewardList') renderReward(); if(currentView==='foundList') renderFound(); if(currentView==='mine') renderMine();});
-
   /* ===== Submit (auth required, NO photos) ===== */
   document.querySelectorAll('[data-submit]').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       if(!auth.currentUser){ centerToast('Avval Google bilan kiring',true); return;}
       if(btn.disabled) return;
       const kind=btn.dataset.submit, isLost=kind==='lost'; btn.disabled=true; btn.classList.add('btn-disabled');
-
       const p={kind,item:val(isLost?'l_item':'f_item'),city:val(isLost?'l_city':'f_city'),place:isLost?val('l_place'):val('f_place'),date:isLost?val('l_date'):val('f_date'),contact:val(isLost?'l_contact':'f_contact'),reward:isLost?num(val('l_reward')):0,notes:val(isLost?'l_notes':'f_notes'),uid:UID(),ownerName:auth.currentUser.displayName||'',ownerEmail:auth.currentUser.email||'',created:Date.now()};
-
       if(!p.item||!p.city||!p.contact){ centerToast(t('guide_2'),true); btn.disabled=false; btn.classList.remove('btn-disabled'); return;}
       const sig=JSON.stringify([p.kind,p.item,p.city,p.contact,p.notes]); const now=Date.now(); const last=JSON.parse(localStorage.getItem('bingo_last_post')||'{}');
       if(LAST_POST===sig || (last.sig===sig && (now-last.ts)<30000)){ centerToast("⚠️ Bu e’lon allaqachon joylangan (30s ichida).",true); btn.disabled=false; btn.classList.remove('btn-disabled'); return;}
       LAST_POST=sig; localStorage.setItem('bingo_last_post',JSON.stringify({sig,ts:now}));
-
       try{ await db.collection('posts').add(p); clearForm(isLost); centerToast("✅ E’lon joylandi!"); navigate(isLost?'lostList':'foundList'); }
       catch(e){ centerToast("❌ Xato: "+e.message,true) }
       finally{ setTimeout(()=>{btn.disabled=false; btn.classList.remove('btn-disabled')},600) }
@@ -359,15 +372,10 @@
       </div>
     </div>`;
   }
-  function applySearch(listEl, arr, searchInputId, counterId){
-    const term=(document.getElementById(searchInputId)?.value||'').toLowerCase(); const gq=(SEARCH_GLOBAL||'').toLowerCase();
-    const m=(p)=>[p.item,p.city,p.place,p.notes,p.contact].some(x=>(x||'').toLowerCase().includes(term)) && ([p.item,p.city,p.place,p.notes,p.contact].some(x=>(x||'').toLowerCase().includes(gq))||!gq);
-    const res=term||gq?arr.filter(m):arr.slice(); if(counterId){const c=document.getElementById(counterId); if(c) c.textContent=String(res.length)}; listEl.innerHTML=res.length?res.map(p=>card(p,false)).join(''):'—';
-  }
-  function renderLost(){const el=document.getElementById('lost_list'); if(!el) return; applySearch(el, ALL_POSTS.filter(p=>p.kind==='lost'), 'lostSearch', 'lostCount')}
-  function renderReward(){const el=document.getElementById('reward_list'); if(!el) return; applySearch(el, ALL_POSTS.filter(p=>p.kind==='lost'&&(p.reward||0)>0), 'rewardSearch', 'rewardCount')}
-  function renderFound(){const el=document.getElementById('found_list'); if(!el) return; applySearch(el, ALL_POSTS.filter(p=>p.kind==='found'), 'foundSearch', 'foundCount')}
-  function renderMine(){const el=document.getElementById('mine_list'); if(!el) return; const uid=UID(); const arr=ALL_POSTS.filter(p=>p.uid===uid); el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—'}
+  function renderLost(){const el=document.getElementById('lost_list'); if(!el) return; el.innerHTML=ALL_POSTS.filter(p=>p.kind==='lost').map(p=>card(p,false)).join('')||'—'}
+  function renderReward(){const el=document.getElementById('reward_list'); if(!el) return; el.innerHTML=ALL_POSTS.filter(p=>p.kind==='lost'&&(p.reward||0)>0).map(p=>card(p,false)).join('')||'—'}
+  function renderFound(){const el=document.getElementById('found_list'); if(!el) return; el.innerHTML=ALL_POSTS.filter(p=>p.kind==='found').map(p=>card(p,false)).join('')||'—'}
+  function renderMine(){const el=document.getElementById('mine_list'); if(!el) return; const arr=ALL_POSTS.filter(p=>p.uid===UID()); el.innerHTML=arr.length?arr.map(p=>card(p,true)).join(''):'—'}
 
   /* ===== Delete (only mine) ===== */
   window.delPost=async function(id){
@@ -375,7 +383,6 @@
     if(!confirm(t('confirm_del'))) return;
     try{ await db.collection('posts').doc(id).delete();
       const chats=await db.collection('posts').doc(id).collection('chats').get(); const batch=db.batch(); chats.forEach(d=>batch.delete(d.ref)); await batch.commit();
-      // alerts ham tozalaymiz
       const alerts=await db.collection('alerts').where('postId','==',id).get(); const b2=db.batch(); alerts.forEach(d=>b2.delete(d.ref)); await b2.commit();
       centerToast('🗑️ O‘chirildi');
     }catch(e){ banner("O‘chirish xatosi: "+e.message) }
@@ -403,7 +410,6 @@
     try{
       await db.collection('posts').doc(currentChatPostId).collection('chats').add(msg);
       document.getElementById('chatText').value='';
-      // Alert yaratamiz (agar o‘zim egasi bo‘lmasam)
       if(post && post.uid!==UID()){
         await db.collection('alerts').add({to:post.uid,postId:post.id,postItem:post.item,fromName:name,text:text.slice(0,140),created:Date.now(),read:false});
       }
@@ -436,9 +442,9 @@
     try{ const mine=ALL_POSTS.filter(p=>p.uid===uid); const batch=db.batch(); mine.forEach(p=>batch.delete(db.collection('posts').doc(p.id))); await batch.commit(); centerToast('🧹 Tozalandi') }catch(e){ banner('Xato: '+e.message) }
   });
 
-  /* ===== Init hash back ===== */
+  /* ===== Back nav ===== */
   window.addEventListener('popstate', e=>{const st=e.state||{view:'home'}; currentChatPostId=st.id||null; showView(st.view||'home')});
 
   </script>
 </body>
-  </html>
+                                  </html>
