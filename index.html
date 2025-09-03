@@ -10,5 +10,100 @@
   </head>
   <body>
     Ochilmoqda… <a href="/main/index.html">qo‘l bilan o‘tish</a>
+    <!-- === BINGO: Firebase Push (FCM) – START === -->
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-messaging-compat.js"></script>
+
+<script>
+  // Sizning Firebase config'ingiz (SW dagisi bilan bir xil bo'lishi shart)
+  const firebaseConfig = {
+    apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+    authDomain: "topildi.firebaseapp.com",
+    databaseURL: "https://topildi-default-rtdb.firebaseio.com",
+    projectId: "topildi",
+    storageBucket: "topildi.firebasestorage.app",
+    messagingSenderId: "323891530719",
+    appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
+    measurementId: "G-NKCMKCXZQ7"
+  };
+
+  // Siz bergan VAPID public key
+  const VAPID_KEY = "BBkV8yPd5KljuhBQxa3JQxKyZ5TWKORCIfEVuC1Lx6pZ147IMYq215LxxxunmeVK84La7dMFILUa7Cr4cIVui1A";
+
+  // Init
+  firebase.initializeApp(firebaseConfig);
+  const messaging = firebase.messaging();
+
+  // GitHub Pages yoki subpathlar uchun SW yo'lini to'g'ri hisoblash
+  const BASE = (function () {
+    // Masalan: /Bingoo/main/index.html -> BASE = /Bingoo
+    const segs = location.pathname.split("/").filter(Boolean);
+    return segs.length ? "/" + segs[0] : "";
+  })();
+
+  // Service Worker ro‘yxatdan o‘tkazish (rootdagi SW)
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register(`${BASE}/firebase-messaging-sw.js`, { scope: `${BASE}/` })
+      .then(reg => console.log("SW registered at:", reg.scope))
+      .catch(err => console.error("SW register error:", err));
+  }
+
+  // Ruxsat so‘rash va token olish
+  async function enablePush() {
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== "granted") {
+        console.warn("Bildirishnoma ruxsati rad etildi");
+        return;
+      }
+      const token = await messaging.getToken({ vapidKey: VAPID_KEY });
+      if (!token) {
+        console.warn("FCM token olinmadi");
+        return;
+      }
+      console.log("✅ FCM token:", token);
+      // Istasangiz: bu tokenni Firestore/RealtimeDB'ga saqlaysiz
+      // (hozircha konsolda ko'rasiz)
+    } catch (e) {
+      console.error("FCM token error:", e);
+    }
+  }
+
+  // Foreground (tab ochiq) holatda xabar kelganda
+  messaging.onMessage((payload) => {
+    console.log("🔔 Foreground push:", payload);
+
+    const title = payload.notification?.title || "Yangi xabar";
+    const body  = payload.notification?.body  || "Bildirishnoma keldi";
+
+    // Kichik toast ko'rsatamiz
+    try {
+      const toast = document.createElement("div");
+      toast.textContent = `${title} — ${body}`;
+      Object.assign(toast.style, {
+        position: "fixed", left: "50%", transform: "translateX(-50%)",
+        bottom: "18px", background: "#111", color: "#fff",
+        padding: "10px 14px", borderRadius: "12px", zIndex: 99999,
+        boxShadow: "0 8px 24px rgba(0,0,0,.25)", fontFamily: "system-ui, Arial"
+      });
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    } catch (e) {}
+
+    // Brauzer notification (ruxsat bo‘lsa)
+    if (Notification.permission === "granted") {
+      new Notification(title, {
+        body,
+        icon: `${BASE}/icon-192.png`, // bo'lsa
+        badge: `${BASE}/icon-192.png`
+      });
+    }
+  });
+
+  // Sahifa yuklanganda pushni yoqishga urinadi (istasa o'chirishingiz mumkin)
+  window.addEventListener("load", enablePush);
+</script>
+<!-- === BINGO: Firebase Push (FCM) – END === -->
   </body>
 </html>
