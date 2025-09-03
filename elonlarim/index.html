@@ -1,1 +1,71 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>⭐ Mening e’lonlarim — BINGO</title>
+  <link rel="stylesheet" href="/main/css/base.css" />
+  <style>
+    .wrap{max-width:980px;margin:24px auto;padding:0 16px}
+    .title{display:flex;align-items:center;gap:12px}
+    .title h1{margin:0}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+    .btn{padding:.6rem 1rem;border-radius:10px;border:1px solid rgba(0,0,0,.1);background:#fff;cursor:pointer}
+    .btn:hover{transform:translateY(-1px)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+    .card{background:#fff;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:14px}
+    .meta{font-size:.9rem;color:#666;margin:.25rem 0}
+    .empty{padding:28px;text-align:center;color:#777;border:1px dashed #ddd;border-radius:12px}
+    .back{display:inline-flex;gap:8px;align-items:center;text-decoration:none;margin:16px 0}
+    .actions{margin-top:12px;display:flex;gap:8px}
+    .del{background:#dc2626;color:#fff;border:none;padding:.5rem 1rem;border-radius:8px;cursor:pointer}
+    .edit{background:#2563eb;color:#fff;border:none;padding:.5rem 1rem;border-radius:8px;cursor:pointer}
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <a class="back" href="/main/index.html">⬅️ Bosh sahifa</a>
+    <div class="title">
+      <span style="font-size:1.5rem">⭐</span>
+      <h1>Mening e’lonlarim</h1>
+    </div>
+    <div class="toolbar">
+      <a class="btn" href="/lost/index.html">❗ Yo‘qotdim</a>
+      <a class="btn" href="/found/index.html">✅ Topdim</a>
+      <a class="btn" href="/reward/index.html">🎁 Mukofotli</a>
+      <a class="btn" href="/ads/index.html">📢 Reklama</a>
+    </div>
+  </header>
 
+  <main class="wrap">
+    <div class="grid" id="myAds">
+      <div class="card">
+        <strong>Narsa:</strong> Pasport yo‘qolgan<br/>
+        <div class="meta">Shahar: Buxoro</div>
+        <div class="meta">Sana: 2025-01-10</div>
+        <div class="meta">Aloqa: +998 93 222 33 44</div>
+        <div class="actions">
+          <button class="edit">✏️ Tahrirlash</button>
+          <button class="del">🗑️ O‘chirish</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <strong>Narsa:</strong> Sumka topilgan<br/>
+        <div class="meta">Shahar: Toshkent</div>
+        <div class="meta">Sana: 2025-01-05</div>
+        <div class="meta">Aloqa: +998 97 111 22 55</div>
+        <div class="actions">
+          <button class="edit">✏️ Tahrirlash</button>
+          <button class="del">🗑️ O‘chirish</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agar foydalanuvchida hali e’lon bo‘lmasa -->
+    <!-- <div class="empty">Hali siz e’lon qo‘ymagansiz.</div> -->
+  </main>
+
+  <footer class="wrap" style="margin:24px 0;color:#666">© 2025 BINGO</footer>
+</body>
+</html>
