@@ -2,109 +2,187 @@
 <html lang="uz">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>BINGO</title>
-    <!-- Avto-yo'naltirish -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>BINGO — Yo‘naltirilmoqda…</title>
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#111827" />
+
+    <!-- Avtomatik /main/ ga yo'naltirish -->
     <meta http-equiv="refresh" content="0; url=/main/index.html" />
-    <script>location.replace("/main/index.html");</script>
+    <script>
+      // JS zaxira yo'naltirish (agar meta ishlamasa)
+      (function () {
+        var target = "/main/index.html";
+        // Agar GitHub Pages subpathda bo'lsa (masalan: /Bingoo/), uni ham hisobga olamiz:
+        var segs = location.pathname.split("/").filter(Boolean);
+        if (segs.length) target = "/" + segs[0] + "/main/index.html";
+        // Agar allaqachon main ichida bo'lsa, qayta yo'naltirmaymiz
+        if (!location.pathname.includes("/main/")) location.replace(target);
+      })();
+    </script>
+
+    <style>
+      :root {
+        --bg: #0b1220;
+        --fg: #e5eef7;
+        --muted: #9fb0c6;
+        --accent: #10b981;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Inter, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: radial-gradient(1200px 800px at 50% 10%, #101a2e, #0b1220);
+        color: var(--fg);
+      }
+      .wrap {
+        height: 100%;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      .card {
+        width: min(680px, 92vw);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(17, 24, 39, 0.6);
+        backdrop-filter: blur(8px);
+        border-radius: 18px;
+        padding: 20px 18px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        background: #fff3c4;
+        color: #b45309;
+        font-weight: 900;
+        border: 1px solid #f1d28a;
+      }
+      .brand {
+        font-weight: 800;
+        font-size: 22px;
+        letter-spacing: 0.3px;
+      }
+      .muted {
+        color: var(--muted);
+        margin: 8px 0 16px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        background: #0f172a;
+        color: #e5eef7;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+      }
+      .btn:active {
+        transform: translateY(0);
+      }
+      .accent {
+        background: var(--accent);
+        color: #062a20;
+        border-color: rgba(16, 185, 129, 0.25);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .hint {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .hr {
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(255, 255, 255, 0.12),
+          transparent
+        );
+        margin: 16px 0 12px;
+      }
+      .spin {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 999px;
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        border-top-color: var(--accent);
+        animation: r 0.9s linear infinite;
+      }
+      @keyframes r {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .small {
+        font-size: 12px;
+      }
+    </style>
   </head>
   <body>
-    Ochilmoqda… <a href="/main/index.html">qo‘l bilan o‘tish</a>
-    <!-- === BINGO: Firebase Push (FCM) – START === -->
-<!-- Firebase SDK (compat) -->
-<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-messaging-compat.js"></script>
+    <div class="wrap">
+      <div class="card">
+        <div class="row">
+          <div class="logo">BG</div>
+          <div class="brand">BINGO</div>
+        </div>
+        <div class="muted">
+          Asosiy sahifa ochilmoqda… <span class="spin"></span>
+        </div>
 
-<script>
-  // Sizning Firebase config'ingiz (SW dagisi bilan bir xil bo'lishi shart)
-  const firebaseConfig = {
-    apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
-    authDomain: "topildi.firebaseapp.com",
-    databaseURL: "https://topildi-default-rtdb.firebaseio.com",
-    projectId: "topildi",
-    storageBucket: "topildi.firebasestorage.app",
-    messagingSenderId: "323891530719",
-    appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
-    measurementId: "G-NKCMKCXZQ7"
-  };
+        <div class="grid">
+          <a id="fallback" class="btn accent" href="/main/index.html">↪️ Qo‘l bilan o‘tish</a>
+          <a id="root" class="btn" href="/">🏠 Root</a>
+        </div>
 
-  // Siz bergan VAPID public key
-  const VAPID_KEY = "BBkV8yPd5KljuhBQxa3JQxKyZ5TWKORCIfEVuC1Lx6pZ147IMYq215LxxxunmeVK84La7dMFILUa7Cr4cIVui1A";
+        <div class="hr"></div>
+        <div class="hint small">
+          Agar avtomatik yo‘naltirilmasa, yuqoridagi tugmani bosing. GitHub Pages
+          subpath ishlatayotgan bo‘lsa (masalan, <code>/Bingoo</code>), havola ham avtomatik moslashadi.
+        </div>
+      </div>
+    </div>
 
-  // Init
-  firebase.initializeApp(firebaseConfig);
-  const messaging = firebase.messaging();
-
-  // GitHub Pages yoki subpathlar uchun SW yo'lini to'g'ri hisoblash
-  const BASE = (function () {
-    // Masalan: /Bingoo/main/index.html -> BASE = /Bingoo
-    const segs = location.pathname.split("/").filter(Boolean);
-    return segs.length ? "/" + segs[0] : "";
-  })();
-
-  // Service Worker ro‘yxatdan o‘tkazish (rootdagi SW)
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register(`${BASE}/firebase-messaging-sw.js`, { scope: `${BASE}/` })
-      .then(reg => console.log("SW registered at:", reg.scope))
-      .catch(err => console.error("SW register error:", err));
-  }
-
-  // Ruxsat so‘rash va token olish
-  async function enablePush() {
-    try {
-      const perm = await Notification.requestPermission();
-      if (perm !== "granted") {
-        console.warn("Bildirishnoma ruxsati rad etildi");
-        return;
-      }
-      const token = await messaging.getToken({ vapidKey: VAPID_KEY });
-      if (!token) {
-        console.warn("FCM token olinmadi");
-        return;
-      }
-      console.log("✅ FCM token:", token);
-      // Istasangiz: bu tokenni Firestore/RealtimeDB'ga saqlaysiz
-      // (hozircha konsolda ko'rasiz)
-    } catch (e) {
-      console.error("FCM token error:", e);
-    }
-  }
-
-  // Foreground (tab ochiq) holatda xabar kelganda
-  messaging.onMessage((payload) => {
-    console.log("🔔 Foreground push:", payload);
-
-    const title = payload.notification?.title || "Yangi xabar";
-    const body  = payload.notification?.body  || "Bildirishnoma keldi";
-
-    // Kichik toast ko'rsatamiz
-    try {
-      const toast = document.createElement("div");
-      toast.textContent = `${title} — ${body}`;
-      Object.assign(toast.style, {
-        position: "fixed", left: "50%", transform: "translateX(-50%)",
-        bottom: "18px", background: "#111", color: "#fff",
-        padding: "10px 14px", borderRadius: "12px", zIndex: 99999,
-        boxShadow: "0 8px 24px rgba(0,0,0,.25)", fontFamily: "system-ui, Arial"
-      });
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3500);
-    } catch (e) {}
-
-    // Brauzer notification (ruxsat bo‘lsa)
-    if (Notification.permission === "granted") {
-      new Notification(title, {
-        body,
-        icon: `${BASE}/icon-192.png`, // bo'lsa
-        badge: `${BASE}/icon-192.png`
-      });
-    }
-  });
-
-  // Sahifa yuklanganda pushni yoqishga urinadi (istasa o'chirishingiz mumkin)
-  window.addEventListener("load", enablePush);
-</script>
-<!-- === BINGO: Firebase Push (FCM) – END === -->
-    <script type="module" src="js/messaging-init.js"></script>
+    <script>
+      // Fallback havolasini GitHub Pages subpathga moslaymiz
+      (function () {
+        var segs = location.pathname.split("/").filter(Boolean);
+        if (segs.length) {
+          var base = "/" + segs[0];
+          var href = base + "/main/index.html";
+          document.getElementById("fallback").setAttribute("href", href);
+          document.getElementById("root").setAttribute("href", base + "/");
+        }
+      })();
+    </script>
   </body>
 </html>
