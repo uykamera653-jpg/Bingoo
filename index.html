@@ -4,60 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BINGO — Yo‘qoldi/Topildi</title>
-  
-  <!-- Base yo‘l -->
-  <base href="/Bingoo/">
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="../css/base.css">
-</head>
-<body>
-  <header>
-    <h1>Yo‘qoldi / Topildi platforma</h1>
-    <nav>
-      <a href="../lost/index.html">❗ Yo‘qotdim</a>
-      <a href="../topilganlar/index.html">✅ Topdim</a>
-      <a href="../mukofotli/index.html">🎁 Mukofotli</a>
-      <a href="../reklama/index.html">📌 Reklama</a>
-      <a href="../elonlarim/index.html">⭐ Mening e’lonlarim</a>
-      <a href="../profil/index.html">👤 Profil</a>
-    </nav>
-  </header>
-
-  <main>
-    <!-- Reklama slayder -->
-    <section class="ads">
-      <div class="slider">
-        <img src="../images/file_000000002de8624383c746f2d7d3cfd7.png" alt="Reklama 1">
-        <img src="../images/file_00000000538861fab34b2e1a449b4ce5.png" alt="Reklama 2">
-      </div>
-      <p class="marquee">⭐ Bu yerda sizning reklamangiz bo‘lishi mumkin ⭐</p>
-    </section>
-
-    <!-- Asosiy bo‘lim -->
-    <section class="intro">
-      <h2>Bosh sahifa</h2>
-      <p>Barcha e’lonlarni shu yerdan boshqarishingiz mumkin.</p>
-    </section>
-  </main>
-
-  <footer>
-    <p>© 2025 BINGO</p>
-  </footer>
-
-  <!-- JS -->
-  <script>
-    // Reklama slayder kodlari
-    const images = document.querySelectorAll('.slider img');
-    let index = 0;
-    setInterval(() => {
-      images.forEach((img, i) => {
-        img.style.display = (i === index) ? 'block' : 'none';
-      });
-      index = (index + 1) % images.length;
-    }, 3000);
-  </script>
-
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -77,6 +23,14 @@
       color: #0f172a;
       font-weight: bold;
     }
+    section {
+      display: none;
+      padding: 20px;
+    }
+    section.active {
+      display: block;
+    }
+    /* Reklama */
     .ads {
       text-align: center;
       margin: 20px 0;
@@ -112,6 +66,152 @@
       padding: 10px;
       margin-top: 20px;
     }
+    .btn {
+      display: inline-block;
+      padding: 10px 14px;
+      margin: 6px 0;
+      border-radius: 8px;
+      background: #f59e0b;
+      color: #111;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn:hover { opacity: 0.85; }
+    .post {
+      border: 1px solid #ccc;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      background: #fff;
+    }
   </style>
+</head>
+<body>
+
+  <header>
+    <h1>BINGO — Yo‘qoldi/Topildi</h1>
+    <nav>
+      <a href="#" onclick="showView('home')">🏠 Bosh sahifa</a>
+      <a href="#" onclick="showView('lost')">❗ Yo‘qotdim</a>
+      <a href="#" onclick="showView('found')">✅ Topdim</a>
+      <a href="#" onclick="showView('reward')">🎁 Mukofotli</a>
+      <a href="#" onclick="showView('mine')">⭐ Mening e’lonlarim</a>
+      <a href="#" onclick="showView('admin')">🛠️ Admin</a>
+    </nav>
+  </header>
+
+  <!-- Bosh sahifa -->
+  <section id="home" class="active">
+    <h2>Bosh sahifa</h2>
+    <div class="ads">
+      <div class="slider">
+        <img src="images/file_000000002de8624383c746f2d7d3cfd7.png" alt="Reklama 1">
+        <img src="images/file_00000000538861fab34b2e1a449b4ce5.png" alt="Reklama 2">
+      </div>
+      <p class="marquee">⭐ Bu yerda sizning reklamangiz bo‘lishi mumkin ⭐</p>
+    </div>
+    <p>Barcha e’lonlarni shu yerdan boshqarishingiz mumkin.</p>
+  </section>
+
+  <!-- Yo‘qotdim -->
+  <section id="lost">
+    <h2>❗ Yo‘qotdim — e’lon qo‘shish</h2>
+    <input id="lost_item" placeholder="Nima yo‘qotdingiz?"><br>
+    <input id="lost_city" placeholder="Shahar"><br>
+    <input id="lost_contact" placeholder="Aloqa"><br>
+    <button class="btn" onclick="addPost('lost')">E’lon berish</button>
+    <div id="lost_list"></div>
+  </section>
+
+  <!-- Topdim -->
+  <section id="found">
+    <h2>✅ Topdim — e’lon qo‘shish</h2>
+    <input id="found_item" placeholder="Nima topdingiz?"><br>
+    <input id="found_city" placeholder="Shahar"><br>
+    <input id="found_contact" placeholder="Aloqa"><br>
+    <button class="btn" onclick="addPost('found')">E’lon berish</button>
+    <div id="found_list"></div>
+  </section>
+
+  <!-- Mukofotli -->
+  <section id="reward">
+    <h2>🎁 Mukofotli e’lonlar</h2>
+    <div id="reward_list"></div>
+  </section>
+
+  <!-- Mening e’lonlarim -->
+  <section id="mine">
+    <h2>⭐ Mening e’lonlarim</h2>
+    <div id="mine_list"></div>
+  </section>
+
+  <!-- Admin -->
+  <section id="admin">
+    <h2>🛠️ Admin paneli</h2>
+    <div id="admin_list"></div>
+  </section>
+
+  <footer>
+    <p>© 2025 BINGO</p>
+  </footer>
+
+  <script>
+    // Sahifa almashtirish
+    function showView(id){
+      document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
+
+    // Reklama slayder
+    const images = document.querySelectorAll('.slider img');
+    let index = 0;
+    setInterval(() => {
+      images.forEach((img, i) => {
+        img.style.display = (i === index) ? 'block' : 'none';
+      });
+      index = (index + 1) % images.length;
+    }, 3000);
+
+    // E’lonlarni saqlash
+    let posts = JSON.parse(localStorage.getItem("posts")||"[]");
+
+    function addPost(kind){
+      const item = document.getElementById(kind+"_item").value;
+      const city = document.getElementById(kind+"_city").value;
+      const contact = document.getElementById(kind+"_contact").value;
+      if(!item || !city || !contact){ alert("Hamma maydonni to‘ldiring"); return; }
+      const post = {id: Date.now(), kind, item, city, contact};
+      posts.push(post);
+      localStorage.setItem("posts", JSON.stringify(posts));
+      render();
+      alert("E’lon qo‘shildi!");
+    }
+
+    function delPost(id){
+      posts = posts.filter(p => p.id !== id);
+      localStorage.setItem("posts", JSON.stringify(posts));
+      render();
+    }
+
+    function render(){
+      document.getElementById("lost_list").innerHTML =
+        posts.filter(p=>p.kind==="lost").map(p=>`<div class="post">${p.item} (${p.city}) — ${p.contact} <button onclick="delPost(${p.id})">❌</button></div>`).join("") || "—";
+
+      document.getElementById("found_list").innerHTML =
+        posts.filter(p=>p.kind==="found").map(p=>`<div class="post">${p.item} (${p.city}) — ${p.contact} <button onclick="delPost(${p.id})">❌</button></div>`).join("") || "—";
+
+      document.getElementById("mine_list").innerHTML =
+        posts.map(p=>`<div class="post">[${p.kind}] ${p.item} (${p.city}) — ${p.contact}</div>`).join("") || "—";
+
+      document.getElementById("reward_list").innerHTML =
+        posts.filter(p=>p.kind==="lost" && p.item.toLowerCase().includes("mukofot"))
+             .map(p=>`<div class="post">${p.item} (${p.city}) — ${p.contact}</div>`).join("") || "—";
+
+      document.getElementById("admin_list").innerHTML =
+        posts.map(p=>`<div class="post">[${p.kind}] ${p.item} — ${p.city} <button onclick="delPost(${p.id})">❌ O‘chirish</button></div>`).join("") || "—";
+    }
+
+    render();
+  </script>
 </body>
 </html>
