@@ -1,29 +1,27 @@
-// Import firebase scripts
+// Firebase service worker push uchun
 importScripts("https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/9.6.11/firebase-messaging-compat.js");
 
-// Firebase config - SENING PROYEKTDAN
+// Sening Firebase config
 firebase.initializeApp({
-  apiKey: "BBkV8yPd5KljuhBQxa3JQxKyZ5TWKORCIfEVuC1Lx6pZ147IMYq215LxxxunmeVK84La7dMFILUa7Cr4cIVui1A",
+  apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
   authDomain: "topildi.firebaseapp.com",
+  databaseURL: "https://topildi-default-rtdb.firebaseio.com",
   projectId: "topildi",
-  storageBucket: "topildi.appspot.com",
+  storageBucket: "topildi.firebasestorage.app",
   messagingSenderId: "323891530719",
-  appId: "1:323891530719:web:xxxxxxxxxxxxxxx"
+  appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
+  measurementId: "G-NKCMKCXZQ7"
 });
 
 // Messaging init
 const messaging = firebase.messaging();
 
-// Background xabarlar kelganda chiqarish
+// Agar app backgroundda bo‘lsa, kelgan pushni ko‘rsatadi
 messaging.onBackgroundMessage((payload) => {
-  console.log("Push xabar keldi: ", payload);
-
-  const notificationTitle = payload.notification?.title || "Yangi xabar";
-  const notificationOptions = {
-    body: payload.notification?.body || "Sizga yangi bildirishnoma keldi",
-    icon: "/icon.png"
-  };
-
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  console.log("Push keldi:", payload);
+  self.registration.showNotification(payload.notification.title, {
+    body: payload.notification.body,
+    icon: "/icon.png" // xohlasang bu yerni logoning rasmiga almashtirasan
+  });
 });
