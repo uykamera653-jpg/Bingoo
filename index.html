@@ -90,6 +90,24 @@
   @keyframes mar{to{transform:translateX(-100%)}}
   /* ===== Admin badge ===== */
   .admin-badge{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;background:#f59e0b;color:#111;font-size:12px;font-weight:900}
+  .admin-badge{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;background:#f59e0b;color:#111;font-size:12px;font-weight:900}
+/* ===== User Badge (Ism) ===== */
+.top-username {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  color: #fff;
+  font-weight: bold;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  display: inline-block;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s;
+}
+.top-username:hover {
+  transform: scale(1.05);
+}
 </style>
 </head>
 <body>
@@ -107,7 +125,7 @@
           <option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option>
         </select>
         <div class="auth">
-          <span class="me" id="meInfo"></span>
+          <span class="top-username" id="meInfo"></span>
           <button class="btn" id="loginBtn">Google bilan kirish</button>
           <button class="btn" id="logoutBtn" style="display:none">Chiqish</button>
         </div>
@@ -433,32 +451,49 @@
 
   loginBtn.onclick=()=>auth.signInWithPopup(provider).catch(e=>banner("Auth xato: "+e.message));
   logoutBtn.onclick=()=>auth.signOut();
+auth.onAuthStateChanged(u=>{
+  const logged = !!u;
+  if (logged) {
+    let gName = u.displayName || u.email || "User";
+    let customName = localStorage.getItem("customName") || gName;
+    meInfo.textContent = "⭐ " + customName;
 
-  auth.onAuthStateChanged(u=>{
-    const logged=!!u;
-    meInfo.textContent = logged ? (u.displayName||u.email||'User') : '';
-    loginBtn.style.display = logged ? 'none' : 'inline-block';
-    logoutBtn.style.display = logged ? 'inline-block' : 'none';
+    // ustiga bosib ismni o‘zgartirish
+    meInfo.onclick = () => {
+      const newName = prompt("Ismingizni o‘zgartiring:", customName);
+      if (newName && newName.trim() !== "") {
+        customName = newName.trim();
+        localStorage.setItem("customName", customName);
+        meInfo.textContent = "⭐ " + customName;
+      }
+    };
 
-    // Admin tugmasi
-    const isAdmin = logged && ADMIN_EMAILS.includes((u.email||'').toLowerCase());
-    adminNavBtn.style.display = isAdmin ? 'inline-block' : 'none';
+  } else {
+    meInfo.textContent = "";
+    localStorage.removeItem("customName");
+  }
 
-    // Formalarni faollashtirish / bloklash
-    ['l_','f_'].forEach(p=>{
-      ['item','city','place','date','contact','reward','notes','photo'].forEach(id=>{
-        const el=document.getElementById(p+id); if(el) el.disabled = !logged;
-      });
+  // qolganlari o‘sha-o‘sha
+  loginBtn.style.display = logged ? 'none' : 'inline-block';
+  logoutBtn.style.display = logged ? 'inline-block' : 'none';
+
+  const isAdmin = logged && ADMIN_EMAILS.includes((u.email||'').toLowerCase());
+  adminNavBtn.style.display = isAdmin ? 'inline-block' : 'none';
+
+  ['l_','f_'].forEach(p=>{
+    ['item','city','place','date','contact','reward','notes','photo'].forEach(id=>{
+      const el=document.getElementById(p+id); if(el) el.disabled = !logged;
     });
-    ['btnLost','btnFound'].forEach(id=>{
-      const b=document.getElementById(id);
-      if(!b) return;
-      b.disabled=!logged;
-      b.classList.toggle('btn-disabled',!logged);
-    });
-    document.getElementById('authGuardLost').style.display = logged?'none':'inline-block';
-    document.getElementById('authGuardFound').style.display = logged?'none':'inline-block';
   });
+  ['btnLost','btnFound'].forEach(id=>{
+    const b=document.getElementById(id);
+    if(!b) return;
+    b.disabled=!logged;
+    b.classList.toggle('btn-disabled',!logged);
+  });
+  document.getElementById('authGuardLost').style.display = logged?'none':'inline-block';
+  document.getElementById('authGuardFound').style.display = logged?'none':'inline-block';
+});
 
   /* ======== Helpers ======== */
   const MY_UID=(function(){let id=localStorage.getItem('bingo_uid');if(!id){id='u_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('bingo_uid',id)}return id})();
@@ -825,4 +860,4 @@
   // hash router init yuqorida
   </script>
 </body>
-  </html>
+            </html>
