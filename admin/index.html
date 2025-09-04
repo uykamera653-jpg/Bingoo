@@ -1,202 +1,261 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BINGO — Admin</title>
-  <style>
-    :root{--bg:#f8fafc;--panel:#ffffff;--ink:#0f172a;--muted:#475569;--ok:#16a34a;--danger:#dc2626;--btn:#0f172a;}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter}
-    header{padding:16px 20px;border-bottom:1px solid #e5e7eb;background:#fff;position:sticky;top:0}
-    h1{margin:0;font-size:20px}
-    .container{max-width:920px;margin:20px auto;padding:0 16px}
-    .card{background:var(--panel);border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.05);padding:16px}
-    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-    button{border:0;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer;background:var(--btn);color:#fff}
-    button:hover{opacity:.92}
-    .btn-ok{background:var(--ok)} .btn-del{background:var(--danger)}
-    .post{margin:10px 0;padding:12px;border:1px solid #e5e7eb;border-radius:10px;background:#f1f5f9}
-    .muted{color:var(--muted)}
-    .right{margin-left:auto}
-    #error{display:none;margin:16px 0;padding:12px;border-radius:10px;background:#fee2e2;color:#7f1d1d;border:1px solid #fecaca;white-space:pre-wrap}
-    .filter{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-    input[type="search"]{flex:1;min-width:220px;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px}
-    .chip{display:inline-block;padding:6px 10px;border:1px dashed #cbd5e1;border-radius:999px;background:#fff;color:#0f172a}
-    .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#e2e8f0;font-size:12px}
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BINGO • Admin</title>
+<meta name="theme-color" content="#111827"/>
+<style>
+  :root{--bg:#0b1220;--panel:#0f172a;--ring:#223047;--text:#e5eef7;--muted:#94a3b8;--red:#ef4444;--amber:#f59e0b;--green:#22c55e;}
+  *{box-sizing:border-box} html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto}
+  body{background:linear-gradient(180deg,#0b1220,#0a1020);color:var(--text)}
+  .wrap{max-width:980px;margin:0 auto;padding:16px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .badge{padding:8px 10px;border:1px solid var(--ring);border-radius:10px;background:#0c1526;color:#cbd5e1}
+  .btn{padding:10px 14px;border-radius:12px;border:1px solid var(--ring);background:#0e1728;color:#e5eef7;cursor:pointer;font-weight:700}
+  .btn.red{background:#2a0c0c;border-color:#7f1d1d} .btn.green{background:#0c2617;border-color:#14532d}
+  .card{margin-top:14px;background:var(--panel);border:1px solid var(--ring);border-radius:16px;padding:12px}
+  .row{display:grid;grid-template-columns:1fr 110px;gap:10px}
+  .post{border:1px solid var(--ring);border-radius:12px;padding:10px;margin:10px 0;background:#0b1220}
+  .post h4{margin:0 0 6px 0}
+  .muted{color:var(--muted);font-size:13px}
+  .err{margin-top:12px;padding:10px;border-radius:12px;background:#3b0a0a;border:1px solid #7f1d1d;color:#fecaca;white-space:pre-wrap}
+  .ok{margin-top:12px;padding:10px;border-radius:12px;background:#042016;border:1px solid #14532d;color:#d1fae5}
+  .pill{display:inline-block;border:1px dashed var(--ring);border-radius:999px;padding:6px 10px;background:#0b1220}
+  .hdr{font-weight:800;font-size:22px;display:flex;align-items:center;gap:8px}
+  img.thumb{max-height:160px;border-radius:10px;border:1px solid var(--ring);display:block;margin-top:6px}
+</style>
 </head>
 <body>
-  <header class="row">
-    <h1>🔐 BINGO — Admin Panel</h1>
-    <span id="who" class="muted right"></span>
-  </header>
-
-  <div class="container">
-    <div id="error" class="card"></div>
-
-    <!-- Login -->
-    <div id="loginBox" class="card">
-      <p>Faqat <b>uykamera653@gmail.com</b> kirishi mumkin.</p>
-      <div class="row">
-        <button id="loginBtn">Google orqali kirish</button>
-        <button id="loginRedirectBtn" title="Popup bloklansa">↩️ Redirect bilan kirish</button>
-      </div>
-      <p class="muted" style="margin-top:8px">Agar hech narsa bo‘lmasa, Firebase’da Google Sign-in yoqilganini va
-        <code>uykamera653-jpg.github.io</code> domeni “Authorized domains” ro‘yxatida borligini tekshiring.</p>
-    </div>
-
-    <!-- Panel -->
-    <div id="panelBox" class="card" style="display:none">
-      <div class="row">
-        <div class="chip">Barcha e’lonlar</div>
-        <span id="count" class="badge">0</span>
-        <span class="right"></span>
-        <button id="logoutBtn">Chiqish</button>
-      </div>
-
-      <div class="filter">
-        <input id="q" type="search" placeholder="Qidirish: narsa, shahar, aloqa..." />
-        <button id="refreshBtn">Yangilash</button>
-      </div>
-
-      <div id="list">Yuklanmoqda...</div>
+<div class="wrap">
+  <div class="top">
+    <div class="hdr">🛡️ Admin Panel</div>
+    <div id="authBox">
+      <button id="btnLogin" class="btn">Google bilan kirish</button>
+      <button id="btnLoginRedirect" class="btn" style="display:none">Google (redirect)</button>
+      <button id="btnLogout" class="btn red" style="display:none">Chiqish</button>
     </div>
   </div>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <div class="card">
+    <div><span class="pill">Origin:</span> <code id="origin"></code></div>
+    <div class="muted" style="margin-top:6px">Agar kirishdan keyin <b>about:blank</b> ochilsa, Firebase → Authentication → <b>Authorized domains</b> ro‘yxatiga aynan shu domen (origin) qo‘shilgan bo‘lishi kerak.</div>
+    <div id="msg" class="err" style="display:none"></div>
+    <div id="ok" class="ok" style="display:none"></div>
+  </div>
 
-  <script>
-  // === Firebase config (sizniki) ===
+  <div id="stats" class="card" style="display:none">
+    <div><b>Foydalanuvchi:</b> <span id="who"></span></div>
+    <div><b>Holat:</b> <span id="state">—</span></div>
+  </div>
+
+  <div id="list" class="card" style="display:none">
+    <div class="row">
+      <input id="q" placeholder="Qidirish: narsa, shahar, aloqa" class="btn" style="text-align:left"/>
+      <button id="refresh" class="btn">🔄 Yangilash</button>
+    </div>
+    <div style="margin-top:8px"><span class="pill">Jami:</span> <b id="count">0</b></div>
+    <div id="posts"></div>
+  </div>
+</div>
+
+<!-- Firebase compat -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script>
+  // 1) Bu origin qiymatini ekranga chiqaramiz (Authorized domains uchun)
+  const originEl = document.getElementById('origin');
+  originEl.textContent = location.origin;
+
+  // 2) Firebase config (Topildi projektingiz)
   const firebaseConfig = {
     apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
     authDomain: "topildi.firebaseapp.com",
+    databaseURL: "https://topildi-default-rtdb.firebaseio.com",
     projectId: "topildi",
     storageBucket: "topildi.appspot.com",
     messagingSenderId: "323891530719",
-    appId: "1:323891530719:web:d57c2ce38781dc37e4926a"
+    appId: "1:323891530719:web:d57c2ce38781dc37e4926a",
+    measurementId: "G-NKCMKCXZQ7"
   };
-  firebase.initializeApp(firebaseConfig);
+
+  try { firebase.initializeApp(firebaseConfig); } catch(e) {}
+
   const auth = firebase.auth();
   const db   = firebase.firestore();
 
-  // === UI refs ===
-  const E = id => document.getElementById(id);
-  const loginBox  = E('loginBox');
-  const panelBox  = E('panelBox');
-  const listEl    = E('list');
-  const whoEl     = E('who');
-  const errEl     = E('error');
-  const countEl   = E('count');
-  const qEl       = E('q');
+  // UI elementlar
+  const msg = (t)=>{const el=document.getElementById('msg'); el.style.display='block'; el.textContent=t||'';}
+  const ok  = (t)=>{const el=document.getElementById('ok');  el.style.display='block'; el.textContent=t||'';}
+  const hideAlerts = ()=>{document.getElementById('msg').style.display='none'; document.getElementById('ok').style.display='none';}
 
-  const ADMIN_EMAIL = "uykamera653@gmail.com";
+  const btnLogin  = document.getElementById('btnLogin');
+  const btnLoginR = document.getElementById('btnLoginRedirect');
+  const btnLogout = document.getElementById('btnLogout');
+  const stats     = document.getElementById('stats');
+  const who       = document.getElementById('who');
+  const state     = document.getElementById('state');
+  const listCard  = document.getElementById('list');
+  const postsBox  = document.getElementById('posts');
+  const countEl   = document.getElementById('count');
+  const qInput    = document.getElementById('q');
 
-  function showError(msg){
-    errEl.textContent = msg || "";
-    errEl.style.display = msg ? "block" : "none";
-    console.error(msg);
+  // Admin ro‘yxati (oddiy: faqat bitta Gmail)
+  const ADMINS = new Set(["uykamera653@gmail.com"]); // <- siz bergan admin email
+
+  function isAdmin(user){
+    if(!user || !user.email) return false;
+    return ADMINS.has(user.email.toLowerCase());
   }
 
-  // === Auth UI ===
-  E('loginBtn').addEventListener('click', async ()=>{
-    showError("");
+  // Kirish (popup)
+  btnLogin.onclick = async () => {
+    hideAlerts();
     const provider = new firebase.auth.GoogleAuthProvider();
-    try{
+    try {
       await auth.signInWithPopup(provider);
-    }catch(e){
-      showError("Popup orqali login muvaffaqiyatsiz: " + e.message + "\nQuyidagi 'Redirect bilan kirish' tugmasini sinab ko‘ring.");
-    }
-  });
-
-  E('loginRedirectBtn').addEventListener('click', async ()=>{
-    showError("");
-    const provider = new firebase.auth.GoogleAuthProvider();
-    try{
-      await auth.signInWithRedirect(provider);
-    }catch(e){
-      showError("Redirect orqali login xatosi: " + e.message);
-    }
-  });
-
-  E('logoutBtn').addEventListener('click', ()=> auth.signOut());
-
-  auth.onAuthStateChanged(async user=>{
-    showError("");
-    if(user){
-      whoEl.textContent = user.email || user.uid;
-      if(user.email !== ADMIN_EMAIL){
-        loginBox.style.display="block";
-        panelBox.style.display="none";
-        showError("⛔ Bu panelga faqat " + ADMIN_EMAIL + " kira oladi. Siz: " + (user.email||"no-email"));
-        await auth.signOut();
-        return;
+    } catch(e) {
+      // Popup bloklansa yoki domen ruxsat etilmagan bo‘lsa — foydali xabar beramiz
+      if (e && e.code === 'auth/popup-blocked') {
+        msg("Popup bloklangan. Quyidagi 'Google (redirect)' tugmasini bosing yoki brauzerda popuplarga ruxsat bering.");
+        btnLoginR.style.display = 'inline-block';
+      } else if (e && e.code === 'auth/unauthorized-domain') {
+        msg("Domen ruxsat etilmagan.\nFirebase Console → Authentication → Settings → Authorized domains bo‘limiga quyidagi domenni qo‘shing:\n" + location.origin);
+      } else if (e && e.message) {
+        msg("Kirish xatosi: " + e.message);
+      } else {
+        msg("Kutilmagan xato (popup).");
       }
-      loginBox.style.display="none";
-      panelBox.style.display="block";
-      attachFeed();
-    }else{
-      whoEl.textContent="";
-      loginBox.style.display="block";
-      panelBox.style.display="none";
-      listEl.innerHTML = "Kirish talab qilinadi.";
     }
+  };
+
+  // Kirish (redirect)
+  btnLoginR.onclick = async () => {
+    hideAlerts();
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try {
+      await auth.signInWithRedirect(provider);
+      // Bu satrdan keyin brauzer Firebase Google sahifasiga ketadi, qaytganda onAuthStateChanged ishlaydi
+    } catch(e) {
+      if (e && e.code === 'auth/unauthorized-domain') {
+        msg("Domen ruxsat etilmagan.\nFirebase → Authentication → Authorized domains ro‘yxatiga qo‘shing:\n" + location.origin);
+      } else if (e && e.message) {
+        msg("Redirect xatosi: " + e.message);
+      } else {
+        msg("Kutilmagan xato (redirect).");
+      }
+    }
+  };
+
+  // Chiqish
+  btnLogout.onclick = () => auth.signOut().catch(e=>msg("Chiqish xatosi: "+e.message));
+
+  // Auth holatini kuzatish
+  let unsubPosts = null;
+  auth.onAuthStateChanged(async (user) => {
+    hideAlerts();
+    if (!user) {
+      // Logout holati
+      btnLogin.style.display = 'inline-block';
+      btnLoginR.style.display = 'none';
+      btnLogout.style.display = 'none';
+      stats.style.display = 'none';
+      listCard.style.display = 'none';
+      if (unsubPosts) { unsubPosts(); unsubPosts=null; }
+      return;
+    }
+
+    // Login bo‘ldi
+    who.textContent = user.email || user.uid;
+    stats.style.display = 'block';
+    btnLogin.style.display = 'none';
+    btnLoginR.style.display = 'none';
+    btnLogout.style.display = 'inline-block';
+
+    if (!isAdmin(user)) {
+      state.textContent = "❌ Admin emassiz. Ruxsat yo‘q.";
+      msg("Bu sahifani faqat adminlar ko‘ra oladi. Admin ro‘yxati: uykamera653@gmail.com");
+      listCard.style.display = 'none';
+      if (unsubPosts) { unsubPosts(); unsubPosts=null; }
+      return;
+    }
+
+    state.textContent = "✅ Admin tasdiqlandi.";
+    ok("Kirish muvaffaqiyatli. E'lonlar ro‘yxati yuklanmoqda…");
+    listCard.style.display = 'block';
+
+    // Real-time ro‘yxat
+    if (unsubPosts) { unsubPosts(); unsubPosts=null; }
+    const q = db.collection('posts').orderBy('created', 'desc');
+    unsubPosts = q.onSnapshot(snap=>{
+      const all = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      render(all);
+    }, e=> msg("Firestore o‘qish xatosi: "+e.message));
   });
 
-  // === Data feed ===
-  let unsub = null, ALL = [];
-  function attachFeed(){
-    if(unsub) unsub();
-    listEl.innerHTML = "Yuklanmoqda...";
-    unsub = db.collection("posts").orderBy("created","desc").onSnapshot(snap=>{
-      ALL = snap.docs.map(d=>({id:d.id, ...d.data()}));
-      render();
-    }, e=> showError("Firestore o‘qish xatosi: " + e.message));
+  // Qidirish + yangilash
+  document.getElementById('refresh').onclick = () => location.reload();
+  qInput.oninput = () => {
+    // klient tomonda filtrlaymiz (oxirgi snapshot allItems’ni cache’da saqlamayapmiz, shuning uchun DOMdan o‘qib olamiz)
+    const cards = postsBox.querySelectorAll('.post');
+    const needle = (qInput.value||'').toLowerCase();
+    let shown = 0;
+    cards.forEach(c=>{
+      const hay = c.getAttribute('data-haystack')||'';
+      const ok = !needle || hay.includes(needle);
+      c.style.display = ok ? '' : 'none';
+      if (ok) shown++;
+    });
+    countEl.textContent = String(shown);
+  };
+
+  // Render
+  function render(list){
+    const needle = (qInput.value||'').toLowerCase();
+    postsBox.innerHTML = list.map(p=>{
+      const hay = [p.item,p.city,p.place,p.notes,p.contact,(p.kind||''),(p.reward||0)].map(x=>(x||'')+'').join(' ').toLowerCase();
+      const ok = !needle || hay.includes(needle);
+      return `
+        <div class="post" data-haystack="${escapeHtml(hay)}" style="${ok?'':'display:none'}">
+          <h4>${escapeHtml(p.item||'-')} <span class="muted">• ${p.kind==='lost'?'❗ Yo‘qolgan':'✅ Topilgan'}${(p.reward||0)>0?` • 🎁 ${Number(p.reward).toLocaleString()} so‘m`:''}</span></h4>
+          <div class="muted">${escapeHtml(p.city||'-')} • ${escapeHtml(p.place||'-')} • ${p.date?escapeHtml(p.date):'-'}</div>
+          ${p.photo?`<img class="thumb" src="${escapeAttr(p.photo)}" alt="rasm">`:''}
+          <div style="margin-top:6px;white-space:pre-wrap">${escapeHtml(p.notes||'')}</div>
+          <div style="margin-top:6px">📞 ${escapeHtml(p.contact||'-')}</div>
+          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn red" onclick="delPost('${p.id}')">🗑️ O‘chirish</button>
+            <a class="btn" href="${location.origin + location.pathname.replace(/\/admin\/?$/,'/') + '#postChat-' + p.id}" target="_blank">✉️ Xabarlar</a>
+            <span class="pill">UID: ${escapeHtml(p.uid||'-')}</span>
+          </div>
+        </div>`;
+    }).join('');
+    // hisob
+    let shown = 0;
+    postsBox.querySelectorAll('.post').forEach(el=>{ if(el.style.display!=='none') shown++; });
+    countEl.textContent = String(shown);
   }
 
-  function esc(s){return (s||"").replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));}
-
-  function itemCard(p){
-    const dt = p.created ? new Date(p.created).toLocaleString() : "-";
-    return `
-      <div class="post">
-        <div><b>${esc(p.item||'-')}</b> — ${p.kind==='lost'?'❗ Yo‘qotildi':'✅ Topildi'}</div>
-        <div class="muted">📍 ${esc(p.city||'-')} · ${esc(p.place||'-')} · ${esc(p.date||'-')}</div>
-        <div class="muted">📞 ${esc(p.contact||'-')} ${p.reward?(' · 🎁 '+Number(p.reward).toLocaleString()+' so‘m'):''}</div>
-        ${p.notes?('<div style="margin-top:6px">'+esc(p.notes)+'</div>'):''}
-        <div class="muted" style="margin-top:6px">${dt}</div>
-        <div class="row" style="margin-top:8px">
-          <button class="btn-del" onclick="delPost('${p.id}')">🗑️ O‘chirish</button>
-        </div>
-      </div>
-    `;
-  }
-
-  function render(){
-    const term = (qEl.value||"").toLowerCase().trim();
-    const arr = !term ? ALL : ALL.filter(p =>
-      [p.item,p.city,p.place,p.notes,p.contact].some(x => (x||"").toLowerCase().includes(term))
-    );
-    countEl.textContent = String(arr.length);
-    listEl.innerHTML = arr.length ? arr.map(itemCard).join("") : "E’lonlar topilmadi.";
-  }
-
-  qEl.addEventListener('input', render);
-  E('refreshBtn').addEventListener('click', ()=>{ attachFeed(); });
-
-  // === Delete (only admin anyway) ===
+  // O‘chirish
   window.delPost = async function(id){
-    if(!confirm("Ushbu e’lonni o‘chirilsinmi?")) return;
+    hideAlerts();
+    if(!confirm("Ushbu e’lonni o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi.")) return;
     try{
-      await db.collection("posts").doc(id).delete();
-      showError(""); // clear
+      await db.collection('posts').doc(id).delete();
+      // ichki chatlarni ham tozalaymiz
+      const chats = await db.collection('posts').doc(id).collection('chats').get();
+      const batch = db.batch();
+      chats.forEach(d=>batch.delete(d.ref));
+      await batch.commit();
+      ok("O‘chirildi.");
     }catch(e){
-      showError("O‘chirish xatosi: " + e.message);
+      msg("O‘chirish xatosi: " + e.message);
     }
   }
-  </script>
+
+  // XSSdan oddiy himoya
+  function escapeHtml(s){return (s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+  function escapeAttr(s){return (s||'').replace(/"/g,'%22')}
+</script>
 </body>
 </html>
