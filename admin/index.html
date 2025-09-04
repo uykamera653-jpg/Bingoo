@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BINGO — Admin</title>
+  <style>
+    body {font-family: Arial, sans-serif; margin:0; padding:20px; background:#f8fafc; color:#0f172a;}
+    h1 {color:#1e293b;}
+    .login, .panel {max-width:600px; margin:20px auto; padding:20px; background:#fff; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,.1);}
+    button {padding:10px 14px; border:none; border-radius:8px; cursor:pointer; background:#0f172a; color:#fff; font-weight:600;}
+    button:hover {background:#334155;}
+    .post {padding:12px; margin:10px 0; border:1px solid #e2e8f0; border-radius:8px; background:#f1f5f9;}
+    .actions {margin-top:8px; display:flex; gap:10px;}
+    .approve {background:#16a34a;}
+    .delete {background:#dc2626;}
+  </style>
+</head>
+<body>
+  <h1>🔑 BINGO Admin Panel</h1>
+
+  <!-- Login qismi -->
+  <div id="loginBox" class="login">
+    <p>Faqat admin (uykamera653@gmail.com) kirishi mumkin.</p>
+    <button id="loginBtn">Google orqali kirish</button>
+  </div>
+
+  <!-- Admin panel -->
+  <div id="panelBox" class="panel" style="display:none">
+    <h2>E’lonlar</h2>
+    <div id="posts">Yuklanmoqda...</div>
+    <button id="logoutBtn">Chiqish</button>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    // 🔥 Sizning Firebase konfiguratsiyangiz
+    const firebaseConfig = {
+      apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+      authDomain: "topildi.firebaseapp.com",
+      projectId: "topildi",
+      storageBucket: "topildi.appspot.com",
+      messagingSenderId: "323891530719",
+      appId: "1:323891530719:web:d57c2ce38781dc37e4926a"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const loginBox = document.getElementById('loginBox');
+    const panelBox = document.getElementById('panelBox');
+    const postsDiv = document.getElementById('posts');
+
+    // Login
+    document.getElementById('loginBtn').addEventListener('click', async ()=>{
+      const provider = new firebase.auth.GoogleAuthProvider();
+      try {
+        const res = await auth.signInWithPopup(provider);
+        const user = res.user;
+        if(user.email !== "uykamera653@gmail.com"){
+          alert("⛔ Siz admin emassiz!");
+          await auth.signOut();
+        }
+      } catch(e){ alert("Login xato: "+e.message); }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', ()=> auth.signOut());
+
+    // Auth state
+    auth.onAuthStateChanged(user=>{
+      if(user && user.email==="uykamera653@gmail.com"){
+        loginBox.style.display="none";
+        panelBox.style.display="block";
+        loadPosts();
+      } else {
+        loginBox.style.display="block";
+        panelBox.style.display="none";
+      }
+    });
+
+    // E’lonlarni yuklash
+    function loadPosts(){
+      db.collection("posts").orderBy("created","desc").onSnapshot(snap=>{
+        postsDiv.innerHTML="";
+        snap.forEach(doc=>{
+          const p = doc.data();
+          const el = document.createElement("div");
+          el.className="post";
+          el.innerHTML = `
+            <b>${p.item||'—'}</b> (${p.kind}) <br>
+            📍 ${p.city||'-'} <br>
+            📞 ${p.contact||'-'} <br>
+            <small>${new Date(p.created).toLocaleString()}</small>
+            <div class="actions">
+              <button class="approve">✅ Tasdiqlash</button>
+              <button class="delete">🗑️ O‘chirish</button>
+            </div>
+          `;
+          el.querySelector(".delete").onclick = ()=> db.collection("posts").doc(doc.id).delete();
+          el.querySelector(".approve").onclick = ()=> alert("Bu yerga keyinchalik tasdiqlash logikasi qo‘shiladi");
+          postsDiv.appendChild(el);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
