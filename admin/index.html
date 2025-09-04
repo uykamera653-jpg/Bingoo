@@ -1,35 +1,67 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BINGO — Admin</title>
   <style>
-    body {font-family: Arial, sans-serif; margin:0; padding:20px; background:#f8fafc; color:#0f172a;}
-    h1 {color:#1e293b;}
-    .login, .panel {max-width:600px; margin:20px auto; padding:20px; background:#fff; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,.1);}
-    button {padding:10px 14px; border:none; border-radius:8px; cursor:pointer; background:#0f172a; color:#fff; font-weight:600;}
-    button:hover {background:#334155;}
-    .post {padding:12px; margin:10px 0; border:1px solid #e2e8f0; border-radius:8px; background:#f1f5f9;}
-    .actions {margin-top:8px; display:flex; gap:10px;}
-    .approve {background:#16a34a;}
-    .delete {background:#dc2626;}
+    :root{--bg:#f8fafc;--panel:#ffffff;--ink:#0f172a;--muted:#475569;--ok:#16a34a;--danger:#dc2626;--btn:#0f172a;}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter}
+    header{padding:16px 20px;border-bottom:1px solid #e5e7eb;background:#fff;position:sticky;top:0}
+    h1{margin:0;font-size:20px}
+    .container{max-width:920px;margin:20px auto;padding:0 16px}
+    .card{background:var(--panel);border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.05);padding:16px}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    button{border:0;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer;background:var(--btn);color:#fff}
+    button:hover{opacity:.92}
+    .btn-ok{background:var(--ok)} .btn-del{background:var(--danger)}
+    .post{margin:10px 0;padding:12px;border:1px solid #e5e7eb;border-radius:10px;background:#f1f5f9}
+    .muted{color:var(--muted)}
+    .right{margin-left:auto}
+    #error{display:none;margin:16px 0;padding:12px;border-radius:10px;background:#fee2e2;color:#7f1d1d;border:1px solid #fecaca;white-space:pre-wrap}
+    .filter{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+    input[type="search"]{flex:1;min-width:220px;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px}
+    .chip{display:inline-block;padding:6px 10px;border:1px dashed #cbd5e1;border-radius:999px;background:#fff;color:#0f172a}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#e2e8f0;font-size:12px}
   </style>
 </head>
 <body>
-  <h1>🔑 BINGO Admin Panel</h1>
+  <header class="row">
+    <h1>🔐 BINGO — Admin Panel</h1>
+    <span id="who" class="muted right"></span>
+  </header>
 
-  <!-- Login qismi -->
-  <div id="loginBox" class="login">
-    <p>Faqat admin (uykamera653@gmail.com) kirishi mumkin.</p>
-    <button id="loginBtn">Google orqali kirish</button>
-  </div>
+  <div class="container">
+    <div id="error" class="card"></div>
 
-  <!-- Admin panel -->
-  <div id="panelBox" class="panel" style="display:none">
-    <h2>E’lonlar</h2>
-    <div id="posts">Yuklanmoqda...</div>
-    <button id="logoutBtn">Chiqish</button>
+    <!-- Login -->
+    <div id="loginBox" class="card">
+      <p>Faqat <b>uykamera653@gmail.com</b> kirishi mumkin.</p>
+      <div class="row">
+        <button id="loginBtn">Google orqali kirish</button>
+        <button id="loginRedirectBtn" title="Popup bloklansa">↩️ Redirect bilan kirish</button>
+      </div>
+      <p class="muted" style="margin-top:8px">Agar hech narsa bo‘lmasa, Firebase’da Google Sign-in yoqilganini va
+        <code>uykamera653-jpg.github.io</code> domeni “Authorized domains” ro‘yxatida borligini tekshiring.</p>
+    </div>
+
+    <!-- Panel -->
+    <div id="panelBox" class="card" style="display:none">
+      <div class="row">
+        <div class="chip">Barcha e’lonlar</div>
+        <span id="count" class="badge">0</span>
+        <span class="right"></span>
+        <button id="logoutBtn">Chiqish</button>
+      </div>
+
+      <div class="filter">
+        <input id="q" type="search" placeholder="Qidirish: narsa, shahar, aloqa..." />
+        <button id="refreshBtn">Yangilash</button>
+      </div>
+
+      <div id="list">Yuklanmoqda...</div>
+    </div>
   </div>
 
   <!-- Firebase -->
@@ -38,76 +70,133 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <script>
-    // 🔥 Sizning Firebase konfiguratsiyangiz
-    const firebaseConfig = {
-      apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
-      authDomain: "topildi.firebaseapp.com",
-      projectId: "topildi",
-      storageBucket: "topildi.appspot.com",
-      messagingSenderId: "323891530719",
-      appId: "1:323891530719:web:d57c2ce38781dc37e4926a"
-    };
-    firebase.initializeApp(firebaseConfig);
+  // === Firebase config (sizniki) ===
+  const firebaseConfig = {
+    apiKey: "AIzaSyA39AFiKjNF3XO4NwkwzU1HA_5pKV9xEN4",
+    authDomain: "topildi.firebaseapp.com",
+    projectId: "topildi",
+    storageBucket: "topildi.appspot.com",
+    messagingSenderId: "323891530719",
+    appId: "1:323891530719:web:d57c2ce38781dc37e4926a"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
 
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+  // === UI refs ===
+  const E = id => document.getElementById(id);
+  const loginBox  = E('loginBox');
+  const panelBox  = E('panelBox');
+  const listEl    = E('list');
+  const whoEl     = E('who');
+  const errEl     = E('error');
+  const countEl   = E('count');
+  const qEl       = E('q');
 
-    const loginBox = document.getElementById('loginBox');
-    const panelBox = document.getElementById('panelBox');
-    const postsDiv = document.getElementById('posts');
+  const ADMIN_EMAIL = "uykamera653@gmail.com";
 
-    // Login
-    document.getElementById('loginBtn').addEventListener('click', async ()=>{
-      const provider = new firebase.auth.GoogleAuthProvider();
-      try {
-        const res = await auth.signInWithPopup(provider);
-        const user = res.user;
-        if(user.email !== "uykamera653@gmail.com"){
-          alert("⛔ Siz admin emassiz!");
-          await auth.signOut();
-        }
-      } catch(e){ alert("Login xato: "+e.message); }
-    });
+  function showError(msg){
+    errEl.textContent = msg || "";
+    errEl.style.display = msg ? "block" : "none";
+    console.error(msg);
+  }
 
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', ()=> auth.signOut());
+  // === Auth UI ===
+  E('loginBtn').addEventListener('click', async ()=>{
+    showError("");
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try{
+      await auth.signInWithPopup(provider);
+    }catch(e){
+      showError("Popup orqali login muvaffaqiyatsiz: " + e.message + "\nQuyidagi 'Redirect bilan kirish' tugmasini sinab ko‘ring.");
+    }
+  });
 
-    // Auth state
-    auth.onAuthStateChanged(user=>{
-      if(user && user.email==="uykamera653@gmail.com"){
-        loginBox.style.display="none";
-        panelBox.style.display="block";
-        loadPosts();
-      } else {
+  E('loginRedirectBtn').addEventListener('click', async ()=>{
+    showError("");
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try{
+      await auth.signInWithRedirect(provider);
+    }catch(e){
+      showError("Redirect orqali login xatosi: " + e.message);
+    }
+  });
+
+  E('logoutBtn').addEventListener('click', ()=> auth.signOut());
+
+  auth.onAuthStateChanged(async user=>{
+    showError("");
+    if(user){
+      whoEl.textContent = user.email || user.uid;
+      if(user.email !== ADMIN_EMAIL){
         loginBox.style.display="block";
         panelBox.style.display="none";
+        showError("⛔ Bu panelga faqat " + ADMIN_EMAIL + " kira oladi. Siz: " + (user.email||"no-email"));
+        await auth.signOut();
+        return;
       }
-    });
-
-    // E’lonlarni yuklash
-    function loadPosts(){
-      db.collection("posts").orderBy("created","desc").onSnapshot(snap=>{
-        postsDiv.innerHTML="";
-        snap.forEach(doc=>{
-          const p = doc.data();
-          const el = document.createElement("div");
-          el.className="post";
-          el.innerHTML = `
-            <b>${p.item||'—'}</b> (${p.kind}) <br>
-            📍 ${p.city||'-'} <br>
-            📞 ${p.contact||'-'} <br>
-            <small>${new Date(p.created).toLocaleString()}</small>
-            <div class="actions">
-              <button class="approve">✅ Tasdiqlash</button>
-              <button class="delete">🗑️ O‘chirish</button>
-            </div>
-          `;
-          el.querySelector(".delete").onclick = ()=> db.collection("posts").doc(doc.id).delete();
-          el.querySelector(".approve").onclick = ()=> alert("Bu yerga keyinchalik tasdiqlash logikasi qo‘shiladi");
-          postsDiv.appendChild(el);
-        });
-      });
+      loginBox.style.display="none";
+      panelBox.style.display="block";
+      attachFeed();
+    }else{
+      whoEl.textContent="";
+      loginBox.style.display="block";
+      panelBox.style.display="none";
+      listEl.innerHTML = "Kirish talab qilinadi.";
     }
+  });
+
+  // === Data feed ===
+  let unsub = null, ALL = [];
+  function attachFeed(){
+    if(unsub) unsub();
+    listEl.innerHTML = "Yuklanmoqda...";
+    unsub = db.collection("posts").orderBy("created","desc").onSnapshot(snap=>{
+      ALL = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      render();
+    }, e=> showError("Firestore o‘qish xatosi: " + e.message));
+  }
+
+  function esc(s){return (s||"").replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));}
+
+  function itemCard(p){
+    const dt = p.created ? new Date(p.created).toLocaleString() : "-";
+    return `
+      <div class="post">
+        <div><b>${esc(p.item||'-')}</b> — ${p.kind==='lost'?'❗ Yo‘qotildi':'✅ Topildi'}</div>
+        <div class="muted">📍 ${esc(p.city||'-')} · ${esc(p.place||'-')} · ${esc(p.date||'-')}</div>
+        <div class="muted">📞 ${esc(p.contact||'-')} ${p.reward?(' · 🎁 '+Number(p.reward).toLocaleString()+' so‘m'):''}</div>
+        ${p.notes?('<div style="margin-top:6px">'+esc(p.notes)+'</div>'):''}
+        <div class="muted" style="margin-top:6px">${dt}</div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn-del" onclick="delPost('${p.id}')">🗑️ O‘chirish</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function render(){
+    const term = (qEl.value||"").toLowerCase().trim();
+    const arr = !term ? ALL : ALL.filter(p =>
+      [p.item,p.city,p.place,p.notes,p.contact].some(x => (x||"").toLowerCase().includes(term))
+    );
+    countEl.textContent = String(arr.length);
+    listEl.innerHTML = arr.length ? arr.map(itemCard).join("") : "E’lonlar topilmadi.";
+  }
+
+  qEl.addEventListener('input', render);
+  E('refreshBtn').addEventListener('click', ()=>{ attachFeed(); });
+
+  // === Delete (only admin anyway) ===
+  window.delPost = async function(id){
+    if(!confirm("Ushbu e’lonni o‘chirilsinmi?")) return;
+    try{
+      await db.collection("posts").doc(id).delete();
+      showError(""); // clear
+    }catch(e){
+      showError("O‘chirish xatosi: " + e.message);
+    }
+  }
   </script>
 </body>
 </html>
