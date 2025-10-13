@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // ⬅️ Yangi import
+import 'package:firebase_auth/firebase_auth.dart'; // ownerId uchun
 import 'package:bingo/widgets/app_bar.dart';
 import 'package:bingo/l10n/app_localizations.dart';
 
@@ -64,6 +64,15 @@ class _AnnouncementFormState extends State<AnnouncementForm> {
   }
 
   Future<void> _submitForm() async {
+    // 🔐 Avval login tekshiruvi — ownerId null bo‘lmasin
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Kirish talab qilinadi")),
+      );
+      return;
+    }
+
     if (_formKey.currentState!.validate()) {
       try {
         await FirebaseFirestore.instance.collection('posts').add({
@@ -81,7 +90,7 @@ class _AnnouncementFormState extends State<AnnouncementForm> {
           'created': DateTime.now().millisecondsSinceEpoch,
 
           // 🔐 Kim joylaganini saqlaymiz — keyin o‘sha foydalanuvchi o‘chira oladi
-          'ownerId': FirebaseAuth.instance.currentUser?.uid,
+          'ownerId': user.uid,
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -90,9 +99,9 @@ class _AnnouncementFormState extends State<AnnouncementForm> {
 
         _formKey.currentState!.reset();
       } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Xatolik: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Xatolik: $e")),
+        );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -123,9 +132,7 @@ class _AnnouncementFormState extends State<AnnouncementForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.type == "lost"
-                      ? loc.lostFormTitle
-                      : loc.foundFormTitle,
+                  widget.type == "lost" ? loc.lostFormTitle : loc.foundFormTitle,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,

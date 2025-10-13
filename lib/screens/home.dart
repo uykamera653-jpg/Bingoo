@@ -3,7 +3,7 @@ import 'package:bingo/widgets/pub_elon.dart';
 import 'package:flutter/material.dart';
 import 'package:bingo/widgets/app_bar.dart';
 import 'package:bingo/widgets/darkbtn.dart';
-import 'package:bingo/widgets/infoCard.dart';
+import 'package:bingo/widgets/infocard.dart';
 import 'package:bingo/widgets/list.dart';
 import 'package:bingo/l10n/app_localizations.dart';
 

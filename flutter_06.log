@@ -1,0 +1,112 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter build apk --release
+
+## exception
+
+ProcessPackageException: ProcessException: Found candidates, but lacked sufficient permissions to execute "/storage/self/primary/bingo/bingo/android/gradlew".
+  Command: /storage/self/primary/bingo/bingo/android/gradlew 
+
+```
+#0      LocalProcessManager.start (package:process/src/interface/local_process_manager.dart:56:7)
+#1      ErrorHandlingProcessManager.start.<anonymous closure> (package:flutter_tools/src/base/error_handling_io.dart:654:26)
+#2      _run (package:flutter_tools/src/base/error_handling_io.dart:514:20)
+#3      ErrorHandlingProcessManager.start (package:flutter_tools/src/base/error_handling_io.dart:652:12)
+#4      _DefaultProcessUtils.start (package:flutter_tools/src/base/process.dart:503:28)
+#5      _DefaultProcessUtils.stream (package:flutter_tools/src/base/process.dart:523:35)
+#6      AndroidGradleBuilder._runGradleTask (package:flutter_tools/src/android/gradle.dart:354:38)
+#7      AndroidGradleBuilder.buildGradleApp (package:flutter_tools/src/android/gradle.dart:577:32)
+<asynchronous suspension>
+#8      AndroidGradleBuilder.buildApk (package:flutter_tools/src/android/gradle.dart:239:5)
+<asynchronous suspension>
+#9      BuildApkCommand.runCommand (package:flutter_tools/src/commands/build_apk.dart:131:5)
+<asynchronous suspension>
+#10     FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1581:27)
+<asynchronous suspension>
+#11     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#12     CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+<asynchronous suspension>
+#13     FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:503:9)
+<asynchronous suspension>
+#14     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#15     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:438:5)
+<asynchronous suspension>
+#16     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:98:11)
+<asynchronous suspension>
+#17     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#18     main (package:flutter_tools/executable.dart:101:3)
+<asynchronous suspension>
+```
+
+## flutter doctor
+
+```
+[32m[✓][39m Flutter (Channel stable, 3.35.6, on Ubuntu 25.04 6.2.1-PRoot-Distro,
+    locale en_US.UTF-8) [277ms]
+    [32m•[39m Flutter version 3.35.6 on channel stable at /root/flutter
+    [32m•[39m Upstream repository https://github.com/flutter/flutter.git
+    [32m•[39m Framework revision 9f455d2486 (5 days ago), 2025-10-08 14:55:31 -0500
+    [32m•[39m Engine revision d2913632a4
+    [32m•[39m Dart version 3.9.2
+    [32m•[39m DevTools version 2.48.0
+    [32m•[39m Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop,
+      enable-windows-desktop, enable-android, enable-ios, cli-animations,
+      enable-lldb-debugging
+
+[32m[✓][39m Android toolchain - develop for Android devices (Android SDK version
+    34.0.0) [5.8s]
+    [32m•[39m Android SDK at /root/Android
+    [32m•[39m Emulator version unknown
+    [32m•[39m Platform android-34, build-tools 34.0.0
+    [32m•[39m ANDROID_HOME = /root/Android
+    [32m•[39m ANDROID_SDK_ROOT = /root/Android
+    [32m•[39m Java binary at: /usr/lib/jvm/java-17-openjdk-arm64/bin/java
+      This JDK is specified by the JAVA_HOME environment variable.
+      To manually set the JDK path, use: `flutter config
+      --jdk-dir="path/to/jdk"`.
+    [32m•[39m Java version OpenJDK Runtime Environment (build
+      17.0.16+8-Ubuntu-0ubuntu125.04.1)
+    [32m•[39m All Android licenses accepted.
+
+[31m[✗][39m Chrome - develop for the web (Cannot find Chrome executable at
+    google-chrome) [238ms]
+    [33m![39m Cannot find Chrome. Try setting CHROME_EXECUTABLE to a Chrome
+      executable.
+
+[31m[✗][39m Linux toolchain - develop for Linux desktop [295ms]
+    [31m✗[39m clang++ is required for Linux development.
+      It is likely available from your distribution (e.g.: apt install
+      clang), or can be downloaded from https://releases.llvm.org/
+    [31m✗[39m CMake is required for Linux development.
+      It is likely available from your distribution (e.g.: apt install
+      cmake), or can be downloaded from https://cmake.org/download/
+    [31m✗[39m ninja is required for Linux development.
+      It is likely available from your distribution (e.g.: apt install
+      ninja-build), or can be downloaded from
+      https://github.com/ninja-build/ninja/releases
+    [31m✗[39m pkg-config is required for Linux development.
+      It is likely available from your distribution (e.g.: apt install
+      pkg-config), or can be downloaded from
+      https://www.freedesktop.org/wiki/Software/pkg-config/
+
+[33m[!][39m Android Studio (not installed) [226ms]
+    [32m•[39m Android Studio not found; download from
+      https://developer.android.com/studio/index.html
+      (or visit https://flutter.dev/to/linux-android-setup for detailed
+      instructions).
+
+[32m[✓][39m Connected device (1 available) [468ms]
+    [32m•[39m Linux (desktop) • linux • linux-arm64 • Ubuntu 25.04
+      6.2.1-PRoot-Distro
+
+[32m[✓][39m Network resources [994ms]
+    [32m•[39m All expected network resources are available.
+
+[33m![39m Doctor found issues in 3 categories.
+```
