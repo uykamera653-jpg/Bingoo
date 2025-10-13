@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "323891530719",
+    "firebase_url": "https://topildi-default-rtdb.firebaseio.com",
+    "project_id": "topildi",
+    "storage_bucket": "topildi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:323891530719:android:8e9151a8fb79743fe4926a",
+        "android_client_info": {
+          "package_name": "Com.topildi.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "323891530719-6p90jtjpeirhu7ikd1e89ca3rk1nq66a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDw3_0AXL8J2N4dz1my_1XBuw1eV08x31o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "323891530719-6p90jtjpeirhu7ikd1e89ca3rk1nq66a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:323891530719:android:73ec83468c7c6d0ce4926a",
+        "android_client_info": {
+          "package_name": "com.topildi.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "323891530719-5cg7ob49l4hnas7loi6td151bns7bhkt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.topildi.app",
+            "certificate_hash": "1f1e0038f021538cb08f2d7da251aa5fbc632cdf"
+          }
+        },
+        {
+          "client_id": "323891530719-6p90jtjpeirhu7ikd1e89ca3rk1nq66a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDw3_0AXL8J2N4dz1my_1XBuw1eV08x31o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "323891530719-6p90jtjpeirhu7ikd1e89ca3rk1nq66a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
