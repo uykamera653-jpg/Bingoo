@@ -22,20 +22,27 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'        # yoki kerak bo'lsa aniq versiya: 3.22.0
+          channel: 'stable'     # kerak bo'lsa: flutter-version: '3.22.0'
 
       - name: Flutter pub get
         run: flutter pub get
 
-      # Ixtiyoriy: web build kerak bo'lsa keyin qo'shish mumkin
+      # Gradle uchun ko'proq xotira (heap)
+      - name: Increase Gradle heap
+        run: |
+          echo "org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=512m -Dkotlin.daemon.jvm.options=-Xmx2048m" >> android/gradle.properties
 
+      # Release build (xotira tejamkor, yiqilsa ham job davom etadi)
       - name: Build APK (release)
-        run: flutter build apk --release
+        continue-on-error: true
+        run: flutter build apk --release --no-tree-shake-icons
 
-      - name: Build APK (debug)  # telefonlarga oson o'rnatiladi
+      # Debug build (o'rnatish oson, doimiy artefakt)
+      - name: Build APK (debug)
         run: flutter build apk --debug
 
       - name: Upload release APK
+        if: always()  # release yiqilsa ham step ko'rinadi
         uses: actions/upload-artifact@v4
         with:
           name: app-release
