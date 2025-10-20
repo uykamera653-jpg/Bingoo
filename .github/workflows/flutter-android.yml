@@ -22,18 +22,21 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: stable
 
       - name: Flutter pub get
         run: flutter pub get
 
-      # More memory (heap) for Gradle
-      - name: Increase Gradle heap
-        run: echo "org.gradle.jvmargs=-Xmx4096m -Xms512m -XX:MaxMetaspaceSize=512m" >> gradle.properties
+      - name: Ensure android/gradle.properties exists + increase heap
+        run: |
+          mkdir -p android
+          touch android/gradle.properties
+          echo "org.gradle.jvmargs=-Xmx6144m -Xms1024m -XX:MaxMetaspaceSize=1024m -Dkotlin.daemon.jvm.options=-Xmx2048m" >> android/gradle.properties
+          echo "android.useAndroidX=true" >> android/gradle.properties
+          echo "android.enableJetifier=true" >> android/gradle.properties
 
-      # Debug build (easy to install, permanent artifact)
       - name: Build APK (debug)
-        run: flutter build apk --debug
+        run: flutter build apk --debug --no-tree-shake-icons
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
