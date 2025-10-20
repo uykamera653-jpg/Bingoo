@@ -14,7 +14,7 @@ class ElonItem {
   final String place;
   final int? reward;
   final String date;
-  final String uid;
+  final String uid; // post egasi uid (agar bor bo'lsa)
   final String? authorEmail;
   final String? authorName;
 
@@ -51,7 +51,7 @@ class ElonItem {
 }
 
 class ElonPage extends StatefulWidget {
-  final String listType;
+  final String listType; // lost_list, found_list, mine_list, reward_list
   final String? currentUserEmail;
 
   const ElonPage({super.key, required this.listType, this.currentUserEmail});
@@ -118,9 +118,7 @@ class _ElonPageState extends State<ElonPage> {
                 if (widget.listType == "lost_list") {
                   filtered = allElonlar.where((e) => e.kind == "lost").toList();
                 } else if (widget.listType == "found_list") {
-                  filtered = allElonlar
-                      .where((e) => e.kind == "found")
-                      .toList();
+                  filtered = allElonlar.where((e) => e.kind == "found").toList();
                 } else if (widget.listType == "mine_list") {
                   filtered = allElonlar
                       .where((e) => e.authorEmail == widget.currentUserEmail)
@@ -144,6 +142,11 @@ class _ElonPageState extends State<ElonPage> {
                   itemBuilder: (context, index) {
                     final item = filtered[index];
 
+                    // faqat egasiga o'chirish tugmasini ko'rsatamiz
+                    final bool canDelete = widget.listType == "mine_list" ||
+                        (item.authorEmail != null &&
+                         item.authorEmail == widget.currentUserEmail);
+
                     return Container(
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(14),
@@ -154,29 +157,108 @@ class _ElonPageState extends State<ElonPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Yuqori chiziq: holat + sana + (o'chirish menyusi)
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                item.kind == "lost"
-                                    ? "❗ Yo‘qoldi"
-                                    : "✅ Topildi",
-                                style: TextStyle(
-                                  color: item.kind == "lost"
-                                      ? Colors.red
-                                      : Colors.green,
-                                  fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.kind == "lost"
+                                          ? "❗ Yo‘qoldi"
+                                          : "✅ Topildi",
+                                      style: TextStyle(
+                                        color: item.kind == "lost"
+                                            ? Colors.red
+                                            : Colors.green,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      "· ${item.date}",
+                                      style: const TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Text(
-                                item.date,
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
+
+                              // O'chirish tugmasi – faqat egalarga
+                              if (canDelete)
+                                PopupMenuButton<String>(
+                                  icon: const Icon(Icons.more_vert,
+                                      color: Colors.white70),
+                                  onSelected: (value) async {
+                                    if (value == 'delete') {
+                                      final confirm = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: const Text("E’loni o‘chirish"),
+                                          content: const Text(
+                                              "Bu e’loni butunlay o‘chirasiz. Davom etaymi?"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, false),
+                                              child: const Text("Bekor qilish"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, true),
+                                              child: const Text("O‘chirish"),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+
+                                      if (confirm == true) {
+                                        try {
+                                          await FirebaseFirestore.instance
+                                              .collection('posts')
+                                              .doc(item.id)
+                                              .delete();
+
+                                          if (mounted) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(const SnackBar(
+                                              content:
+                                                  Text("E’lon o‘chirildi"),
+                                            ));
+                                          }
+                                        } catch (e) {
+                                          if (mounted) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  "Xatolik: o‘chirilmadi ($e)"),
+                                            ));
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  itemBuilder: (context) => const [
+                                    PopupMenuItem(
+                                      value: 'delete',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.delete,
+                                              color: Colors.red),
+                                          SizedBox(width: 8),
+                                          Text("O‘chirish"),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
                             ],
                           ),
+
                           const SizedBox(height: 8),
 
                           Text(
@@ -300,8 +382,7 @@ class _ElonPageState extends State<ElonPage> {
                               const SizedBox(width: 10),
                               ElevatedButton.icon(
                                 onPressed: () {
-                                  final shareText =
-                                      """
+                                  final shareText = """
 📢 E’lon: ${item.item}
 📍 Joy: ${item.place}
 📞 Tel: ${item.contact}
