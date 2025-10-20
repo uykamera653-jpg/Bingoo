@@ -141,6 +141,9 @@ class _ElonPageState extends State<ElonPage> {
                   itemCount: filtered.length,
                   itemBuilder: (context, index) {
                     final item = filtered[index];
+                    final bool canDelete = widget.listType == "mine_list" ||
+    (item.authorEmail != null &&
+     item.authorEmail == widget.currentUserEmail);
 
                     // faqat egasiga o'chirish tugmasini ko'rsatamiz
                     final bool canDelete = widget.listType == "mine_list" ||
@@ -399,6 +402,58 @@ ${item.notes ?? ""}
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
+                                if (canDelete) ...[
+  const SizedBox(width: 10),
+  ElevatedButton.icon(
+    onPressed: () async {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('E’loni o‘chirish'),
+          content: const Text('Bu e’loni butunlay o‘chirasiz. Davom etaymi?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Bekor qilish'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('O‘chirish'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirm == true) {
+        try {
+          await FirebaseFirestore.instance
+              .collection('posts')
+              .doc(item.id)
+              .delete();
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('E’lon o‘chirildi')),
+            );
+          }
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Xatolik: $e')),
+            );
+          }
+        }
+      }
+    },
+    icon: const Icon(Icons.delete, size: 16),
+    label: const Text('O‘chirish'),
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.red,
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    ),
+  ),
+],
                               ),
                             ],
                           ),
