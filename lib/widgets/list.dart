@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bingo/l10n/app_localizations.dart';
 import 'package:bingo/widgets/chat.dart';
 import 'package:share_plus/share_plus.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 class ElonItem {
   final String id;
   final String item;
