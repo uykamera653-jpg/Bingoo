@@ -6,6 +6,94 @@ import 'package:bingo/widgets/chat.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+// Yangi DeleteButton widgeti
+class DeleteButton extends StatelessWidget {
+  final Future<void> Function() onDelete;
+  final bool compact;
+  final double height;
+  final String? label;
+
+  const DeleteButton({
+    Key? key,
+    required this.onDelete,
+    this.compact = false,
+    this.height = 40.0,
+    this.label,
+  }) : super(key: key);
+
+  Future<bool?> _showConfirm(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('E’lonni oʻchirish'),
+        content: Text(loc.confirm_del),   // Lokalizatsiyadan tarjima
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Bekor qilish'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Oʻchirish'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.error;
+    final textColor = Colors.white;
+    return Semantics(
+      button: true,
+      label: label ?? 'Oʻchirish',
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: () async {
+          final confirmed = await _showConfirm(context);
+          if (confirmed == true) {
+            await onDelete();
+          }
+        },
+        child: Container(
+          height: height,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.18),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.delete, color: textColor, size: compact ? 16 : 18),
+              if (!compact) ...[
+                const SizedBox(width: 8),
+                Text(
+                  label ?? 'Oʻchirish',
+                  style: TextStyle(color: textColor, fontSize: 14),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class ElonItem {
   final String id;
   final String item;         // nomi
@@ -93,12 +181,11 @@ class _ElonPageState extends State<ElonPage> {
             ),
           ),
 
-          // Ro‘yxat
+          // Roʻyxat
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("posts")
-                  .snapshots(),
+              stream:
+                  FirebaseFirestore.instance.collection("posts").snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -107,24 +194,21 @@ class _ElonPageState extends State<ElonPage> {
                   return Center(child: Text(loc.noData));
                 }
 
-                final allElonlar = snapshot.data!.docs
-                    .map((doc) => ElonItem.fromDoc(doc))
-                    .toList();
+                final allElonlar =
+                    snapshot.data!.docs.map((doc) => ElonItem.fromDoc(doc)).toList();
 
                 // Filtrlash: tur bo‘yicha
                 List<ElonItem> filtered = allElonlar;
                 if (widget.listType == "lost_list") {
                   filtered = allElonlar.where((e) => e.kind == "lost").toList();
                 } else if (widget.listType == "found_list") {
-                  filtered =
-                      allElonlar.where((e) => e.kind == "found").toList();
+                  filtered = allElonlar.where((e) => e.kind == "found").toList();
                 } else if (widget.listType == "mine_list") {
                   filtered = allElonlar
                       .where((e) => e.authorEmail == widget.currentUserEmail)
                       .toList();
                 } else if (widget.listType == "reward_list") {
-                  filtered =
-                      allElonlar.where((e) => (e.reward ?? 0) > 0).toList();
+                  filtered = allElonlar.where((e) => (e.reward ?? 0) > 0).toList();
                 }
 
                 // Qidiruv bo‘yicha filtrlash
@@ -186,7 +270,7 @@ class _ElonPageState extends State<ElonPage> {
                                   ],
                                 ),
                               ),
-                              // (xohlasang shu yerda ⋮ menyu ham qoldirsa bo‘ladi)
+                              // (xohlasangiz shu yerda ⋮ menyu ham qo‘shishingiz mumkin)
                             ],
                           ),
                           const SizedBox(height: 8),
@@ -218,8 +302,7 @@ class _ElonPageState extends State<ElonPage> {
                           const SizedBox(height: 10),
 
                           // Muallif (bo‘lsa)
-                          if (item.authorName != null ||
-                              item.authorEmail != null)
+                          if (item.authorName != null || item.authorEmail != null)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -243,19 +326,19 @@ class _ElonPageState extends State<ElonPage> {
                                 if (item.authorEmail != null)
                                   Row(
                                     children: [
-                                        const Icon(
-                                          Icons.email,
+                                      const Icon(
+                                        Icons.email,
+                                        color: Colors.white70,
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        item.authorEmail!,
+                                        style: const TextStyle(
                                           color: Colors.white70,
-                                          size: 16,
                                         ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          item.authorEmail!,
-                                          style: const TextStyle(
-                                            color: Colors.white70,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
+                                    ],
                                   ),
                               ],
                             ),
@@ -302,8 +385,7 @@ class _ElonPageState extends State<ElonPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          Chat(postId: item.id),
+                                      builder: (context) => Chat(postId: item.id),
                                     ),
                                   );
                                 },
@@ -340,76 +422,39 @@ ${item.notes ?? ""}
                                   ),
                                 ),
                               ),
+                              const SizedBox(width: 10),
 
-                              // O‘chirish (faqat egasiga)
-                              if (canDelete) ...[
-                                const SizedBox(width: 10),
-                                ElevatedButton.icon(
-                                  onPressed: () async {
-                                    final confirm =
-                                        await showDialog<bool>(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title:
-                                            const Text('E’lonni o‘chirish'),
-                                        content: const Text(
-                                            'Bu e’lonni butunlay o‘chirasiz. Davom etaymi?'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(
-                                                context, false),
-                                            child:
-                                                const Text('Bekor qilish'),
+                              // Oʻchirish (faqat egasiga)
+                              if (canDelete)
+                                DeleteButton(
+                                  compact: false,
+                                  onDelete: () async {
+                                    try {
+                                      await FirebaseFirestore.instance
+                                          .collection('posts')
+                                          .doc(item.id)
+                                          .delete();
+
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text('E’lon o‘chirildi'),
                                           ),
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(
-                                                context, true),
-                                            child: const Text('O‘chirish'),
+                                        );
+                                      }
+                                    } catch (e) {
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text('Xatolik: $e'),
                                           ),
-                                        ],
-                                      ),
-                                    );
-
-                                    if (confirm == true) {
-                                      try {
-                                        await FirebaseFirestore.instance
-                                            .collection('posts')
-                                            .doc(item.id)
-                                            .delete();
-
-                                        if (mounted) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content:
-                                                  Text('E’lon o‘chirildi'),
-                                            ),
-                                          );
-                                        }
-                                      } catch (e) {
-                                        if (mounted) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content:
-                                                  Text('Xatolik: $e'),
-                                            ),
-                                          );
-                                        }
+                                        );
                                       }
                                     }
                                   },
-                                  icon: const Icon(Icons.delete, size: 16),
-                                  label: const Text('O‘chirish'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
                                 ),
-                              ],
                             ],
                           ),
                         ],
