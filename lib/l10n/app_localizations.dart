@@ -226,6 +226,18 @@ abstract class AppLocalizations {
   /// **'Delete my announcements'**
   String get btn_delete_mine;
 
+  /// No description provided for @btn_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get btn_delete;
+
+  /// No description provided for @deleted_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement deleted'**
+  String get deleted_msg;
+
   /// No description provided for @chat_title.
   ///
   /// In en, this message translates to:
