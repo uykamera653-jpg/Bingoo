@@ -6,7 +6,8 @@ import 'package:bingo/widgets/chat.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-// Yangi DeleteButton widgeti
+// Yangi, "toza" DeleteButton widgeti — faqat ikona ko'rinadi, boshqa dekoratsiyalar olib tashlandi.
+// E'tibor: API o'zgarmadi (onDelete, compact, height, label) — lekin UI minimal bo'ladi.
 class DeleteButton extends StatelessWidget {
   final Future<void> Function() onDelete;
   final bool compact;
@@ -16,7 +17,7 @@ class DeleteButton extends StatelessWidget {
   const DeleteButton({
     Key? key,
     required this.onDelete,
-    this.compact = false,
+    this.compact = true,
     this.height = 40.0,
     this.label,
   }) : super(key: key);
@@ -26,19 +27,19 @@ class DeleteButton extends StatelessWidget {
     return showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('E’lonni oʻchirish'),
-        content: Text(loc.confirm_del),   // Lokalizatsiyadan tarjima
+        title: Text(loc.btn_delete),
+        content: Text(loc.confirm_del),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Bekor qilish'),
+            child: Text(MaterialLocalizations.of(ctx).cancelButtonLabel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(ctx).colorScheme.error,
             ),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Oʻchirish'),
+            child: Text(loc.btn_delete),
           ),
         ],
       ),
@@ -47,48 +48,25 @@ class DeleteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.error;
-    final textColor = Colors.white;
+    final loc = AppLocalizations.of(context)!;
+    // Minimal, "toza" ikonka — rang theme error dan olinadi
     return Semantics(
       button: true,
-      label: label ?? 'Oʻchirish',
-      child: InkWell(
-        borderRadius: BorderRadius.circular(10),
-        onTap: () async {
+      label: label ?? loc.btn_delete,
+      child: IconButton(
+        tooltip: label ?? loc.btn_delete,
+        icon: Icon(
+          Icons.delete,
+          color: Theme.of(context).colorScheme.error,
+          size: 20,
+        ),
+        onPressed: () async {
           final confirmed = await _showConfirm(context);
           if (confirmed == true) {
             await onDelete();
           }
         },
-        child: Container(
-          height: height,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.18),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.delete, color: textColor, size: compact ? 16 : 18),
-              if (!compact) ...[
-                const SizedBox(width: 8),
-                Text(
-                  label ?? 'Oʻchirish',
-                  style: TextStyle(color: textColor, fontSize: 14),
-                ),
-              ],
-            ],
-          ),
-        ),
+        // IconButton o'zining padding va constraintsiga ega; agar juda kichik qilish kerak bo'lsa, buni o'zgartirish mumkin.
       ),
     );
   }
@@ -405,11 +383,11 @@ class _ElonPageState extends State<ElonPage> {
                               ElevatedButton.icon(
                                 onPressed: () {
                                   final shareText = """
-📢 E’lon: ${item.item}
-📍 Joy: ${item.place}
-📞 Tel: ${item.contact}
-${item.notes ?? ""}
-""";
+ 📢 E’lon: ${item.item}
+ 📍 Joy: ${item.place}
+ 📞 Tel: ${item.contact}
+ ${item.notes ?? ""}
+ """;
                                   Share.share(shareText);
                                 },
                                 icon: const Icon(Icons.link, size: 16),
@@ -427,7 +405,8 @@ ${item.notes ?? ""}
                               // Oʻchirish (faqat egasiga)
                               if (canDelete)
                                 DeleteButton(
-                                  compact: false,
+                                  // API saqlansin; DeleteButton endi minimal ikonka ko'rsatadi.
+                                  compact: true,
                                   onDelete: () async {
                                     try {
                                       await FirebaseFirestore.instance
@@ -438,8 +417,8 @@ ${item.notes ?? ""}
                                       if (mounted) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
-                                          const SnackBar(
-                                            content: Text('E’lon o‘chirildi'),
+                                          SnackBar(
+                                            content: Text(loc.deleted_msg),
                                           ),
                                         );
                                       }
