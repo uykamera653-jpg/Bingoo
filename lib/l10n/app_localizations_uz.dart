@@ -22,7 +22,13 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get btn_lostlist => '📋 Yo‘qotilganlar';
+  
+  @override
+  String get btn_delete => "O'chirish";
 
+  @override
+  String get deleted_msg => "E'lon o'chirildi";
+  
   @override
   String get btn_reward => '🎁 Mukofotli';
 
