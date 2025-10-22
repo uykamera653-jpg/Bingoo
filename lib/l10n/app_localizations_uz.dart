@@ -157,7 +157,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get logout => 'Chiqish';
 
   @override
-  String get login_google => 'google orqali kirish';
+  String get login_google => 'Google orqali kirish';
 
   @override
   String get chat_error => 'Xabar bo‘sh bo‘lishi mumkin emas';
@@ -238,7 +238,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get image => 'Rasm';
 
   @override
-  String get noFile => 'Файл не выбран';
+  String get noFile => 'Fayl tanlanmadi';
 
   @override
   String get chooseAnother => 'Boshqa rasm tanlash';
@@ -261,7 +261,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get foundDescription2 =>
-      '❗ Yo‘qotdim yoki ✅ Topdim formasini to‘ldiring\n';
+      '❗ Yo‘qotdim yoki ✅ Topdim formasini to‘ldiring';
 
   @override
   String get btn_share => 'Ulashish';
