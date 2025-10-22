@@ -5,72 +5,7 @@ import 'package:bingo/l10n/app_localizations.dart';
 import 'package:bingo/widgets/chat.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-// Yangi, "toza" DeleteButton widgeti — faqat ikona ko'rinadi, boshqa dekoratsiyalar olib tashlandi.
-// E'tibor: API o'zgarmadi (onDelete, compact, height, label) — lekin UI minimal bo'ladi.
-class DeleteButton extends StatelessWidget {
-  final Future<void> Function() onDelete;
-  final bool compact;
-  final double height;
-  final String? label;
-
-  const DeleteButton({
-    Key? key,
-    required this.onDelete,
-    this.compact = true,
-    this.height = 40.0,
-    this.label,
-  }) : super(key: key);
-
-  Future<bool?> _showConfirm(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    return showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(loc.btn_delete),
-        content: Text(loc.confirm_del),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(MaterialLocalizations.of(ctx).cancelButtonLabel),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(ctx).colorScheme.error,
-            ),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(loc.btn_delete),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    // Minimal, "toza" ikonka — rang theme error dan olinadi
-    return Semantics(
-      button: true,
-      label: label ?? loc.btn_delete,
-      child: IconButton(
-        tooltip: label ?? loc.btn_delete,
-        icon: Icon(
-          Icons.delete,
-          color: Theme.of(context).colorScheme.error,
-          size: 20,
-        ),
-        onPressed: () async {
-          final confirmed = await _showConfirm(context);
-          if (confirmed == true) {
-            await onDelete();
-          }
-        },
-        // IconButton o'zining padding va constraintsiga ega; agar juda kichik qilish kerak bo'lsa, buni o'zgartirish mumkin.
-      ),
-    );
-  }
-}
+import 'package:bingo/widgets/delete_button.dart'; // <- yangi import
 
 class ElonItem {
   final String id;
@@ -405,7 +340,6 @@ class _ElonPageState extends State<ElonPage> {
                               // Oʻchirish (faqat egasiga)
                               if (canDelete)
                                 DeleteButton(
-                                  // API saqlansin; DeleteButton endi minimal ikonka ko'rsatadi.
                                   compact: true,
                                   onDelete: () async {
                                     try {
