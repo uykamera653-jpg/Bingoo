@@ -263,4 +263,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btn_message => 'Message';
+    @override
+  String get btn_delete => 'Delete';
+
+  @override
+  String get deleted_msg => 'Announcement deleted';
 }
