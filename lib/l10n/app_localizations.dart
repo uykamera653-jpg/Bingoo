@@ -1,4 +1,4 @@
-// (To'liq app_localizations.dart fayli — siz ilgari bergan versiya bilan mos)
+// GENERATED: manual fixed version for btn_delete and deleted_msg
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -12,6 +12,8 @@ import 'app_localizations_uz.dart';
 
 // ignore_for_file: type=lint
 
+/// Callers can lookup localized strings with an instance of AppLocalizations
+/// returned by `AppLocalizations.of(context)`.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
     : localeName = intl.Intl.canonicalizedLocale(locale.toString());
@@ -39,7 +41,7 @@ abstract class AppLocalizations {
     Locale('uz'),
   ];
 
-  // (existing getters — keep as you had them)
+  // --- existing getters (keep these in sync with your other locale files) ---
   String get hero_title;
   String get hero_sub;
   String get btn_lost;
@@ -62,7 +64,7 @@ abstract class AppLocalizations {
   String get mine_title;
   String get btn_delete_mine;
 
-  // IMPORTANT: these must be present
+  // IMPORTANT: these two must be declared (compiler errors came from missing these)
   String get btn_delete;
   String get deleted_msg;
 
