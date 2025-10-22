@@ -72,6 +72,12 @@ class AppLocalizationsUz extends AppLocalizations {
   String get btn_delete_mine => 'Mening e’lonlarimni o‘chirish';
 
   @override
+  String get btn_delete => "O'chirish";
+
+  @override
+  String get deleted_msg => "E'lon o'chirildi";
+
+  @override
   String get chat_title => 'Xabar';
 
   @override
