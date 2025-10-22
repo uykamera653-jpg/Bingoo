@@ -263,7 +263,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btn_message => 'Message';
-    @override
+  
+  @override
   String get btn_delete => 'Delete';
 
   @override
