@@ -265,7 +265,7 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get btn_message => 'Сообщение';
 
-    @override
+  @override
   String get btn_delete => 'Удалить';
 
   @override
