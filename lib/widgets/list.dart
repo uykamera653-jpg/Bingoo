@@ -5,7 +5,7 @@ import 'package:bingo/l10n/app_localizations.dart';
 import 'package:bingo/widgets/chat.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:bingo/widgets/delete_button.dart'; // yeni import
+import 'package:bingo/widgets/delete_button.dart'; // <- yangi import
 
 class ElonItem {
   final String id;
