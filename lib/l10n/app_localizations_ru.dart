@@ -74,6 +74,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get btn_delete_mine => 'Удалить мои объявления';
 
   @override
+  String get btn_delete => 'Удалить';
+
+  @override
+  String get deleted_msg => 'Объявление удалено';
+
+  @override
   String get chat_title => 'Сообщение';
 
   @override

@@ -74,6 +74,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btn_delete_mine => 'Delete my announcements';
 
   @override
+  String get btn_delete => 'Delete';
+
+  @override
+  String get deleted_msg => 'Announcement deleted';
+
+  @override
   String get chat_title => 'Message';
 
   @override
