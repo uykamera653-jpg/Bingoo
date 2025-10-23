@@ -132,35 +132,3 @@ abstract class AppLocalizations {
   String get btn_share;
   String get btn_message;
 }
-
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
-  const _AppLocalizationsDelegate();
-
-  @override
-  Future<AppLocalizations> load(Locale locale) {
-    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
-  }
-
-  @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'ru', 'uz'].contains(locale.languageCode);
-
-  @override
-  bool shouldReload(_AppLocalizationsDelegate old) => false;
-}
-
-AppLocalizations lookupAppLocalizations(Locale locale) {
-  switch (locale.languageCode) {
-    case 'en':
-      return AppLocalizationsEn();
-    case 'ru':
-      return AppLocalizationsRu();
-    case 'uz':
-      return AppLocalizationsUz();
-  }
-
-  throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale".',
-  );
-}
