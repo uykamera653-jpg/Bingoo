@@ -32,5 +32,29 @@ class AuthController {
     await _googleSignIn.signOut();
   }
 
+  Future<User?> registerWithEmailPassword(String email, String password) async {
+    try {
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return userCredential.user;
+    } catch (e) {
+      throw Exception("Registration error: $e");
+    }
+  }
+
+  Future<User?> signInWithEmailPassword(String email, String password) async {
+    try {
+      final userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return userCredential.user;
+    } catch (e) {
+      throw Exception("Login error: $e");
+    }
+  }
+
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 }
