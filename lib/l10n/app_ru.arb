@@ -104,5 +104,8 @@
   "registration_success": "Регистрация успешна!",
   "login_success": "Вход выполнен!",
   "registration_error": "Ошибка регистрации",
-  "login_error": "Ошибка входа"
+  "login_error": "Ошибка входа",
+  "email_invalid": "Неверный email",
+  "password_min_length": "Пароль должен быть не менее 6 символов",
+  "or": "ИЛИ"
 }

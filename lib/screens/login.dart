@@ -162,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         return loc.email_required;
                       }
                       if (!value.contains('@')) {
-                        return 'Invalid email';
+                        return loc.email_invalid;
                       }
                       return null;
                     },
@@ -228,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          'OR',
+                          loc.or,
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                       ),

@@ -127,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         return loc.email_required;
                       }
                       if (!value.contains('@')) {
-                        return 'Invalid email';
+                        return loc.email_invalid;
                       }
                       return null;
                     },
@@ -155,7 +155,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         return loc.password_required;
                       }
                       if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
+                        return loc.password_min_length;
                       }
                       return null;
                     },
