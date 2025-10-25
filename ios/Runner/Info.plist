@@ -48,14 +48,14 @@
 	
 	<!-- Camera permission description -->
 	<key>NSCameraUsageDescription</key>
-	<string>Bu ilova yo'qolgan yoki topilgan buyumlar haqida e'lon joylash uchun rasm olish imkonini berish uchun kameraga ruxsat talab qiladi.</string>
+	<string>E'lon uchun rasm olish</string>
 	
 	<!-- Photo library permission description -->
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Bu ilova yo'qolgan yoki topilgan buyumlar haqida e'lon joylash uchun galereyadan rasm tanlash imkonini berish uchun foto kutubxonaga ruxsat talab qiladi.</string>
+	<string>Galereyadan rasm tanlash</string>
 	
 	<!-- Photo library add permission (for saving photos) -->
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Bu ilova rasmlarni saqlash uchun foto kutubxonaga ruxsat talab qiladi.</string>
+	<string>Rasmlarni saqlash</string>
 </dict>
 </plist>
