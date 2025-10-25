@@ -1,6 +1,24 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.topildi.app">
 
+    <!-- Internet permission for Firebase and network operations -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    
+    <!-- Camera permission for image_picker camera functionality -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    
+    <!-- Storage permissions for image_picker gallery functionality -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
+                     android:maxSdkVersion="32"/>
+    
+    <!-- For Android 13+ (API 33+) - Required for reading images from gallery -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    
+    <!-- Camera feature declaration (optional, but recommended) -->
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+
     <application
         android:label="bingo"
         android:name="${applicationName}">
