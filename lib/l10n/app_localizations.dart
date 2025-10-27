@@ -41,7 +41,7 @@ abstract class AppLocalizations {
     Locale('uz'),
   ];
 
-  // --- existing getters (keep these in sync with your other locale files) ---
+  // existing getters...
   String get hero_title;
   String get hero_sub;
   String get btn_lost;
@@ -64,7 +64,7 @@ abstract class AppLocalizations {
   String get mine_title;
   String get btn_delete_mine;
 
-  // IMPORTANT: these two must be declared (compiler errors came from missing these)
+  // IMPORTANT — add these two:
   String get btn_delete;
   String get deleted_msg;
 
