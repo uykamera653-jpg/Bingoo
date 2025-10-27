@@ -56,8 +56,6 @@ abstract class AppLocalizations {
   String get guide_1;
   String get guide_2;
   String get guide_3;
-  String get lost_form_title;
-  String get found_form_title;
   String get lost_list_title;
   String get reward_list_title;
   String get found_list_title;
